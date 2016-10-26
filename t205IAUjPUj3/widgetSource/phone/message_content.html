@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="message_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver sc-bg" id="comment">
+            <div onclick="openUserMsg()"  class="ub uinn5 ubb bc-border">
+                <div class="ub-img1 standby" style="min-width:3em;min-height:3em;"></div>
+                <div class="ub-f1 ub-ver tip-right">
+                    <div class="ub ulev-3">
+                        <div class="ub-f1">
+                            通知消息
+                        </div>
+                    </div>
+                    <div id="standbyContent" class="ulev-5 tip-cont">
+                        暂时没有新的通知
+                    </div>
+                </div>
+                <div id="standbyBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                    1
+                </div>
+            </div>
+            <div class="ub uinn5 ubb bc-border uhide">
+                <div class="ub-img1 huodong" style="min-width:3em;min-height:3em;"></div>
+                <div class="ub-f1 ub-ver tip-right">
+                    <div class="ub">
+                        <div class="ub-f1">
+                            最新活动
+                        </div>
+                        <div id="logicTime" class="tx-c ulev-1 tip-time"></div>
+                    </div>
+                    <div id="logicContent" class="ulev-1 tip-cont"></div>
+                </div>
+                <div id="logicmsgBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                    1
+                </div>
+            </div>
+            <div class="ub uinn5 ubb bc-border uhide">
+                <div class="ub-img1 zhaopin" style="min-width:3em;min-height:3em;"></div>
+                <div class="ub-f1 ub-ver tip-right">
+                    <div class="ub">
+                        <div class="ub-f1">
+                            最新招聘
+                        </div>
+                        <div id="logicTime" class="tx-c ulev-1 tip-time"></div>
+                    </div>
+                    <div id="logicContent" class="ulev-1 tip-cont"></div>
+                </div>
+                <div id="logicmsgBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                    1
+                </div>
+            </div>
+            <div  class="ub uinn5 ubb bc-border uhide">
+                <div class="ub-img1 message" style="min-width:3em;min-height:3em;"></div>
+                <div class="ub-f1 ub-ver tip-right">
+                    <div class="ub">
+                        <div class="ub-f1">
+                            系统消息
+                        </div>
+                        <div id="logicTime" class="tx-c ulev-1 tip-time"></div>
+                    </div>
+                    <div id="logicContent" class="ulev-1 tip-cont"></div>
+                </div>
+                <div id="logicmsgBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                    1
+                </div>
+            </div>
+            <div id="friendMsgList" ></div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.optionList.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/project.js"></script>
+        <script src="js/Base64-80.js"></script>
+        <script src="wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var recentChatters;
+        var firendData;
+        var lv1;
+        var bounceType;
+        var userinfo;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWindow.setMultilPopoverFlippingEnbaled(1);
+                App.setPageBounce(function(type) {
+                    bounceType = type;
+                    if (!isdebug) {
+                        uexEasemob.getRecentChatters();
+                    }
+                });
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            lv1 = appcan.optionList({
+                selector : "#friendMsgList",
+                type : "hiddenLine",
+                id : 1,
+                duration : "500ms",
+                multiShow : false,
+                align : 'left'
+            });
+            if (!isdebug) {
+                uexEasemob.getRecentChatters();
+            }
+            getSystemMsg();
+        }
+
+        function getChatters() {
+            var chatters = new Array();
+            if (!App.isNull(recentChatters)) {
+                for (var i = 0; i < recentChatters.length; i++) {
+                    if (recentChatters[i].chatter != "appcan") {
+                        var messageId = $('#u' + recentChatters[i].chatter).attr("data-mid");
+                        var lastMessageId = recentChatters[i].lastMsg.messageId;
+                        if (!App.isNull(lastMessageId)) {
+                            if (messageId != lastMessageId) {
+                                chatters.push(recentChatters[i].chatter);
+                            }
+                        }
+                    }
+                };
+            }
+            return chatters;
+        }
+
+        function getRecentChatters() {
+            if (App.isNull(lv1)) {
+                lv1 = appcan.optionList({
+                    selector : "#friendMsgList",
+                    type : "hiddenLine",
+                    id : 1,
+                    duration : "500ms",
+                    multiShow : false,
+                    align : 'left'
+                });
+            }
+            var data = App.getVal("cbGetRecentChatters");
+            recentChatters = eval('(' + data + ')');
+            if (App.isNull(recentChatters)) {
+                if (bounceType != null && bounceType != undefined) {
+                    uexWindow.resetBounceView(bounceType);
+                }
+                var d = "";
+                d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                d += '    <div class="t-gra tx-c uinn">您暂时还没有收到消息,可以从右上角发起聊天</div>';
+                d += '</div>'
+                $('#friendMsgList').html(d);
+                App.ajaxLoading(0);
+                App.removeVal("cbGetRecentChatters");
+                return;
+            }
+            if (!App.isNull(recentChatters)) {
+                var list = getChatters();
+                if (App.isNull(list.length) || list.length <= 0) {
+                    App.ajaxLoading(0);
+                    if (bounceType != null && bounceType != undefined) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                    return;
+                }
+                var d = '';
+                var updateData = [];
+                var unReadMsg = false;
+                for (var i = 0; i < recentChatters.length; i++) {
+                    var lastMessageId = recentChatters[i].lastMsg.messageId;
+                    var messageId = $('#u' + recentChatters[i].chatter).attr("data-mid");
+                    if (recentChatters[i].chatter != "appcan" && !App.isNull(lastMessageId)) {
+                        if (recentChatters[i].unreadMsgCount > 0) {
+                            unReadMsg = true;
+                        }
+                        if (App.isNull(messageId)) {
+                            d = createMsgHtml(recentChatters[i], i);
+                            var obj = {
+                                content : d,
+                                height : "",
+                                hideOption : {
+                                    content : ["删除"],
+                                    style : {
+                                        fontSize : "0.9125em",
+                                        background : "red"
+                                    },
+                                    onClick : function(obj, index, length) {
+                                        var item = $(obj).find('.scroll-bar').children();
+                                        var userId = item.attr("data-id");
+                                        var chatType = item.attr("data-type");
+                                        $(obj).remove();
+                                        if (!isdebug) {
+                                            var params = {
+                                                username : userId,
+                                                chatType : chatType
+                                            }
+                                            uexEasemob.deleteConversation(App.toJsonStr(params));
+                                            App.removeLastMsgId(userId);
+                                        }
+                                    }
+                                },
+                                onLongTap : function(obj, index) {
+
+                                },
+                                onClick : function(obj, index) {
+                                    openChat(obj);
+                                }
+                            }
+                            updateData.push(obj);
+                        } else if (Number(messageId) != Number(lastMessageId)) {
+                            $('#u' + recentChatters[i].chatter).parent().parent().remove();
+                            d = createMsgHtml(recentChatters[i], i);
+                            var obj = {
+                                content : d,
+                                height : "",
+                                hideOption : {
+                                    content : ["删除"],
+                                    style : {
+                                        fontSize : "0.9125em",
+                                        background : "red"
+                                    },
+                                    onClick : function(obj, index, length) {
+                                        var item = $(obj).find('.scroll-bar').children();
+                                        var userId = item.attr("data-id");
+                                        var chatType = item.attr("data-type");
+                                        $(obj).remove();
+                                        if (!isdebug) {
+                                            var params = {
+                                                username : userId,
+                                                chatType : chatType
+                                            }
+                                            uexEasemob.deleteConversation(App.toJsonStr(params));
+                                            App.removeLastMsgId(userId);
+                                        }
+                                    }
+                                },
+                                onLongTap : function(obj, index) {
+
+                                },
+                                onClick : function(obj, index) {
+                                    openChat(obj);
+                                }
+                            }
+                            updateData.push(obj);
+                        }
+                    }
+                }
+                if (updateData.length > 0) {
+                    if ($("#friendMsgList .nofriend").length > 0) {
+                        $('#friendMsgList').html("");
+                    }
+                    lv1.add(updateData, 0);
+                }
+                if (unReadMsg) {
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 1,
+                        js : 'shwoTabBage("xiaoxi",1)'
+                    });
+                } else {
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 1,
+                        js : 'shwoTabBage("xiaoxi",0)'
+                    });
+                }
+                App.authApi({
+                    url : "friend/getFriendMsg",
+                    data : {
+                        params : {
+                            list : list
+                        }
+                    },
+                    callBack : function(data) {
+                        App.Logs(App.toJsonStr(data))
+                        if (data.code == 0) {
+                            for (var i = 0; i < data.items.length; i++) {
+                                if (!App.isNull(data.items[i].compname) && !App.isNull(data.items[i].parentid)) {
+                                    $('#u' + data.items[i].userid + " .compName").html("|" + data.items[i].compname);
+                                }
+                                $('#u' + data.items[i].userid + " .userName").html(data.items[i].cnname);
+                                $('#u' + data.items[i].userid).attr("data-id", data.items[i].userid);
+                                $('#u' + data.items[i].userid).attr("data-gnum", data.items[i].groupnumber);
+                                $('#u' + data.items[i].userid).attr("data-maxnum", data.items[i].maxusers);
+                                if (data.items[i].auditstatus == 2) {
+                                    $('#u' + data.items[i].userid + ' .verify').removeClass("uhide");
+                                }
+                                var headuri = App.isNull(data.items[i].headuri) ? "./wgtRes/comImg.png" : data.items[i].headuri;
+                                var oUri = "./wgtRes/comImg.png";
+                                if (headuri.substr(0, 4) != "http" && headuri.substr(0, 2) != "./") {
+                                    headuri = App.headUri + headuri;
+                                    oUri = data.items[i].headuri;
+                                } else {
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid == "1000000") {
+                                    headuri = "./wgtRes/version.png";
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid == "1000002") {
+                                    headuri = "./message_content/css/myImg/zhaopin.png";
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid == "1000001") {
+                                    headuri = "./message_content/css/myImg/huodong.png";
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid == "1000003") {
+                                    headuri = "./message_content/css/myImg/message.png";
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid != 'admin') {
+                                    $('#u' + data.items[i].userid + " .ub-img1").attr("data-imgo", oUri);
+                                    $('#u' + data.items[i].userid + " .ub-img1").attr("data-img", headuri);
+                                    $('#u' + data.items[i].userid + " .ub-img1").css('background-image', 'url(' + headuri + ')');
+                                }
+                            };
+                        } else {
+                            App.toast(data.message);
+                        }
+                        App.ajaxLoading(0);
+                        if (bounceType != null && bounceType != undefined) {
+                            uexWindow.resetBounceView(bounceType);
+                        }
+                    }
+                })
+            } else {
+                var d = "";
+                d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                d += '    <div class="t-gra tx-c uinn">您暂时还没有收到消息,可以从右上角发起聊天</div>';
+                d += '</div>'
+                $('#friendMsgList').html(d);
+                if (bounceType != null && bounceType != undefined) {
+                    uexWindow.resetBounceView(bounceType);
+                }
+                App.ajaxLoading(0);
+            }
+            App.removeVal("cbGetRecentChatters");
+        }
+
+        function createMsgHtml(obj, index) {
+            var h = '';
+            var text = obj.lastMsg.messageType;
+            var str = "";
+            var timeStr = App.setMsgTime(parseInt(obj.lastMsg.messageTime));
+            var count = obj.unreadMsgCount;
+            var cStyle = "sc-bg-alert";
+            if (count > 99) {
+                count = "99+"
+            } else if (count == 0) {
+                count = "";
+                cStyle = "";
+            }
+            switch (text) {
+            case 'image':
+                str = "[图片]";
+                break;
+            case 'text':
+                str = decode64(obj.lastMsg.messageBody.text);
+                var reg = /\[([^\]]+)\]/g;
+                str = str.replace(reg, function($1) {
+                    return emoarr[$1] || $1;
+                });
+                break;
+            case 'audio':
+                str = "[语音]";
+                break;
+            case 'location':
+                str = "[位置]";
+                break;
+            case 'video':
+                str = "[视屏]";
+                break;
+            }
+            h += '<div id="u' + obj.chatter + '"  data-type="' + obj.chatType + '" data-id="' + obj.chatter + '" data-mid="' + obj.lastMsg.messageId + '" class="ub ub-f1 ub-ac uinn5">';
+            h += '   <div class="ub-img1 " data-img="" style="min-width:3em;min-height:3em;"></div>';
+            h += '   <div class="ub ub-f1 ub-ver tip-right">';
+            h += '      <div class="ub ub-f1">';
+            h += '         <div class="userName ulev-3"></div>';
+            h += '         <div class="compName ulev-1 tip-cont ut-s tx-l"></div>';
+            h += '         <div class="ub-img verify umw1 umh1 uhide"></div>';
+            h += '      </div>';
+            h += '      <div id="logicContent" class="ulev-5 tip-cont">' + str + '</div>';
+            h += '   </div>';
+            h += '   <div class="ub ub-ac ub-pe ub-ver">';
+            h += '      <div class="tx-c ulev-4 tip-time" style="margin-bottom: 1em">' + timeStr + '</div>';
+            h += '      <div class="ub ub-ac ub-pc">';
+            h += '         <div class="ub ub-ac ub-pc ulev-4 t-wh tab_badge2 ' + cStyle + '">' + count + '</div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</div>';
+            return h;
+        }
+
+        function openChat(li) {
+            var userId = $(li).attr('data-id');
+            var chatType = $(li).attr('data-type');
+            var groupNumber = $(li).attr('data-gnum');
+            var maxUsers = $(li).attr('data-maxnum');
+            var chatpic = $(li).find('.ub-img1').attr('data-img');
+            var oUri = $(li).find('.ub-img1').attr('data-imgo');
+            App.setVal('chatId', userId);
+            App.setVal('chatname', $(li).find('.userName').html());
+            App.setVal('chatpic', chatpic);
+            $(li).find('.tab_badge2').removeClass('sc-bg-alert');
+            $(li).find('.tab_badge2').html("");
+            if (!isdebug) {
+                var data = {
+                    username : userId,
+                    chatType : chatType
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+            }
+            App.evalJs({
+                winName : "indexNew",
+                type : 1,
+                js : 'shwoTabBage("xiaoxi",0)'
+            });
+            if (chatType == 1) {
+                App.setVal('groupNumber', groupNumber);
+                App.setVal('groupHeadUri', chatpic);
+                App.setVal("oUri", oUri);
+                var param = {
+                    groupId : userId, //
+                    loadCache : false //是否从本地加载缓存,(默认为false,从网络获取)
+                };
+                var groupInfo = {
+                    winName : "indexNew",
+                    maxUsers : maxUsers
+                };
+                App.setVal("groupInfo", groupInfo);
+                uexEasemob.getGroup(App.toJsonStr(param));
+            } else {
+                if (userId == "1000000" || userId == "1000001" || userId == "1000002" || userId == "1000003") {
+                    App.openWin({
+                        backName : "indexNew",
+                        name : 'sysChatRoom',
+                        url : 'chat/sysChatRoom.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    });
+                } else {
+                    App.openWin({
+                        backName : "indexNew",
+                        name : 'chatRoom',
+                        url : 'chat/chatRoom.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    });
+                }
+            }
+        }
+
+        function updateHeadLogo(id, headUri, oUri) {
+            $('#u' + id).find(".ub-img1").attr("data-imgo", oUri);
+            $('#u' + id).find(".ub-img1").attr("data-img", headUri);
+            $('#u' + id).find(".ub-img1").css("background-image", "url(" + headUri + ")");
+        }
+
+        function updateTitle(id, groupName) {
+            $('#u' + id).find(".userName").html(groupName);
+        }
+
+        function removeFriendHtml(id, type) {
+            App.Logs("removeFriendHtml:" + id + "," + type);
+            $('#u' + id).parent().parent().remove();
+            if (App.isNull(type)) {
+                type = 0;
+            }
+            if (!isdebug) {
+                if (type == 0) {
+                    var param = {
+                        username : id
+                    }
+                    uexEasemob.deleteContact(App.toJsonStr(param));
+                    var param1 = {
+                        username : id,
+                        chatType : type
+                    }
+                    uexEasemob.deleteConversation(App.toJsonStr(param1));
+                }
+                App.removeLastMsgId(id);
+            }
+        }
+
+        function openUserMsg() {
+            App.openWin({
+                backName : "indexNew",
+                name : 'userMsg',
+                url : 'message/userMsg.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+            $("#standbyBage").html(0);
+            $("#standbyBage").addClass("uhide");
+            $("#standbyContent").html("暂时没有新的通知");
+        }
+
+        function getSystemMsg() {
+            if (App.isNull(userinfo)) {
+                userinfo = App.getUserInfo();
+            }
+            App.authApi({
+                url : "msg/getMsgCount",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        messageType : "system"
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (data.items.total > 0) {
+                            $("#standbyContent").html("你有新的消息通知");
+                            $("#standbyBage").html(data.items.total);
+                            $("#standbyBage").removeClass("uhide");
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

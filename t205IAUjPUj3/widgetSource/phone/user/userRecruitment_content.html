@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userApplyExpect_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+            .select {
+                display: -webkit-box !important;
+                display: box !important;
+                position: relative;
+                -webkit-box-align: center;
+                box-align: center;
+                -webkit-box-pack: center;
+                box-pack: center;
+                min-height: 2em;
+                padding: 0;
+            }
+            .uinput textarea {
+                min-height: 5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub ub-ver ub-f1">
+                <div class="ub uinn ub-ac ub-f1">
+                    <div class="ub-f1 ulev-5 t-gra">
+                        <span id="stepMsg">发布招聘</span>
+                    </div>
+                </div>
+            </div>
+            <div id="step2" class="ub ub-ver ub-f1 sc-bg ubt bc-border">
+                <div id="jobTitle" class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub">
+                        职位名称
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择职位名称
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="jobTitle" selectedindex="0"></select>
+                    </div>
+                </div>
+                <div id="certificateLv" class="ub uinn ub-ac ub-f1 ubb bc-border seaman">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub">
+                        证书等级
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择证书等级
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="certificateLv" selectedindex="0"></select>
+                    </div>
+                </div>
+                <div id="shipType" class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5">
+                        船舶类型
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择船舶类型
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </div>
+                </div>
+                <div id="shipTonnage" class="ub uinn ub-ac ub-f1 ubb bc-border seaman">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub">
+                        船舶总吨
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择船舶总吨
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="shipTonnage" selectedindex="0">
+                            <option value="">请选择船舶总吨</option>
+                            <option value="不限">不限</option>
+                            <option value="5千吨以下">5千吨以下</option>
+                            <option value="5千-1万吨">5千-1万吨</option>
+                            <option value="1万-2万吨">1万-2万吨</option>
+                            <option value="2万-3万吨">2万-3万吨</option>
+                            <option value="3万-6万吨">3万-6万吨</option>
+                            <option value="6万-10万吨">6万-10万吨</option>
+                            <option value="10万-15万吨">10万-15万吨</option>
+                            <option value="15万-30万吨">15万-30万吨</option>
+                            <option value="30万吨以上">30万吨以上</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="shipLine" class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub">
+                        航行区域
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择航行区域
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="shipLine" selectedindex="0"></select>
+                    </div>
+                </div>
+                <div id="shipAge" class="ub uinn ub-ac ub-f1 ubb bc-border seaman">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub">
+                        船龄
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请选择船龄
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="shipAge" selectedindex="0">
+                            <option value="">请选择船龄</option>
+                            <option value="新船">新船</option>
+                            <option value="半新旧">半新旧</option>
+                            <option value="旧船">旧船</option>
+                            <option value="1-3年">1-3年</option>
+                            <option value="4-6年">4-6年</option>
+                            <option value="7-10年">7-10年</option>
+                            <option value="11-15年">11-15年</option>
+                            <option value="16-20年">16-20年</option>
+                            <option value="21-30年">21-30年</option>
+                            <option value="31年以上">31年以上</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="onBoardTime" class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5">
+                        上船时间
+                    </div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请设置上船时间
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </div>
+                </div>
+                <div class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5">
+                        上船地点
+                    </div>
+                    <div class="tx-r ulev-5 txt-gray ub-f1">
+                        <div class="uinput ub ub-f1">
+                            <input id="onBoardLocation" placeholder="请输入上船地点" type="text" class="ub-f1 tx-r txt-color" style="padding-right: 1.5em">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5">
+                        合同期限
+                    </div>
+                    <div class="tx-r ulev-5 txt-gray ub-f1">
+                        <div class="uinput ub ub-f1">
+                            <input id="contactDeadline" placeholder="请输入合同期限(如:1年,半年)" type="text" class="ub-f1 tx-r txt-color" style="padding-right: 1.5em">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub umar-r" style="min-width: 4em;">
+                        提供薪资
+                    </div>
+                    <div class="tx-r ulev-5 txt-gray ub-f1">
+                        <div class="uinput ub ub-f1">
+                            <input id="payroll" placeholder="请输入薪资"  type="text" class="ub-f1 tx-r txt-color">
+                        </div>
+                    </div>
+                    <div id="payrollType" class="select sc-text seaman ">
+                        <div class="ulev-5 text txt-color">
+                            人民币/月
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="payrollType" selectedindex="0">
+                            <option value="人民币" selected="">人民币/月</option>
+                            <option value="美元">美元/月</option>
+                            <option value="面议">面议</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="ub uinn ubb bc-border ub-f1 ub-ver normal">
+                    <div  class="ulev-5 umar-b">
+                        备注
+                    </div>
+                    <div class="uba bc-border uinput ub ub-f1">
+                        <textarea  id="remark" placeholder="请输入备注,请不要在备注信息中输入任何联系方式" type="text" class="ub-f1 ulev-1" ></textarea>
+                    </div>
+                </div>
+                <div id="contactId" class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5">
+                        联系人
+                    </div>
+                    <div class="uhide contactId"></div>
+                    <div class="select sc-text">
+                        <div class="ulev-5 text txt-color">
+                            请设置联系人
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </div>
+                </div>
+                <div class="ub uinn ub-ac ub-f1 ubb bc-border seaman ">
+                    <div class="ub ub-ac ub-pc" style="color: red">
+                        *
+                    </div>
+                    <div class="ub-f1 ulev-5 ub-ac ub umar-r" style="min-width: 4em;">
+                        过期时间
+                    </div>
+                    <div class="tx-r ulev-5 txt-gray ub-f1 uhide">
+                        <div class="uinput ub ub-f1">
+                            <input id="dealineTime" readonly="true" placeholder="点击设置过期时间"  type="text" class="ub-f1 tx-r txt-color">
+                        </div>
+                    </div>
+                    <div id="deadlineType" class="select sc-text seaman ">
+                        <div class="ulev-5 text txt-color">
+                            请设置过期时间
+                        </div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                        <select data-id="deadlineType" selectedindex="0">
+                            <option value="">请设置过期时间</option>
+                            <option value="不限时间">不限时间</option>
+                            <option value="其它时间">其它时间</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/mycitys.js"></script>
+        <script src="../js/options.js"></script>
+    </body>
+    <script>
+        var lv = appcan.listview({
+            selector : "#listview1",
+            type : "singleLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true
+        });
+        var userinfo;
+        var objData;
+        var pickViewType = 1;
+        var recruitmentId;
+        var recruitmentType;
+        var selectDate = 1;
+        var recruitType = "seaman";
+        var recruitId;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWheelPickView.onConfirmClick = function(data) {
+                    App.Logs("uexWheelPickView.onConfirmClick:" + data)
+                    var obj = App.toJson(data);
+                    $('#shipType .txt-color').html(obj.data.join(" "));
+                }
+                uexControl.cbOpenDatePicker = function(opId, dataType, data) {
+                    var obj = App.toJson(data);
+                    var reStr = obj.year + "-" + (obj.month < 10 ? "0" + obj.month : obj.month) + "-";
+                    reStr += obj.day < 10 ? "0" + obj.day : obj.day;
+                    if (selectDate == 1) {
+                        $("#onBoardTime .txt-color").html(reStr);
+                    } else {
+                        $("#dealineTime").val(reStr);
+                    }
+                }
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            recruitId = App.getVal("recruitId");
+            recruitType = App.getVal("recruitType");
+            loadOptionData();
+            if (!App.isNull(recruitId)) {
+                getUserRecruitMent(recruitId);
+            }
+            if (!App.isNull(userinfo.parentid)) {
+                $("#contactId .txt-color").html(userinfo.cnname);
+                $("#contactId .contactId").html(userinfo.contactid);
+            }
+        }
+
+        function getUserRecruitMent(id) {
+            App.authApi({
+                url : "user/getUserRecruitMent",
+                data : {
+                    params : {
+                        recruitId : id
+                    }
+                },
+                callBack : function(data) {
+                    // console.log(data);
+                    if (data.code == 0 && !App.isNull(data.items.id)) {
+                        if (recruitType == "seaman") {
+                            $("#jobTitle .txt-color").html(data.items.jobtitle);
+                            $("#certificateLv .txt-color").html(data.items.certificatelv);
+                            $("#shipType .txt-color").html(data.items.shiptype);
+                            $("#shipLine .txt-color").html(data.items.shipline);
+                            $("#shipTonnage .txt-color").html(data.items.shiptonnage);
+                            $("#shipAge .txt-color").html(data.items.shipage);
+                            $("#onBoardTime .txt-color").html(data.items.onboardtime);
+                            $("#onBoardLocation").val(data.items.onboardlocation);
+                            $("#contactDeadline").val(data.items.contactdeadline);
+                            $("#payroll").val(data.items.payroll);
+                            $("#remark").val(data.items.remark);
+                            $("#payrollType .txt-color").html(data.items.payrolltype);
+                            $("#contactId .contactId").html(data.items.contactid);
+                            $("#deadlineType .txt-color").html(data.items.deadlinetype);
+                            if (data.items.deadlinetype == "其它时间" && !App.isNull(data.items.dealinetime)) {
+                                $("#deadlineType").prev().removeClass("uhide");
+                                $("#dealineTime").val(data.items.dealinetime);
+                            }
+                            if (!App.isNull(data.items.contactname)) {
+                                $("#contactId .contactId").html(data.items.contactid);
+                                $("#contactId .txt-color").html(data.items.contactname);
+                            }
+                            $("[value='" + data.items.jobtitle + "']").attr("selected", true);
+                            $("[value='" + data.items.certificatelv + "']").attr("selected", true);
+                            $("[value='" + data.items.shiptonnage + "']").attr("selected", true);
+                            $("[value='" + data.items.shipline + "']").attr("selected", true);
+                            $("[value='" + data.items.shipage + "']").attr("selected", true);
+                            $("[value='" + data.items.payrolltype + "']").attr("selected", true);
+                            $("[value='" + data.items.deadlinetype + "']").attr("selected", true);
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadOptionData() {
+            var applyJobTitle = "<option value=''>请选择招聘职务</option>";
+            var applyShipLine = "<option value=''>请选择航行区域</option>";
+            var certlv = "<option value=''>请选择证书等级</option>";
+            for (var i = 0; i < certificateTypeArray.length; i++) {
+                certlv += "<option value=" + certificateTypeArray[i] + ">" + certificateTypeArray[i] + "</option>";
+            };
+            for (var i = 0; i < positionArray.length; i++) {
+                applyJobTitle += "<option value=" + positionArray[i] + ">" + positionArray[i] + "</option>";
+            };
+
+            for (var i = 0; i < lineAreaArray.length; i++) {
+                applyShipLine += "<option value=" + lineAreaArray[i] + ">" + lineAreaArray[i] + "</option>";
+            };
+            $("#jobTitle select").html(applyJobTitle);
+            $("#shipLine select").html(applyShipLine);
+            $("#certificateLv select").html(certlv);
+        }
+
+
+        appcan.select(".select", function(ele, value) {
+            var id = ele.attr("data-id");
+            App.Logs(id + "," + value);
+            switch(id) {
+            case "payrollType":
+                if (value == "面议") {
+                    $("#payroll").val("面议");
+                    $("#payroll").attr("disabled", true);
+                } else {
+                    $("#payroll").removeAttr("disabled");
+                    $("#payroll").val("");
+                }
+                break;
+            case "deadlineType":
+                if (value == "其它时间") {
+                    $("#deadlineType").prev().removeClass("uhide");
+                } else {
+                    $("#deadlineType").prev().addClass("uhide");
+                }
+                break;
+            }
+        });
+
+        appcan.button("#dealineTime", '', function() {
+            selectDate = 2;
+            var date = appcan.trim($(this).val());
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            var day = new Date().getDate();
+            if (date != "点击设置过期时间" && !App.isNull(date)) {
+                date = date.split("-");
+                year = date[0];
+                month = date[1];
+                day = date[2];
+            }
+            uexControl.openDatePicker(year, month, day);
+        })
+
+        appcan.button("#onBoardTime", '', function() {
+            selectDate = 1;
+            var date = appcan.trim($(this).find(".txt-color").html());
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            var day = new Date().getDate();
+            if (date != "请设置上船时间") {
+                date = date.split("-");
+                year = date[0];
+                month = date[1];
+                day = date[2];
+            }
+            uexControl.openDatePicker(year, month, day);
+        })
+        function addContactId(id, name) {
+            $("#contactId .contactId").html(id);
+            $("#contactId .txt-color").html(name);
+        }
+
+
+        appcan.button("#contactId", '', function() {
+            if (!App.isNull(userinfo.parentid)) {
+                return;
+            }
+            App.setVal("RselectType", 1);
+            App.openWin({
+                backName : "userRecruitment",
+                name : 'userContactList',
+                url : 'userContactList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+
+        appcan.button("#shipType", '', function() {
+            pickViewType = 3;
+            var shipTypeStr = appcan.trim($(this).find(".txt-color").html());
+            var select = [0, 0];
+            if (shipTypeStr != "请选择船舶类型") {
+                shipTypeStr = shipTypeStr.split(" ");
+                select = getShipSelect(shipTypeStr[0], shipTypeStr[1]);
+                App.Logs("select:" + App.toJsonStr(select));
+            }
+            var params = {};
+            if (App.getAppPlat()) {
+                params = {
+                    src : "res://shipTypes.json",
+                    select : select
+                };
+            } else {
+                var y = screen.availHeight - 280;
+                params = {
+                    x : 0,
+                    y : y,
+                    width : window.innerWidth,
+                    height : 300,
+                    src : "res://shipTypes.json",
+                    select : select
+                };
+            }
+            uexWheelPickView.open(JSON.stringify(params));
+        })
+        function getShipSelect(prov, city) {
+            var select = [];
+            for (var i = 0; i < shipTypeArray.length; i++) {
+                if (shipTypeArray[i].name == prov) {
+                    select.push(i);
+                    if (!App.isNull(shipTypeArray[i].sub)) {
+                        for (var j = 0; j < shipTypeArray[i].sub.length; j++) {
+                            if (shipTypeArray[i].sub[j].name == city) {
+                                select.push(j);
+                                break;
+                            };
+                        };
+                    }
+                    break;
+                };
+            };
+            return select;
+        }
+
+        function addOrUpdateRecruitment() {
+            var jobTitle = appcan.trim($("#jobTitle select")[0].value);
+            var certificateLv = appcan.trim($("#certificateLv select")[0].value);
+            var shipType = appcan.trim($("#shipType .txt-color").html());
+            var shipTonnage = appcan.trim($("#shipTonnage select")[0].value);
+            var shipLine = appcan.trim($("#shipLine select")[0].value);
+            var shipAge = appcan.trim($("#shipAge select")[0].value);
+            var onBoardTime = appcan.trim($("#onBoardTime .txt-color").html());
+            var onBoardLocation = appcan.trim($("#onBoardLocation").val());
+            var contactDeadline = appcan.trim($("#contactDeadline").val());
+            var payroll = appcan.trim($("#payroll").val());
+            var payrollType = appcan.trim($("#payrollType select")[0].value);
+            var remark = appcan.trim($("#remark").val());
+            var contactId = appcan.trim($("#contactId .contactId").html());
+            var deadlineType = appcan.trim($("#deadlineType select")[0].value);
+            var dealineTime = appcan.trim($("#dealineTime").val());
+            if (App.isNull(jobTitle)) {
+                App.toast("请选择职位名称");
+                return;
+            }
+            if (App.isNull(certificateLv)) {
+                App.toast("请选择证书等级");
+                return;
+            }
+            if (App.isNull(shipType) || shipType == "请选择船舶类型") {
+                App.toast("请选择船舶类型");
+                return;
+            }
+            if (App.isNull(shipTonnage)) {
+                App.toast("请选择船舶总吨");
+                return;
+            }
+            if (App.isNull(shipLine)) {
+                App.toast("请选择航行区域");
+                return;
+            }
+            if (App.isNull(shipAge)) {
+                App.toast("请选择船龄");
+                return;
+            }
+            if (App.isNull(onBoardTime) || onBoardTime == "请设置上船时间") {
+                App.toast("请设置上船时间");
+                return;
+            }
+            if (App.isNull(contactDeadline)) {
+                App.toast("请输入合同期限");
+                return;
+            }
+            if (App.isNull(contactDeadline)) {
+                App.toast("请输入合同期限");
+                return;
+            }
+            if (payroll != "面议" && App.isNull(payroll)) {
+                App.toast("请输入薪资");
+                return;
+            }
+            if (App.isNull(contactId)) {
+                App.toast("请设置联系人");
+                return;
+            }
+            if (App.isNull(dealineTime) || dealineTime == "请设置过期时间") {
+                App.toast("请设置过期时间");
+                return;
+            }
+
+            App.authApi({
+                url : "user/addOrUpdateRecruitment",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        jobTitle : jobTitle,
+                        certificateLv : certificateLv,
+                        shipType : shipType,
+                        shipTonnage : shipTonnage,
+                        shipLine : shipLine,
+                        shipAge : shipAge,
+                        onBoardTime : onBoardTime,
+                        onBoardLocation : onBoardLocation,
+                        contactDeadline : contactDeadline,
+                        payroll : payroll,
+                        payrollType : payrollType,
+                        remark : remark,
+                        contactId : contactId,
+                        deadlineType : deadlineType,
+                        dealineTime : dealineTime,
+                        recruitType : App.isNull(recruitType) ? "seaman" : recruitType,
+                        recruitId : recruitId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast("发布成功!");
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "userRecruitment",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }, 1000);
+                    } else if (data.code == 405) {
+                        App.toast("联系人信息不正常，请先设置联系人信息");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

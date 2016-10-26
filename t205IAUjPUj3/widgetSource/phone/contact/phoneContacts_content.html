@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="addFriend_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver c-wh bc-border ubt ub-f1" id="listview1">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.openLoading({
+                title : '',
+                msg : "正在加载通讯录...",
+                canCancel : 0
+            });
+            uexContact.cbSearch = function(data) {
+                App.Logs("uexContact.cbSearch:" + JSON.stringify(data))
+                var obj = ( typeof data == "object") ? data : App.toJson(data);
+                if (App.isNull(data) || (!App.isNull(data.result) && data.result != 0)) {
+                    App.toast("获取联系人失败.请确APP已经获得读取联系人权限");
+                    return;
+                }
+                var d = "";
+                var contactList;
+                if (obj.contactList) {
+                    contactList = obj.contactList;
+                } else {
+                    contactList = obj;
+                }
+                for (var i = 0; i < contactList.length; i++) {
+                    d += createContactList(contactList[i], i);
+                };
+                $('#listview1 ul').html(d);
+                App.evalJs({
+                    winName : 'phoneContacts',
+                    type : 1,
+                    js : 'setLoading(false)'
+                })
+                App.closeLoading();
+            }
+            var option = {
+                resultNum : "-1",
+                searchName : ""
+            };
+            uexContact.search(JSON.stringify(option));
+        })
+        function createContactList(obj, index) {
+            var html = '';
+            if (App.isNull(obj)) {
+                return html;
+            }
+            var phoneNum = "";
+            if (appcan.isArray(obj.num)) {
+                phoneNum = obj.num[0]
+            } else {
+                phoneNum = obj.num;
+            }
+            html += '<li class=" ub  bc-text ub-ac lis ubb bc-border ub-f1" data-index="' + index + '">';
+            html += '   <div class="checkbox umar-r uhide"><input value="' + phoneNum + '" type="checkbox" class="uabs ub-con" ></div>'
+            html += '   <div class="lv_title ub-f1 marg-l ub ub-ver ub-f1">';
+            html += '      <div class="ub ub-f1 ub-ver">';
+            html += '        <div class="umar-b">' + obj.name + '</div>';
+            html += '        <div class="umar-b">' + phoneNum + '</div>';
+            html += '      </div>';
+            html += '   </div>';
+            html += '   <div onclick="sendYq(\'' + phoneNum + '\')" class="ub addBtn">'
+            html += '     <div class="uc-a1 sc-text-active uinn ulev-1 bc-bg us ">邀请加入</div>';
+            html += '   </div>'
+            html += '</li>';
+            return html;
+        }
+
+        function showCheckBtn(type) {
+            if (type) {
+                $('.addBtn').addClass('uhide');
+                $('.checkbox').each(function() {
+                    $(this).removeClass('uhide')
+                })
+            } else {
+                $('.addBtn').removeClass('uhide');
+                $('.checkbox').each(function() {
+                    $(this).find('input')[0].checked = false;
+                    $(this).addClass('uhide');
+                })
+            }
+        }
+
+        function selectAll(type) {
+            $('.checkbox').each(function() {
+                $(this).find('input')[0].checked = type;
+            })
+        }
+
+        function sendYq(phoneNum) {
+            var content = "";
+            var userinfo = App.getUserInfo();
+            var jobtitle = App.isNull(userinfo.jobtitle) ? "" : userinfo.jobtitle;
+            content += userinfo.cnname + " " + jobtitle + " 邀请您使用海员港。海员港可以拓展您的人脉，获取商机，达成交易，下载地址:" + App.userRegHtmlUrl+userinfo.userid+"&f=sms";
+            if (App.isNull(phoneNum)) {
+                var phoneList = [];
+                $('input').each(function() {
+                    if ($(this)[0].checked) {
+                        phoneList.push($(this).val());
+                    }
+                });
+                if (phoneList.length > 0) {
+                    phoneNum = phoneList.join(",");
+                } else {
+                    App.toast("请先选择一个联系人");
+                    return;
+                }
+            }
+            uexSMS.open(phoneNum, content);
+        }
+    </script>
+</html>

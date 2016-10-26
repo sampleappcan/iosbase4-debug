@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .btn2 {
+                height: 3em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head headerh ubb bc-border" >
+                <div class="nav-btn" >
+                    <div id="nav-left" class="fa fa-angle-left fa-2x"></div>
+                    <div id="selectAll" class="ulev0 uhide">
+                        全选
+                    </div>
+                </div>
+                <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                    联系人设置
+                </div>
+                <div class="nav-btn nav-bt" >
+                    <div id="nav-right" class="ulev0">
+                        编辑
+                    </div>
+                    <div id="nav-right1" class="ulev0 uhide" >
+                        完成
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l"></div>
+            <!--content结束-->
+            <div id="footer" class="uf t-bla ub ubt bc-border ub-pc ub-ac sc-bg " >
+                <div id="addCont" class="btn2 ub ub-ac t-wh ub-pc bc-head ub-f1">
+                    添加联系人
+                </div>
+                <div id="deleteCont" class="btn2 ub ub-ac t-wh ub-pc bc-head ub-f1 uhide">
+                    删除联系人
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var all = false;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "userContactList_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+
+        appcan.button('#nav-right1', 'btn-act', function() {
+            all = false;
+            $(this).addClass('uhide');
+            $('#nav-right').removeClass('uhide');
+            $('#deleteCont').addClass('uhide');
+            $('#addCont').removeClass('uhide');
+            $("#nav-left").removeClass("uhide");
+            $('#selectAll').addClass("uhide");
+            appcan.frame.evaluateScript('', 'content', 'showEditBtn(0)');
+        })
+
+        appcan.button('#nav-right', 'btn-act', function() {
+            $(this).addClass('uhide');
+            $('#nav-right1').removeClass('uhide');
+            $('#deleteCont').removeClass('uhide');
+            $("#nav-left").addClass("uhide");
+            $('#selectAll').removeClass("uhide");
+            $('#addCont').addClass('uhide');
+            appcan.frame.evaluateScript('', 'content', 'showEditBtn(1)');
+        })
+
+        appcan.button("#selectAll", "btn-act", function() {
+            if (all) {
+                all = false;
+
+            } else {
+                all = true;
+            }
+            App.evalJs({
+                js : "selectAll(" + all + ")"
+            });
+        })
+        appcan.button('#nav-left', 'btn-act', function() {
+            closeWin();
+        })
+        
+        function closeWin(type) {
+            App.removeVal("RselectType");
+            App.closeWin("userContactList", type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+        appcan.button('#deleteCont', 'btn-act', function() {
+            App.evalJs({
+                js : "deleteCont()"
+            })
+        })
+        appcan.button('#addCont', 'btn-act', function() {
+            App.setVal("contactMode", "add");
+            App.openWin({
+                backName : "userContactList",
+                name : 'userContactDetail',
+                url : 'userContactDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+    </script>
+</html>

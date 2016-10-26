@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="confirmPay_content/css/main.css">
+        <style>
+            .btn1 {
+                padding: .2em 0.7em;
+                text-align: center;
+                font-size: 0.9125em;
+            }
+            .mar-ar1 {
+                margin-right: 0.4em;
+            }
+            .lis-icon {
+                width: 3em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 3em;
+            }
+            .uw-app3 {
+                width: 3em;
+            }
+            .uh-app3 {
+                height: 3em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="uinn-eo3 ubb bc-border sc-bg" style="margin-top: 0.25em">
+            <div class="ub ub-ver ulev-5">
+                <div style="color: #3D4245;padding-top: 0.4em;padding-left: 0.4em;padding-right: 0.4em">
+                    订单编号:<span id="orderId"></span>
+                </div>
+                <div style="color: #3D4245;padding:0.4em">
+                    订单时间:<span id="orderTime"></span>
+                </div>
+            </div>
+        </div>
+        <div class="ub sc-bg-active ub-ac" style="margin-top: 0.25em"></div>
+        <div class="uinn-eo3 sc-bg">
+            <div class="ub ub-ac ">
+                <div class="ub ub-ac ub-f1 " style="padding: 0.5em">
+                    <div id="sellerName" class="ub-f1 uinn-order1 ulev-3 ut-s" style="color: #3D4245">
+                        收款项目
+                    </div>
+                </div>
+            </div>
+            <div id="itemList" style="background-color: #F8F8F8">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <div class="uinn-eo3 ubb  bc-border sc-bg">
+            <div class="ub sc-bg ub-ac" style="padding:0.4em">
+                <div class="ub-f1 ulev-5 ">
+                    实付款:
+                </div>
+                <div class="ulev-1 tx-r umar-ar3 sc-text-warn">
+                    ￥<span id="totalPrice"></span>
+                </div>
+            </div>
+        </div>
+        <div class="uinn-eo3 sc-bg" style="padding-bottom: 0.4em">
+            <div class="uinn ulev-3 ubb bc-border">
+                选择支付方式
+            </div>
+            <div id="listview" class="sc-bg"></div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var orderId = "";
+        var userinfo;
+        var payType = 0;
+        //0支付宝，1微信
+        var lv = appcan.listview({
+            selector : "#listview",
+            type : "thinLine",
+            hasAngle : false,
+            hasRadiobox : true,
+            hasIcon : true,
+            align : 'right'
+        });
+
+        lv.set([{
+            icon : "confirmPay_content/css/myImg/zhifubao.png",
+            title : "支付宝支付",
+            id : 0
+        }/*, {
+         icon : "confirmPay_content/css/myImg/weixin.png",
+         title : "微信支付",
+         id : 1
+         }*/])
+        lv.on("click", function(ele, obj, curEle) {
+            payType = obj.id
+        })
+        lv.on("radio:change", function(obj, data) {
+            payType = data.id
+        })
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            $("input")[0].checked = true;
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            orderId = App.getVal("orderId");
+            loadOrderDetail();
+        }
+
+        function loadOrderDetail() {
+            App.authApi({
+                url : "pay/getOrderDetail",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        $("#orderId").html(data.items.orderid);
+                        $("#orderTime").html(data.items.ordertime);
+                        $("#totalPrice").html(data.items.totalmoney.toFixed(2));
+                        var d = '';
+                        for (var i = 0; i < data.items.itemList.length; i++) {
+                            d += createItemListHtml(data.items.itemList[i]);
+                        };
+                        $("#itemList").html(d);
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function createItemListHtml(obj) {
+            var h = '';
+            var uri = App.downIp + "item_Image/" + obj.itemuri;
+            h += '<li class="ub ub-f1 ubb bc-border" style="padding:0.4em">';
+            h += '  <div class="ub-f1 ub">';
+            h += '     <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + uri + ');"></div>';
+            h += '     <div class="ub ub-f1 ub-ver other">';
+            h += '        <div class="ub ub-f1 umar-b">';
+            h += '           <div class="ut-s userName ub-f1 ulev-5" style="color: #386096">' + obj.itemname + '</div>';
+            h += '        </div>';
+            h += '        <div class="ub ub-f1 ulev-5">';
+            h += '           <div class="ut-s" style="color: #737373">单价:</div>';
+            h += '           <div class="ut-s sc-text-warn" >￥' + obj.itempirce.toFixed(2) + '</div>';
+            h += '        </div>';
+            h += '     </div>';
+            h += '     <div class="ub ub-pc ub-ac sc-text-warn ulev-3">x' + obj.itemcount + '</div>';
+            h += '  </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function payNow() {
+            App.openLoading({
+                title : '',
+                msg : '正在发送支付请求...请稍后...',
+                canCancel : 1
+            });
+            App.aliPay(orderId, function(status, des) {
+                App.Logs(status + "," + des);
+                App.toast(des);
+                if (parseInt(status) == 0) {
+                    App.openLoading({
+                        title : '',
+                        msg : '正在处理中...请稍后...',
+                        canCancel : 1
+                    });
+                    setTimeout(function() {
+                        App.closeLoading();
+                        App.evalJs({
+                            winName : "chatRoom",
+                            js : "paySuccess('" + orderId + "')"
+                        });
+                        App.evalJs({
+                            winName : "confirmPay",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                        App.evalJs({
+                            winName : "orderPreview",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                        App.evalJs({
+                            winName : "orderDetail",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    }, 5000);
+                }
+            });
+        }
+    </script>
+</html>

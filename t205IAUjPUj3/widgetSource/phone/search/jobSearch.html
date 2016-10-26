@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .spec-content {
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header">
+                <div id="header1" class="uh bc-text-head ub bc-head">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-angle-left fa-2x"></div>
+                    </div>
+                    <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                        职位搜索
+                    </div>
+                    <div class="nav-btn nav-bt" id="nav-right"></div>
+                </div>
+                <div id="condition" class="ub ub-f1 sc-bg uba bc-border" style="height: 3em">
+                    <div id="jobTitle" class="ub ubr bc-border ub-ver ub-pc ub-ac ub-f1">
+                        <div class="tx-c ub ub-ac ub-pc " style="font-size: 0.9em;width: 100%">
+                            <div class=" t-color umar-t ut-s "  style="max-width: 80%">
+                                职务
+                            </div>
+                            <div class="fa fa-angle-down t-color" style="padding-top: 0.4em;"></div>
+                        </div>
+                    </div>
+                    <div id="certificate" class="ub ubr bc-border ub-ver ub-pc ub-f1">
+                        <div class="tx-c ub ub-ac ub-pc " style="font-size: 0.9em;width: 100%">
+                            <div class=" t-color umar-t ut-s "  style="max-width: 80%">
+                                证书
+                            </div>
+                            <div class="fa fa-angle-down t-color" style="padding-top: 0.4em;"></div>
+                        </div>
+                    </div>
+                    <div id="shipType" class="ub ubr bc-border ub-ver ub-pc ub-ac ub-f1">
+                        <div class="tx-c ub ub-ac ub-pc " style="font-size: 0.9em;width: 100%">
+                            <div class=" t-color umar-t ut-s "  style="max-width: 80%">
+                                船型
+                            </div>
+                            <div class="fa fa-angle-down t-color" style="padding-top: 0.4em;"></div>
+                        </div>
+                    </div>
+                    <div id="more" class="ub ubr bc-border ub-ver ub-pc ub-ac ub-f1">
+                        <div class="tx-c ub ub-ac ub-pc " style="font-size: 0.9em;width: 100%">
+                            <div class=" t-color umar-t ut-s "  style="max-width: 80%">
+                                更多
+                            </div>
+                            <div class="fa fa-angle-down t-color" style="padding-top: 0.4em;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-ac ub-f1 " style="background: #F7F7F7">
+                    <div id="filter" class="ub-f1 ulev-1 t-gra uinn spec-content" style="height: 1.8em;color: #888888;">
+                        不限
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var menuPop = false;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "jobSearch_content.html", 0, titHeight);
+            setFilter();
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (menuPop) {
+                            closePop();
+                            return;
+                        }
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            if (menuPop) {
+                closePop();
+                return;
+            }
+            closeWin();
+        });
+        function closeWin(type) {
+            App.removeVal("jobCondition");
+            App.closeWin("jobSearch", type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+        function closePop() {
+            menuPop = false;
+            appcan.frame.close("menuPop");
+        }
+
+        function setFilter() {
+            var jobCondition = App.getJson("jobCondition");
+            if (App.isNull(jobCondition)) {
+                $("#filter").html("不限");
+            } else {
+                var html = '';
+                if (jobCondition.jobTitle) {
+                    html += jobCondition.jobTitle + ",";
+                }
+                if (jobCondition.certificateLv) {
+                    html += jobCondition.certificateLv + ",";
+                }
+                if (jobCondition.shipType) {
+                    html += jobCondition.shipType + ",";
+                }
+                if (jobCondition.shipLine) {
+                    html += jobCondition.shipLine + ",";
+                }
+                if (jobCondition.date) {
+                    if (jobCondition.date == 3) {
+                        html += "近3天,";
+                    }
+                    if (jobCondition.date == 7) {
+                        html += "近7天,";
+                    }
+                    if (jobCondition.date == 15) {
+                        html += "近15天,";
+                    }
+                    if (jobCondition.date == 30) {
+                        html += "近30天,";
+                    }
+                }
+                if (App.isNull(jobCondition.date) && App.isNull(jobCondition.shipLine) && App.isNull(jobCondition.shipType) && App.isNull(jobCondition.certificateLv) && App.isNull(jobCondition.jobTitle)) {
+                    html = "不限,";
+                }
+                $("#filter").html(html.substr(0, html.length - 1));
+            }
+        }
+
+
+        appcan.button("#shipType", '', function() {
+            if (menuPop) {
+                closePop();
+                return;
+            }
+            menuPop = true;
+            var titHeight = $('#header1').offset().height + $("#condition").height();
+            App.openPopover({
+                name : "menuPop",
+                url : "../common/shipTypePop.html",
+                top : titHeight
+            });
+        })
+
+        appcan.button("#certificate", '', function() {
+            if (menuPop) {
+                closePop();
+                return;
+            }
+            menuPop = true;
+            var titHeight = $('#header1').offset().height + $("#condition").height();
+            App.openPopover({
+                name : "menuPop",
+                url : "../common/certificatePop.html",
+                top : titHeight
+            });
+        })
+
+        appcan.button("#jobTitle", '', function() {
+            if (menuPop) {
+                closePop();
+                return;
+            }
+            menuPop = true;
+            var titHeight = $('#header1').offset().height + $("#condition").height();
+            App.openPopover({
+                name : "menuPop",
+                url : "../common/jobTitlePop.html",
+                top : titHeight
+            });
+        })
+
+        appcan.button("#more", '', function() {
+            if (menuPop) {
+                closePop();
+                return;
+            }
+            menuPop = true;
+            var titHeight = $('#header1').offset().height + $("#condition").height();
+            App.openPopover({
+                name : "menuPop",
+                url : "../common/jobMorePop.html",
+                top : titHeight
+            });
+        })
+    </script>
+</html>

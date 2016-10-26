@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../indexNew_content/css/main.css">
+        <style>
+            .tab_badge1 {
+                position: absolute;
+                width: 1em;
+                height: 1em;
+                right: 0.9em;
+                bottom: 0.8em;
+                text-align: center;
+            }
+            .tab_color {
+                color: #B4BEC6;
+            }
+            .tab_focus {
+                position: absolute;
+                height: 2px;
+                bottom: 0;
+                width: 100%;
+                z-index: 9999;
+                left: 0;
+            }
+            .content1 {
+                margin-top: 0.2em;
+                font-size: 0.8125em;
+            }
+            .marg-bottom {
+                margin-bottom: 1.5em;
+                padding-bottom: 1.5em;
+            }
+            .tab_l {
+                height: 2.3em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg-active" ontouchstart>
+        <div id="bodyDiv" class="ub ub-ver marg-bottom ub-f1">
+            <div class="ub ub-ver sc-bg ub-f1" id="comment">
+                <div class="ub lis ub-f1">
+                    <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1 userHeader" style="background-image:url();"></div>
+                    <div class="ub-f1 ub ub-ver">
+                        <div class="ub ub-f1 ub-ac ">
+                            <div id="userName" class="ut-s sc-text-active " >
+
+                            </div>
+                            <div class="ubl bc-border uhide" style="margin-left: 0.2em;color: #B4BEC6;height: 0.625em"></div>
+                            <div id="compName" class="ut-s  compName ub-f1 uhide" >
+
+                            </div>
+                            <div id="jobTitle" class="ut-s ub-f1 umar-r jobTitle uhide">
+
+                            </div>
+                            <div id="addFriend" class="ub ub-pc ub-ac uba bc-border ulev-4 t-color addFriend uhide">
+                                +好友
+                            </div>
+                        </div>
+                        <div class="ub ub-f1 umar-b umar-t uhide">
+                            <div class="ub-f1 ub t-gra-comm ut-s">
+                                <div id="city" class="umar-r ulev-4 ub-f1 ut-s"></div>
+                            </div>
+                        </div>
+                        <div class="t-bla ub-f1 content " ></div>
+                        <div id="inContent" class="ub ub-f1 umar-t">
+
+                        </div>
+                        <div class="umar-a ub-f1 piclist umar-t uhide"></div>
+                        <div class="t-gra-comm ub-f1 atlist uhide" style="font-size: 0.68em"></div>
+                        <div class="ub ub-pe ub-ac ub-f1 umar-t">
+                            <div id="time" class="umar-r ulev-4 ub ub-f1 t-gra-comm"></div>
+                            <div id="zanBtn" class="ub ub-pc ub-ac" style="margin-right: 1em">
+                                <div class="ub-img zan"></div>
+                                <div id="zan" style="color: #B4BEC6;font-size:0.9125em;margin-top: 0.2em">
+
+                                </div>
+                            </div>
+                            <div id="pushlish" class="ub ub-pc ub-ac umar-r" style="margin-right: 1em">
+                                <div class="ub-img pinlun"></div>
+                                <div id="pinlun" style="color: #B4BEC6;font-size:0.9125em;margin-top: 0.2em">
+
+                                </div>
+                            </div>
+                            <div id="kuosanBtn" class="ub ub-pc ub-ac umar-r">
+                                <div class="ub-img kuosan" ></div>
+                                <div id="kuosan" style="color: #B4BEC6;font-size:0.9125em;margin-top: 0.2em">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sc-bg-active umar-t"></div>
+            <div id="tabview" class="sc-bg">
+                <div class="t-bla ub tab_l" style="width: 60%">
+                    <div class="ulev-5 ub ub-f1" data-index="0">
+                        <div class="ub-f1 ub ub-ver item ub-ac sc-text-tab">
+                            <div class="ulev tx-c zanNum">
+                                赞
+                            </div>
+                            <div class="tab_focus utra bc-head-tab uhide"></div>
+                        </div>
+                    </div>
+                    <div class="ulev-5 ub ub-f1" data-index="1">
+                        <div class="ub-f1 ub ub-ver item ub-ac sc-text-tab sc-text-active">
+                            <div class="ulev tx-c pinglunNum">
+                                评论
+                            </div>
+                            <div class="tab_focus utra bc-head-tab "></div>
+                        </div>
+                    </div>
+                    <div class="ulev-5 ub ub-f1" data-index="2">
+                        <div class="ub-f1 ub ub-ver item ub-ac sc-text-tab">
+                            <div class="ulev tx-c kuosanNum">
+                                扩散
+                            </div>
+                            <div class="tab_focus utra bc-head-tab uhide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="kuosanList" class="sc-bg uinn uhide ubt bc-border">
+                <ul>
+
+                </ul>
+            </div>
+            <div id="zanList" class="sc-bg uinn uhide ubt bc-border">
+                <ul>
+
+                </ul>
+            </div>
+            <div id="pinglunList" class="sc-bg uinn ubt bc-border">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.tab.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var objData;
+        var userinfo;
+        var pageData;
+        var page = 1;
+        var pageSize = 10;
+        var type = 0;
+        var dynamicId;
+        var pushlishType = 0;
+        var toUserName;
+        var toUserId;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexInputTextFieldView.onCommitJson = function(data) {
+                    App.Logs("onCommitJson:" + data);
+                    var obj = data;
+                    var content = obj.emojiconsText;
+                    if (App.isNull(content)) {
+                        App.toast("请输入评论内容!");
+                        return;
+                    }
+                    sendPinglun(content);
+                    uexInputTextFieldView.close();
+                    openKeyBoard();
+                }
+            }
+            App.setPageBounce(function(bounceType) {
+                type = 0;
+                page = 1;
+                pageSize = 10;
+                loadDynamicDetail(dynamicId, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                if (type == 1) {
+                    loadZanList(page, type, 1, bounceType);
+                } else if (type == 2) {
+                    loadKuosanList(page, type, 1, bounceType);
+                } else {
+                    loadPinglunList(page, type, 1, bounceType);
+                }
+            });
+            loadData();
+        })
+        function loadData() {
+            dynamicId = App.getVal('dynamicId');
+            userinfo = App.getUserInfo();
+            loadDynamicDetail(dynamicId);
+            openKeyBoard();
+        }
+
+        function sendPinglun(content) {
+            if (App.isNull(toUserId)) {
+                toUserId = 0;
+            }
+            App.openLoading({
+                title : '',
+                msg : "正在提交评论...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : "dynamic/publishPinglun",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        id : dynamicId,
+                        content : content,
+                        type : pushlishType,
+                        toUserId : toUserId
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        var obj = {
+                            type : pushlishType,
+                            userid : userinfo.userid,
+                            username : userinfo.cnname,
+                            headuri : userinfo.headuri,
+                            usertype : userinfo.usertype,
+                            comptype : userinfo.comptype,
+                            city : userinfo.city,
+                            jobtitle : userinfo.jobtitle,
+                            compname : userinfo.compname,
+                            zannum : 0,
+                            content : content,
+                            touserid : toUserId,
+                            tousername : toUserName,
+                            regtime : new Date().getTime(),
+                            _id : data.items._id
+                        }
+                        var h = createPinglunListHtml(obj);
+                        var text = appcan.trim($('#pinglunList ul li').eq(0).html());
+                        if (App.isNull(text) || text == "暂时没有人评论!") {
+                            $('#pinglunList ul').html(h);
+                        } else {
+                            $('#pinglunList ul').append(h);
+                        }
+                        $('#pinlun').html(data.items.num);
+                        var obj = {
+                            type : pushlishType,
+                            userid : userinfo.userid,
+                            username : userinfo.cnname,
+                            content : content,
+                            touserid : toUserId,
+                            tousername : toUserName,
+                            _id : data.items._id,
+                            dynamicId : dynamicId,
+                            num : data.items.num
+                        };
+                        var win = App.getCurrWin();
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : win.backName,
+                                js : 'addLocalPingLun(\'' + App.toJsonStr(obj) + '\')'
+                            });
+                        }
+                        App.evalJs({
+                            winName : "indexNew",
+                            type : 2,
+                            popName : "indexNew_content",
+                            js : 'addLocalPingLun(\'' + App.toJsonStr(obj) + '\')'
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+
+        appcan.button('#userName', 'btn-act', function() {
+            if (App.isNull(objData)) {
+                return;
+            }
+            openUserDetail(objData.userid);
+        })
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            if (userId == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            } else {
+                App.setVal('viewMode', 'view');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+        
+        function checkInAtList(objList, userId) {
+            if (!App.isNull(objList)) {
+                for (var i = 0; i < objList.length; i++) {
+                    if (objList[i].userId == userId) {
+                        return true;
+                    };
+                };
+            }
+            return false;
+        }
+
+        function loadDynamicDetail(dynamicId, bounceType) {
+            if (App.isNull(dynamicId)) {
+                return;
+            }
+            App.authApi({
+                url : "dynamic/getDynamicDetail",
+                data : {
+                    params : {
+                        dynamicId : dynamicId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        var headuri = App.isNull(data.items.headuri) ? "../indexNew_content/css/myImg/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + "t/100x100/" + data.items.headuri;
+                        }
+                        $('.userHeader').css('background-image', 'url(' + headuri + ')');
+                        $('.userHeader').attr("data-img", headuri);
+                        $('#userName').html(data.items.cnname);
+                        $('#compName').html(data.items.compname);
+                        $('#jobTitle').html(data.items.jobtitle);
+                        $('.content').html(data.items.content);
+                        var time = App.getLocalTime(data.items.regtime, "yyyy-MM-dd hh:mm");
+                        var city = App.isNull(data.items.city) ? "" : data.items.city + "&nbsp;&nbsp;";
+                        $('#city').html(city + data.items.comptype);
+                        $("#time").html(time);
+                        var zan = data.items.zannum;
+                        var pinlun = data.items.pinglunnum;
+                        var kuosan = data.items.kuosannum;
+                        var inContent = data.items.incontent;
+                        var piclist = data.items.piclist;
+                        var atlist = data.items.atlist;
+                        if (!App.isNull(atlist)) {
+                            if (data.items.userid == userinfo.userid) {
+                                var str = "";
+                                for (var i = 0; i < atlist.length; i++) {
+                                    str += atlist[i].cnname + ",";
+                                };
+                                str = str.substring(0, str.length - 1);
+                                $(".atlist").html("提到了:" + str);
+                            } else {
+                                if (checkInAtList(atlist, userinfo.userid)) {
+                                    $(".atlist").html("提到了我");
+                                }
+                            }
+                            $(".atlist").removeClass("uhide");
+                        }
+                        if (!App.isNull(inContent)) {
+                            $('#inContent').html(createIncontentHtml(inContent));
+                        }
+                        setContentSize();
+                        if (!App.isNull(piclist) && piclist.length > 0) {
+                            $('.piclist').removeClass('uhide');
+                            $('.piclist').html(createPicHtml(piclist));
+                        }
+                        if (data.items.isfriend == 0) {
+                            $('#addFriend').removeClass('uhide');
+                        }
+                        if (!App.isNull(data.items.iszan)) {
+                            $('#zan').prev().removeClass('zan');
+                            $('#zan').prev().addClass('zanY');
+                        }
+                        if (!App.isNull(data.items.iskuosan)) {
+                            $('#kuosan').prev().removeClass('kuosan');
+                            $('#kuosan').prev().addClass('kuosanY');
+                        }
+                        if (!App.isNull(zan)) {
+                            $('#zan').html(zan);
+                            $('#tabview .zanNum').html("赞" + zan);
+                        } else {
+                            $('#zan').html("");
+                            $('#tabview .zanNum').html("赞");
+                        }
+                        if (!App.isNull(pinlun)) {
+                            $('#pinlun').html(pinlun);
+                            $('#tabview .pinglunNum').html("评论" + pinlun);
+                        } else {
+                            $('#pinlun').html("");
+                            $('#tabview .pinglunNum').html("评论");
+                        }
+                        if (!App.isNull(kuosan)) {
+                            $('#kuosan').html(kuosan);
+                            $('#tabview .kuosanNum').html("扩散" + kuosan);
+                        } else {
+                            $('#kuosan').html("");
+                            $('#tabview .kuosanNum').html("扩散");
+                        }
+                        loadPinglunList(page, type, 0);
+                    } else {
+                        App.toast(data.message);
+                    }
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            })
+        }
+
+        function createEmptyHtml(type) {
+            var h = '';
+            var content = ""
+            if (type == 0) {
+                content = "暂时没有人评论!";
+            } else if (type == 1) {
+                content = "还没有人赞过条动态";
+            } else {
+                content = "还没有人扩散这条动态";
+            }
+            h += '<li class="sc-text-active ulev-5 ub ub-pc ub-ac" style="height:4em">' + content + '</li>';
+            return h;
+        }
+
+        function loadKuosanList(pages, lType, add, bounceType) {
+            type = lType;
+            page = pages;
+            App.authApi({
+                url : "dynamic/loadList",
+                data : {
+                    params : {
+                        page : pages,
+                        pageSize : pageSize,
+                        type : lType,
+                        dynamicId : dynamicId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        pageData = data.items;
+                        if (App.isNull(pageData.dataList.length) && page > 1) {
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var html = '';
+                        if (pageData.dataList.length > 0) {
+                            for (var i = 0; i < pageData.dataList.length; i++) {
+                                html += createKuosanlistHtml(pageData.dataList[i], i);
+                            };
+                            if (add) {
+                                $('#kuosanList ul').append(html);
+                            } else {
+                                $('#kuosanList ul').html(html);
+                            }
+                        } else {
+                            $('#kuosanList ul').html(createEmptyHtml(2));
+                        }
+                        if (bounceType != undefined && bounceType != null) {
+                            uexWindow.resetBounceView(bounceType);
+                        }
+                    }
+                }
+            });
+        }
+
+        function addLocalKuosan(id, num, content, kuosanId) {
+            var obj = {
+                headuri : userinfo.headuri,
+                regtime : new Date().getTime(),
+                userid : userinfo.userid,
+                username : userinfo.cnname,
+                compname : userinfo.compname,
+                jobtitle : userinfo.jobtitle,
+                _id : kuosanId
+            }
+            var h = createKuosanlistHtml(obj);
+            var text = appcan.trim($('#kuosanList ul li').eq(0).html());
+            if (App.isNull(text) || text == "还没有人扩散这条动态") {
+                $('#kuosanList ul').html(h);
+            } else {
+                $('#kuosanList ul').append(h);
+            }
+            $('#kuosan').html(num);
+            $('#kuosan').prev().removeClass('kuosan');
+            $('#kuosan').prev().addClass('kuosanY');
+            $('#tabview .kuosanNum').html("扩散" + num);
+            App.authApi({
+                url : 'dynamic/publishDynamic',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        content : content,
+                        imgList : [],
+                        userType : userinfo.userid,
+                        id : id
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.Logs("sdfsdfsdfsdf:" + data.items._id);
+                        $('#kuosanBtn').attr("data-dynamicid", data.items._id);
+                        App.evalJs({
+                            winName : App.getCurrWinName(),
+                            type : 1,
+                            js : 'closeShareInfo()'
+                        });
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'indexNew_content',
+                            type : 2,
+                            js : 'addToKuosanHtml(\'' + dynamicId + '\',\'' + kuosanId + '\',' + num + ')'
+                        })
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'indexNew_content',
+                            type : 2,
+                            js : 'addLocalDynimic(\'' + App.toJsonStr(data.items) + '\')'
+                        })
+                        App.toast("动态已扩散到您的商友圈");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function createKuosanlistHtml(obj, index) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var time = App.getLocalTime(obj.regtime, "yyyy-MM-dd hh:mm");
+            h += '<li id="K' + obj._id + '" class="ub ub-f1 ubb bc-border" style="padding-top:0.4em;padding-bottom:0.4em ">';
+            h += '    <div onclick="openUserDetail(\'' + obj.userid + '\')" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '    <div class="ub-f1 ub ub-ver">';
+            h += '       <div class="ub ub-f1 ub-ac umar-b">';
+            h += '          <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ut-s sc-text-active userName" ontouchstart="appcan.touch(\'btn-act\')">' + obj.username + '</div>';
+            h += '       </div>';
+            h += '       <div class="ub ub-f1 umar-b">';
+            h += '          <div class="ub-f1 ub t-gra-comm ub-ac">';
+            h += '              <div class="umar-r ulev-1">' + time + '</div>';
+            h += '          </div>';
+            h += '       </div>';
+            h += '    </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function loadZanList(pages, lType, add, bounceType) {
+            type = lType;
+            page = pages;
+            App.authApi({
+                url : "dynamic/loadList",
+                data : {
+                    params : {
+                        page : pages,
+                        pageSize : pageSize,
+                        type : lType,
+                        dynamicId : dynamicId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        pageData = data.items;
+                        if (App.isNull(pageData.dataList.length) && page > 1) {
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var html = '';
+                        if (pageData.dataList.length > 0) {
+                            for (var i = 0; i < pageData.dataList.length; i++) {
+                                html += createZanlistHtml(pageData.dataList[i], i);
+                            };
+                            if (add) {
+                                $('#zanList ul').append(html);
+                            } else {
+                                $('#zanList ul').html(html);
+                            }
+                        } else {
+                            $('#zanList ul').html(createEmptyHtml(1));
+                        }
+                        if (bounceType != undefined && bounceType != null) {
+                            uexWindow.resetBounceView(bounceType);
+                        }
+                    }
+                }
+            });
+        }
+
+        function createZanlistHtml(obj, index) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var time = App.getLocalTime(obj.regtime, "yyyy-MM-dd hh:mm");
+            h += '<li id="Z' + obj._id + '" class="ub ub-f1 ubb bc-border" style="padding-top:0.4em;padding-bottom:0.4em ">';
+            h += '    <div onclick="openUserDetail(\'' + obj.userid + '\')" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '    <div class="ub-f1 ub ub-ver">';
+            h += '       <div class="ub ub-f1 ub-ac umar-b">';
+            h += '          <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ut-s sc-text-active userName" ontouchstart="appcan.touch(\'btn-act\')">' + obj.username + '</div>';
+            h += '       </div>';
+            h += '       <div class="ub ub-f1 umar-b uhide">';
+            h += '          <div class="ub-f1 ub t-gra-comm ub-ac">';
+            h += '             <div class="umar-r ulev-1">' + obj.compname + " " + obj.jobtitle + '</div>';
+            h += '          </div>';
+            h += '       </div>';
+            h += '       <div class="ub ub-f1 umar-b">';
+            h += '          <div class="ub-f1 ub t-gra-comm ub-ac">';
+            h += '              <div class="umar-r ulev-1">' + time + '</div>';
+            h += '          </div>';
+            h += '       </div>';
+            h += '    </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function loadPinglunList(pages, lType, add, bounceType) {
+            type = lType;
+            page = pages;
+            App.authApi({
+                url : "dynamic/loadList",
+                data : {
+                    params : {
+                        page : pages,
+                        pageSize : pageSize,
+                        type : lType,
+                        dynamicId : dynamicId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        pageData = data.items;
+                        if (App.isNull(pageData.dataList.length) && page > 1) {
+                            page = pageData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var html = '';
+                        if (pageData.dataList.length > 0) {
+                            for (var i = 0; i < pageData.dataList.length; i++) {
+                                html += createPinglunListHtml(pageData.dataList[i], i);
+                            };
+                            if (add) {
+                                $('#pinglunList ul').append(html);
+                            } else {
+                                $('#pinglunList ul').html(html);
+                            }
+                        } else {
+                            $('#pinglunList ul').html(createEmptyHtml(0));
+                        }
+                        if (bounceType != undefined && bounceType != null) {
+                            uexWindow.resetBounceView(bounceType);
+                        }
+                    }
+                }
+            })
+        }
+
+        function createPinglunListHtml(obj, index) {
+            var headuri = App.isNull(obj.headuri) ? "../indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var usertype = obj.comptype;
+            var time = App.getLocalTime(obj.regtime, "yyyy-MM-dd hh:mm");
+            var h = '';
+            var content = App.isNull(obj.content) ? "" : obj.content;
+            var reg = /\[([^\]]+)\]/g;
+            content = content.replace(reg, function($1) {
+                return emoarr1[$1] || $1;
+            });
+            var contentMsg = ''
+            if (obj.type == 1) {
+                contentMsg = '<span>回复</span><span class="t-color" onclick="openUserDetail(\'' + obj.touserid + '\')">' + obj.tousername + '</span><span>:</span><span>' + content + '</span>'
+            } else {
+                contentMsg = content;
+            }
+            var city = App.isNull(obj.city) ? "" : obj.city;
+            var isshowzannum = "";
+            var zan = "zan";
+            if (!App.isNull(obj.iszan)) {
+                zan = "zanY";
+            }
+            if (obj.zannum > 0) {
+                isshowzannum = obj.zannum;
+            }
+            h += '<li id="P' + obj._id + '" class="ub ub-f1 ubb bc-border P' + obj._id + '" style="padding-top:0.4em;padding-bottom:0.4em ">';
+            h += '   <div onclick="openUserDetail(\'' + obj.userid + '\')" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '   <div class="ub-f1 ub ">';
+            h += '      <div class="ub ub-f1 ub-ver ">';
+            h += '        <div class="ub ub-f1">'
+            h += '          <div class="ub ub-f1 ub-ver">';
+            h += '             <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ut-s sc-text-active userName ub-f1" ontouchstart="appcan.touch(\'btn-act\')">' + obj.username + '</div>';
+            h += '             <div class="ub ub-f1 umar-t">';
+            h += '               <div class="ub-f1 ub t-gra-comm ">';
+            h += '                  <div class="umar-r ulev-1">' + city + '</div>';
+            h += '                  <div class="ulev-4 umar-r ub-f1 ut-s">' + usertype + '</div>';
+            h += '                  <div class="ulev-4">' + time + '</div>';
+            h += '               </div>';
+            h += '            </div>';
+            h += '          </div>';
+            h += '          <div onclick="addPinglunZan(\'' + obj._id + '\')" class="ub ub-ver ub-pe ub-ac " >';
+            h += '            <div class="ub-img ' + zan + '"></div>';
+            h += '            <div class="ub ub-pc ulev-4 tab_color" style="min-width:4em">' + isshowzannum + '</div>';
+            h += '          </div>';
+            h += '        </div>'
+            h += '        <div class="ub ub-f1 ub-ver umar-t">';
+            h += '           <div onclick=publishPinlun(1,\'' + obj.userid + '\',\'' + obj.username + '\',\'' + obj._id + '\') class="ub t-bla ub-f1 content1 umar-t" >' + contentMsg + '</div>';
+            h += '       </div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function addPinglunZan(pinglunId) {
+            if (App.isNull(pinglunId)) {
+                return;
+            }
+            App.authApi({
+                url : "dynamic/addPinglunZan",
+                data : {
+                    params : {
+                        pinglunId : pinglunId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        if (data.items.num > 0) {
+                            $("#P" + pinglunId + " .tab_color").removeClass("uhide");
+                            $("#P" + pinglunId + " .tab_color").html(data.items.num);
+                            $("#P" + pinglunId + " .ub-img").removeClass("zan");
+                            $("#P" + pinglunId + " .ub-img").addClass("zanY");
+                        } else {
+                            $("#P" + pinglunId + " .tab_color").addClass("uhide");
+                            $("#P" + pinglunId + " .ub-img").addClass("zan");
+                            $("#P" + pinglunId + " .ub-img").removeClass("zanY");
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button('#pushlish', 'btn-act', function() {
+            if (!isdebug) {
+                pushlishType = 0;
+                uexInputTextFieldView.close();
+                var data = {
+                    emojicons : "res://emojicons/emojicons.xml",
+                    placeHold : ""
+                };
+                var jsonStr = JSON.stringify(data);
+                uexInputTextFieldView.open(jsonStr);
+                uexInputTextFieldView.setInputFocused();
+            }
+        })
+        function delePinglun(pingLunId, userId) {
+            App.authApi({
+                url : "dynamic/delePinglun",
+                data : {
+                    params : {
+                        id : pingLunId,
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $('#P' + pingLunId).remove();
+                        if (data.items.num == 0) {
+                            $('#pinlun').html('');
+                            $('#tabview .pinglunNum').html('评论');
+                            $('#pinlun').html('');
+                            $('#pinglunList ul').prepend(createEmptyHtml(0))
+                        } else {
+                            $('#pinlun').html(data.items.num);
+                            $('#tabview .pinglunNum').html('评论' + data.items.num);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+        function publishPinlun(type, userId, userName, pingLunId) {
+            if (userId == userinfo.userid) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '是否要删除您所发布的这条评论?',
+                    buttons : ['不要删除', '我要删除'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            delePinglun(pingLunId, userId);
+                        }
+                    }
+                });
+                return;
+            }
+            if (!isdebug) {
+                pushlishType = 1;
+                toUserId = userId;
+                toUserName = userName;
+                uexInputTextFieldView.close();
+                var data = {
+                    emojicons : "res://emojicons/emojicons.xml",
+                    placeHold : "回复 " + toUserName
+                };
+                var jsonStr = JSON.stringify(data);
+                uexInputTextFieldView.open(jsonStr);
+                uexInputTextFieldView.setInputFocused();
+            }
+        }
+
+        function openKeyBoard() {
+            if (!isdebug) {
+                var needFoucs = App.getVal("needFoucs");
+                var data = {
+                    emojicons : "res://emojicons/emojicons.xml",
+                    placeHold : ""
+                };
+                var jsonStr = JSON.stringify(data);
+                uexInputTextFieldView.open(jsonStr);
+                if (needFoucs == 1) {
+                    uexInputTextFieldView.setInputFocused();
+                }
+            }
+        }
+
+
+        appcan.button('.item', '', function() {
+            $('.item').removeClass('sc-text-active');
+            $('.tab_focus').addClass('uhide');
+            $(this).addClass('sc-text-active');
+            $(this).find('.tab_focus').removeClass('uhide');
+            var index = parseInt($(this).parent().attr("data-index"));
+            App.removeVal("needFoucs");
+            page = 1;
+            if (index == 0) {
+                $('#pinglunList').addClass('uhide');
+                $('#kuosanList').addClass('uhide');
+                $('#zanList').removeClass('uhide');
+                $('#bodyDiv').removeClass('marg-bottom');
+                if (!isdebug) {
+                    uexInputTextFieldView.close();
+                }
+                type = 1;
+                if ($('#zanList ul li').length <= 0) {
+                    loadZanList(page, type, 0);
+                }
+            } else if (index == 1) {
+                $('#pinglunList').removeClass('uhide');
+                $('#kuosanList').addClass('uhide');
+                $('#zanList').addClass('uhide');
+                $('#bodyDiv').addClass('marg-bottom');
+                openKeyBoard();
+                type = 0;
+            } else {
+                $('#pinglunList').addClass('uhide');
+                $('#kuosanList').removeClass('uhide');
+                $('#zanList').addClass('uhide');
+                $('#bodyDiv').removeClass('marg-bottom');
+                if (!isdebug) {
+                    uexInputTextFieldView.close();
+                }
+                type = 2;
+                if ($('#kuosanList ul li').length <= 0) {
+                    loadKuosanList(page, type, 0);
+                }
+            }
+        })
+        function createIncontentHtml(obj) {
+            var cnname = obj.cnname;
+            var h = '';
+            if (!App.isNull(cnname)) {
+                var showPic = "uhide";
+                var picHtml = '';
+                if (!App.isNull(obj.piclist) && obj.piclist.length > 0) {
+                    showPic = "";
+                    picHtml = createPicHtml(obj.piclist);
+                }
+                h += '<div data-id="' + obj.id + '" data-headuri="' + obj.headuri + '" class="ub ub-ver ub-f1 uinn-comm inContent" style="background-color: #F3F4F6">';
+                h += '    <div class="ub ub-f1 ub-ac ">';
+                h += '        <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ut-s sc-text-active userName" ontouchstart="appcan.touch(\'btn-act\')">' + obj.cnname + '说:</div>';
+                h += '        <div class="ubl bc-border uhide" style="margin-left: 0.2em;color: #B4BEC6;height: 0.625em"></div>';
+                h += '        <div class="ut-s compName uhide" >' + obj.compname + '</div>';
+                h += '        <div class="ut-s ub-f1 umar-r jobTitle uhide" >' + obj.jobtitle + '</div>';
+                h += '    </div>';
+                h += '    <div onclick="openContent(\'' + obj.id + '\')" class="t-bla ub-f1 icontent" style="height:4em" >';
+                h += '       <div class="ub-f1 spec-title" ontouchstart="appcan.touch(\'btn-act\')">' + obj.content + '</div>';
+                h += '    </div>';
+                h += '    <div onclick="shwoMoreContent(this,1)" class="sc-text-active umar-t all ulev-5 iallContent uhide">全文</div>';
+                h += '    <div class="umar-t ub-f1 ipiclist ' + showPic + '">';
+                h += '        ' + picHtml;
+                h += '    </div>';
+                h += '</div>';
+            } else {
+                h += '<div class="ub ub-ver ub-f1 uinn-comm inContent" style="background-color: #F3F4F6">';
+                h += '    <div class="ub ub-f1 ub-ac ulev-5" style="color: #6e6e6e">该条动态已被屏蔽或删除</div>';
+                h += '</div>';
+            }
+            return h;
+        }
+
+        function createPicHtml(piclist) {
+            var h = '';
+            for (var i = 0; i < piclist.length; i++) {
+                var image = App.dynamicPicUri + 't/160x160/' + piclist[i];
+                var oimage = App.dynamicPicUri + 'o/' + piclist[i];
+                h += '<img data-o="' + oimage + '" onclick="openImageBrowser(' + i + ')" class="imgitem" src="' + image + '">';
+            };
+            return h
+        }
+
+        function openImageBrowser(index) {
+            var picList = [];
+            $(" .piclist .imgitem").each(function() {
+                var obj = {
+                    src : $(this).attr("data-o")
+                }
+                picList.push(obj);
+            })
+            var param = {
+                displayActionButton : false,
+                displayNavArrows : true,
+                enableGrid : true,
+                startOnGrid : false,
+                startIndex : index,
+                data : picList
+            }
+            uexImage.openBrowser(App.toJsonStr(param));
+        }
+
+        function shwoMoreContent(item, type) {
+            if ($(item).html() == "全文") {
+                $(item).prev().css('height', '');
+                if (type == 1) {
+                    $(item).prev().children().removeClass('spec-content2');
+                } else {
+                    $(item).prev().children().removeClass('spec-content');
+                }
+                $(item).html('收起');
+            } else {
+                $(item).html('全文');
+                if (type == 1) {
+                    $(item).prev().css('height', '4em');
+                    $(item).prev().children().addClass('spec-content2');
+                } else {
+                    $(item).prev().css('height', '7em');
+                    $(item).prev().children().addClass('spec-content');
+                }
+            }
+        }
+
+        function setContentSize() {
+            $('.icontent').each(function() {
+                // console.log($(this).find(".spec-title").height(), $(this).height())
+                if ($(this).find(".spec-title").height() <= $(this).height()) {
+                    $(this).css('height', '');
+                } else {
+                    $(this).find(".spec-title").addClass('spec-content2');
+                    $(this).next().removeClass('uhide');
+                }
+            })
+        }
+
+        function openContent(id) {
+            App.setVal("dynamicId", id);
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : id,
+                name : 'dynamic',
+                url : 'dynamic.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function cancleKuosan() {
+            var shareData = App.getJson('shareData');
+            if (App.isNull(shareData) && App.isNull(shareData.dynamicId)) {
+                return;
+            }
+            var oriId = shareData.oriId;
+            var dynamicId = shareData.dynamicId;
+            var userId = userinfo.userid;
+            App.authApi({
+                url : "dynamic/cancleKuosan",
+                data : {
+                    params : {
+                        userId : userId,
+                        oriId : oriId,
+                        dynamicId : dynamicId
+                    }
+                },
+                callBack : function(data) {
+                    App.Logs('cancleKuosan:' + App.toJsonStr(data))
+                    if (data.code == 0) {
+                        $('#K' + data.items.kuosanid).remove();
+                        $('#kuosanBtn .ub-img').removeClass('kuosanY');
+                        $('#kuosanBtn .ub-img').addClass('kuosan');
+                        var dynamicidnew = $('#kuosanBtn').attr('data-dynamicid');
+                        if (data.items.num == 0) {
+                            $('#kuosan').html("");
+                            $('#tabview .kuosanNum').html("扩散");
+                            $('#kuosanList ul').prepend(createEmptyHtml(2));
+                        } else {
+                            $('#tabview .kuosanNum').html(扩散 + data.items.num);
+                            $('#kuosan').html(data.items.num);
+                        }
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'indexNew_content',
+                            type : 2,
+                            js : 'removeKuosanHtml(\'' + dynamicId + '\',\'' + data.items.kuosanid + '\',' + data.items.num + ',\'' + dynamicidnew + '\')'
+                        })
+                        App.toast("已取消扩散");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button('#kuosanBtn', '', function() {
+            var shareData = {};
+            var isCancle = $('#kuosan').prev().hasClass('kuosanY');
+            if ($('#inContent .inContent').length > 0) {
+                var cnname = $('.inContent').find(".userName").html();
+                var compname = $('.inContent').find(".compName").html();
+                var jobtitle = $('.inContent').find(".jobTitle").html();
+                var content = $('.inContent').find(".spec-title").html();
+                var shareContent = cnname + "说:";
+                var Oid = $('.inContent').attr("data-id");
+                var userContent = content.replace(/<br\s*\/?>/g, "").substr(0, 30);
+                var image = $('.inContent').attr("data-headuri");
+                if (App.isNull(image)) {
+                    image = "res://comImg.png";
+                } else if (image.substr(0, 4) != "http") {
+                    image = App.headUri + "t/100x100/" + obj.headuri
+                }
+                shareData = {
+                    cnName : cnname,
+                    inContent : shareContent + userContent,
+                    windowName : App.getCurrWinName(),
+                    thumbImg : image,
+                    wedpageUrl : App.dynamicShareUri + dynamicId,
+                    title : userContent,
+                    dynamicId : Oid,
+                    oriId : dynamicId,
+                    isCancle : isCancle
+                };
+            } else {
+                var headuri = $('.userHeader').attr("data-img");
+                if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                    headuri = App.headUri + "t/100x100/" + obj.headuri;
+                }
+                if (headuri.substr(0, 3) == "../") {
+                    headuri = "res://comImg.png";
+                }
+                var shareContent = $('#userName').html() + "说:";
+                var userContent = $('.content').html().replace(/<br\s*\/?>/g, "").substr(0, 30);
+                shareData = {
+                    cnName : $('#userName').html(),
+                    inContent : shareContent + userContent,
+                    windowName : App.getCurrWinName(),
+                    thumbImg : headuri,
+                    wedpageUrl : App.dynamicShareUri + dynamicId,
+                    title : userContent,
+                    dynamicId : dynamicId,
+                    isCancle : isCancle
+                };
+            }
+            App.setVal('shareData', shareData);
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : 'openShareMunu()'
+            })
+        })
+
+        appcan.button('#zanBtn', '', function() {
+            App.authApi({
+                url : "dynamic/publishZan",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        id : dynamicId,
+                        userName : userinfo.cnname
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if ($('#zanBtn .ub-img').hasClass('zan')) {
+                            $('#zanBtn .ub-img').removeClass('zan');
+                            $('#zanBtn .ub-img').addClass('zanY');
+                        } else {
+                            $('#zanBtn .ub-img').addClass('zan');
+                            $('#zanBtn .ub-img').removeClass('zanY');
+                        }
+                        var h = '';
+                        if (data.items.num == 0) {
+                            $('#zan').html('');
+                            $('#Z' + data.items.zanid).remove();
+                            $('#tabview .zanNum').html("赞");
+                            h = createEmptyHtml(1);
+
+                        } else {
+                            $('#zan').html(data.items.num);
+                            $('#tabview .zanNum').html("赞" + data.items.num);
+                            var obj = {
+                                userid : userinfo.userid,
+                                username : userinfo.cnname,
+                                compname : userinfo.compname,
+                                jobtitle : userinfo.jobtitle,
+                                headuri : userinfo.headuri,
+                                _id : data.items.zanid,
+                                regtime : new Date().getTime()
+                            }
+                            h = createZanlistHtml(obj);
+                        }
+                        if (App.isNull(text) || text == "还没有人赞过条动态") {
+                            $('#zanList ul').html(h);
+                        } else {
+                            $('#zanList ul').prepend(h);
+                        }
+                    } else {
+                        App.tosat(data.message);
+                    }
+                }
+            })
+        })
+    </script>
+</html>

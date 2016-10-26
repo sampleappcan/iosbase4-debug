@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userResumeDetail_content/css/main.css">
+        <style>
+            .spec-title {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                word-break: break-all;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="userinfo" class="ub ub-f1 ub-ver">
+            <div class="ub ub-f1 ub-ver ubb bc-border uinn sc-bg">
+                <div id="jobTitle" class="ulev1">
+
+                </div>
+                <div id="payroll" class="ulev1 sc-text-warn umar-t">
+
+                </div>
+                <div id="compName" class="t-gra  umar-t ub-f1 ut-s">
+
+                </div>
+            </div>
+            <div class="ub t-gra sc-bg umar-at1 uinn ubb bc-border">
+                <div class="ub-img1 resume_info umw1 umh1"></div>
+                <div class="ulev-5 umar-l">
+                    招聘信息
+                </div>
+            </div>
+            <div class="ub ub-f1 ub-ver ubb bc-border uinn sc-bg" >
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div  class="t-gra">
+                        证书要求:
+                    </div>
+                    <div id="certificateLv" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船舶类型:
+                    </div>
+                    <div id="shipType" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船舶总吨:
+                    </div>
+                    <div id="shipTonnage" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        航行区域:
+                    </div>
+                    <div id="shipLine" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船龄:
+                    </div>
+                    <div id="shipAge" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        上船时间:
+                    </div>
+                    <div id="onBoardTime" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        上船地点:
+                    </div>
+                    <div id="onBoardLocation" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        合同期限:
+                    </div>
+                    <div id="contactDeadline" class="umar-l">
+
+                    </div>
+                </div>
+                <div id="remark" class="ub ub-f1 ulev-5 umar-t ub-ver">
+                    <div class="t-gra">
+                        具体要求:
+                    </div>
+                    <div class="ub ub-f1 ub-ver uinn contentP" style="padding-left: 0.4em;padding-right: 0.4em;height: 3.5em">
+                        <div  class="content" style="text-indent: 2em"></div>
+                    </div>
+                    <div id="more" class="ub ub-pc ub-f1 ubt bc-border uhide" style="padding: 0.2em">
+                        <div class="ulev-5">
+                            展开
+                        </div>
+                        <div class="fa fa-angle-double-down"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        发布时间:
+                    </div>
+                    <div id="regTime" class="umar-l">
+
+                    </div>
+                </div>
+            </div>
+            <div class="ub t-gra sc-bg umar-at1 uinn ubb bc-border">
+                <div class="ub-img1 resume_more umw1 umh1"></div>
+                <div class="ulev-5 umar-l">
+                    公司信息
+                </div>
+            </div>
+            <div class="ub ub-f1 ub-ver ubb bc-border uinn sc-bg" >
+                <div class="ub ub-f1 ulev-5">
+                    <div class="t-gra">
+                        公司性质:
+                    </div>
+                    <div id="compType" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        联系人:
+                    </div>
+                    <div id="contactName" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        公司地址:
+                    </div>
+                    <div id="compAddr" class="umar-l">
+
+                    </div>
+                </div>
+                <div id="compRemark" class="ub ub-f1 ulev-5 umar-t ub-ver">
+                    <div class="t-gra">
+                        公司简介:
+                    </div>
+                    <div class="ub ub-f1 ub-ver uinn contentP" style="padding-left: 0.4em;padding-right: 0.4em;height: 3.5em">
+                        <div  class="content" style="text-indent: 2em"></div>
+                    </div>
+                    <div id="more" class="ub ub-pc ub-f1 ubt bc-border uhide" style="padding: 0.2em">
+                        <div class="ulev-5">
+                            展开
+                        </div>
+                        <div class="fa fa-angle-double-down"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var recruitId;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        });
+        function loadData() {
+            userinfo = App.getUserInfo();
+            recruitId = App.getVal("recruitId");
+            App.authApi({
+                url : "user/getUserRecruitMent",
+                data : {
+                    params : {
+                        recruitId : recruitId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var headuri = App.isNull(data.items.headuri) ? "../wgtRes/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + data.items.headuri;
+                        }
+                        $("#userinfo").attr("chatId", data.items.userid);
+                        $("#userinfo").attr("chatpic", headuri);
+                        $("#userinfo").attr('chatname', data.items.cnname);
+                        $("#userinfo").attr('mobile', data.items.mobile);
+                        $("#jobTitle").html(data.items.jobtitle);
+                        $("#payroll").html(data.items.payroll + data.items.payrolltype + "/月");
+                        $("#compName").html(data.items.compname);
+                        $("#certificateLv").html(data.items.certificatelv);
+                        $("#shipType").html(data.items.shiptype);
+                        $("#shipTonnage").html(data.items.shiptonnage);
+                        $("#shipLine").html(data.items.shipline);
+                        $("#shipAge").html(data.items.shipage);
+                        var onboardtime = data.items.onboardtime;
+                        if (!App.isNull(onboardtime)) {
+                            onboardtime = onboardtime.split("-");
+                            onboardtime = onboardtime[1] + "月" + onboardtime[2] + "日";
+                        } else {
+                            onboardtime = "";
+                        }
+                        $("#onBoardTime").html(onboardtime);
+                        $("#onBoardLocation").html(data.items.onboardlocation);
+                        $("#contactDeadline").html(data.items.contactdeadline);
+                        $("#remark .content").html(data.items.remark);
+                        if ($("#remark .content").height() > $("#remark .contentP").height()) {
+                            $("#remark .contentP").css("height", '');
+                            $("#remark .content").addClass("spec-title");
+                            $("#remark [id='more']").removeClass("uhide");
+                        } else {
+                            $("#remark .contentP").css("height", '');
+                        }
+                        var regtime = data.items.regtime;
+                        if (!App.isNull(regtime)) {
+                            regtime = regtime.split(" ");
+                            regtime = regtime[0];
+                        } else {
+                            regtime = "最近"
+                        }
+                        var compAddr = App.isNull(data.items.compaddr) ? "" : data.items.compaddr;
+                        var contactname = App.isNull(data.items.contactname) ? "" : data.items.contactname;
+                        var sex = App.isNull(data.items.sex) ? "" : data.items.sex;
+                        $("#regTime").html(regtime);
+                        $("#compType").html(data.items.comptype);
+                        $("#contactName").html(contactname + " " + sex);
+                        $("#compAddr").html(data.items.comparea + " " + compAddr);
+                        $("#compRemark .content").html(data.items.compremark);
+                        if ($("#compRemark .content").height() > $("#compRemark .contentP").height()) {
+                            $("#compRemark .contentP").css("height", '');
+                            $("#compRemark .content").addClass("spec-title");
+                            $("#compRemark [id='more']").removeClass("uhide");
+                        } else {
+                            $("#compRemark .contentP").css("height", '');
+                        }
+                        if (data.items.userid != userinfo.userid) {
+                            App.isFriend(userinfo.userid, data.items.userid, function(data) {
+                                App.evalJs({
+                                    winName : "userRecruitPreview",
+                                    type : 1,
+                                    js : "shwoBtn(true," + data + ")"
+                                });
+                            });
+                            addViewCount(userinfo.userid);
+                        }
+                        var title = "[直招]" + data.items.shipline + "航线" + data.items.shiptonnage + data.items.shiptype + "招聘" + data.items.jobtitle;
+                        var shareData = {
+                            thumbImg : "res://version.png",
+                            wedpageUrl : App.userRecruitUrl + recruitId,
+                            title : title,
+                            description : data.items.compname + "," + data.items.comptype,
+                            windowName : "userRecruitPreview"
+                        }
+                        App.setVal("shareData", shareData);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function addViewCount(userId) {
+            App.authApi({
+                url : "user/addViewCount",
+                data : {
+                    params : {
+                        recruitId : recruitId,
+                        userId : userId,
+                        type : "recruit"
+                    }
+                },
+                callBack : function(data) {
+                }
+            });
+        }
+
+        function openChat() {
+            var chatId = $("#userinfo").attr("chatId");
+            var chatname = $("#userinfo").attr('chatname');
+            var chatpic = $("#userinfo").attr('chatpic');
+            App.setVal("chatId", chatId);
+            App.setVal("chatname", chatname);
+            App.setVal("chatpic", chatpic);
+            if (!isdebug) {
+                var data = {
+                    username : chatId,
+                    chatType : "0"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                App.evalJs({
+                    winName : "indexNew",
+                    type : 1,
+                    js : 'shwoTabBage("xiaoxi",0)'
+                });
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'chatRoom',
+                url : '../chat/chatRoom.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function sendResume() {
+            App.openLoading({
+                title : "",
+                msg : "正在发送简历，请稍后...",
+                canCancel : 1
+            });
+            var myId = $("#userinfo").attr("chatid");
+            var jobTitle = appcan.trim($("#jobTitle").html());
+            App.authApi({
+                url : "user/sendResume",
+                data : {
+                    params : {
+                        recruitId : recruitId,
+                        userId : userinfo.userid,
+                        myId : myId,
+                        jobTitle : jobTitle
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("简历发送成功,请等待通知");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button("#compRemark [id='more']", '', function() {
+            if ($("#compRemark .fa-angle-double-down").length > 0) {
+                $("#compRemark .ulev-5").html("收起");
+                $("#compRemark .fa").removeClass("fa-angle-double-down");
+                $("#compRemark .fa").addClass("fa-angle-double-up");
+                $("#compRemark .content").removeClass("spec-title");
+            } else {
+                $("#compRemark .ulev-5").html("展开");
+                $("#compRemark .fa").addClass("fa-angle-double-down");
+                $("#compRemark .fa").removeClass("fa-angle-double-up");
+                $("#compRemark .content").addClass("spec-title");
+            }
+        })
+
+        appcan.button("#remark [id='more']", '', function() {
+            if ($("#remark .fa-angle-double-down").length > 0) {
+                $("#remark .ulev-5").html("收起");
+                $("#remark .fa").removeClass("fa-angle-double-down");
+                $("#remark .fa").addClass("fa-angle-double-up");
+                $("#remark .content").removeClass("spec-title");
+            } else {
+                $("#remark .ulev-5").html("展开");
+                $("#remark .fa").addClass("fa-angle-double-down");
+                $("#remark .fa").removeClass("fa-angle-double-up");
+                $("#remark .content").addClass("spec-title");
+            }
+        })
+        function addToFriend(type) {
+            userId = $("#userinfo").attr('chatid');
+            if (!isdebug) {
+                if (userId == userinfo.userid) {
+                    App.toast("不能添加自己");
+                    return;
+                }
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : type == 1 ? userinfo.cnname + "请求跟你进行上船沟通" : userinfo.cnname + "请求添加你为好友",
+                            remark1 : type == 1 ? "你请求跟" + $("#userinfo").attr("chatname") + "进行上船沟通" : "你请求添加" + $("#userinfo").attr("chatname") + "为好友",
+                            type : type,
+                            mobile : $("#userinfo").attr("mobile"),
+                            addType : "recruit",
+                            recruitId : recruitId
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : type == 1 ? userinfo.cnname + "请求跟你进行上船沟通" : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            App.evalJs({
+                                winName : App.getCurrWinName(),
+                                type : 1,
+                                js : 'showBtn(true,0)'
+                            });
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        function acceptInvitid() {
+            userId = $("#userinfo").attr("chatid");
+            App.authApi({
+                url : "friend/acceptInvitation",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toUserId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!isdebug) {
+                            var param = {
+                                username : userId
+                            };
+                            App.Logs("acceptInvitation:" + App.toJsonStr(param));
+                            uexEasemob.acceptInvitation(App.toJsonStr(param));
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

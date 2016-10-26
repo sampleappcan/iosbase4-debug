@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userAnnexAudit_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-f1 ubb bc-border ub-ac uinn ulev-3" style="color: red">
+            请上传真实有效的信息，以便尽快通过审核。<span class="ulev-1">注意:审核期间您的招聘信息将暂时无法被搜索到</span>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                上传营业执照(必填)
+            </div>
+            <div id ="busiPicList">
+                <div data-index="0" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem ">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                上传其它资质(选填)
+            </div>
+            <div id ="otherPicList">
+                <div data-index="1" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div data-index="2" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div data-index="2" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div data-index="3" data-change="false"class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div data-index="5" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide"></div>
+            </div>
+        </div>
+        <div class="ub ub-f1">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                审核状态:
+            </div>
+            <div class="ub ub-ac ubb bc-border uinn ulev-3 status" style="color: red">
+                未审核
+            </div>
+        </div>
+        <div class="ub ub-f1 ub-ver uhide">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                备注信息:
+            </div>
+            <div class="ub ub-ac ubb bc-border uinn ulev-3 remark" style="color: red">
+                正在审核中
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var type = 0;
+        var picList = [];
+        var otherPicList = [];
+        var totalPicNum = 5;
+        var uploadNum = 0;
+        var imgList = [];
+        var otherImgList = [];
+        var userinfo;
+        var auditstatus;
+        var edit = false;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexImage.onPickerClosed = function(data) {
+                    App.Logs("uexImage.onPickerClosed:" + data);
+                    var obj = JSON.parse(data);
+                    if (obj.isCancelled == false || obj.isCancelled == "false") {
+                        if (type == 0) {
+                            var objData = {
+                                src : obj.data[0],
+                                type : 0,
+                                isChange : true
+                            }
+                            picList.push(objData);
+                            $('#busiPicList .picItem').removeClass('imgBg');
+                            $('#busiPicList .picItem').css("background-image", 'url(' + obj.data[0] + ')');
+                            $('#busiPicList .picItem').attr("data-src", obj.data[0]);
+                            $('#busiPicList .picItem').attr("data-change", true);
+                            $('#busiPicList .picItem').children().removeClass("uhide");
+                        } else {
+                            var len = obj.data.length;
+                            var d = '';
+                            for (var i = 0; i < len; i++) {
+                                var objData = {
+                                    src : obj.data[i],
+                                    type : 2
+                                }
+                                $('#otherPicList').children().each(function() {
+                                    if ($(this).hasClass('imgBg')) {
+                                        $(this).removeClass('uhide');
+                                        $(this).removeClass('imgBg');
+                                        $(this).css("background-image", 'url(' + objData.src + ')');
+                                        $(this).attr("data-src", objData.src);
+                                        $(this).attr("data-change", true);
+                                        $(this).children().removeClass("uhide");
+                                        var ori = $(this).attr("data-ori");
+                                        objData.oriImg = App.isNull(ori) ? "" : ori;
+                                        objData.isChange = true;
+                                        otherPicList.push(objData);
+                                        picList.push(objData);
+                                        return false;
+                                    }
+                                });
+                                if (otherPicList.length == totalPicNum) {
+                                    $('#otherPicList').children().last().addClass('uhide');
+                                } else {
+                                    $('#otherPicList').children().last().removeClass('uhide');
+                                }
+                            };
+                        }
+                    }
+                }
+            }
+            uexCamera.cbOpen = function(opCode, dataType, data) {
+                App.Logs("uexCamera.cbOpenInternal:" + data);
+                if (type == 0) {
+                    var obj = {
+                        src : data,
+                        type : 0,
+                        isChange : true
+                    }
+                    picList.push(obj)
+                    $('#busiPicList .picItem').removeClass('imgBg');
+                    $('#busiPicList .picItem').css("background-image", 'url(' + data + ')');
+                    $('#busiPicList .picItem').attr("data-src", data);
+                    $('#busiPicList .picItem').attr("data-change", true);
+                    $('#busiPicList .picItem').children().removeClass("uhide");
+                } else {
+                    var obj = {
+                        src : data,
+                        type : 2
+                    }
+                    var index = otherPicList.length - 1;
+                    $('#otherPicList').children().eq(index).removeClass('uhide');
+                    $('#otherPicList').children().eq(index).removeClass('imgBg');
+                    $('#otherPicList').children().eq(index).css("background-image", 'url(' + data + ')');
+                    $('#otherPicList').children().eq(index).attr("data-src", data);
+                    $('#otherPicList').children().eq(index).attr("data-change", true);
+                    $('#otherPicList').children().eq(index).children().removeClass("uhide");
+                    $('#otherPicList').children().last().removeClass('uhide');
+                    var ori = $('#otherPicList').children().eq(index).attr("data-ori");
+                    obj.oriImg = App.isNull(ori) ? "" : ori;
+                    obj.isChange = true;
+                    otherPicList.push(obj);
+                    picList.push(obj);
+                    if (otherPicList.length == totalPicNum) {
+                        $('#otherPicList').children().last().addClass('uhide');
+                    }
+                }
+            }
+
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 80);
+                    break;
+                case 1:
+                    var length = $("#otherPicList").children().length;
+                    var max = totalPicNum - otherPicList.length;
+                    if (type == 0) {
+                        max = 1;
+                    }
+                    var data = {
+                        min : 1,
+                        max : max,
+                        quality : 0.8,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                }
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1,true);
+            userinfo = App.getUserInfo();
+            loadAuditData();
+        }
+
+        function loadAuditData() {
+            App.authApi({
+                url : 'audit/getAuditData',
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $("#busiPicList").attr("data-id", data.items.id)
+                        if (!App.isNull(data.items.bussilicense)) {
+                            var obj = {
+                                src : App.downIp + "user_Image/annexImage/t/320x320/" + data.items.bussilicense,
+                                type : 0,
+                                isChange : false,
+                                oriImg : data.items.bussilicense
+                            }
+                            picList.push(obj);
+                            var oriSrc = App.downIp + "user_Image/annexImage/" + data.items.bussilicense;
+                            $('#busiPicList .picItem').removeClass('imgBg');
+                            $('#busiPicList .picItem').css("background-image", 'url(' + obj.src + ')');
+                            $('#busiPicList .picItem').attr("data-src", oriSrc);
+                            $('#busiPicList .picItem').attr("data-ori", data.items.bussilicense);
+                            if (data.items.status != 1 && data.items.status != 2) {
+                                $('#busiPicList .picItem').children().removeClass("uhide");
+                            }
+
+                        }
+                        if (!App.isNull(data.items.otherlicense)) {
+                            var imglist = data.items.otherlicense.split(",");
+                            for (var i = 0; i < imglist.length; i++) {
+                                var status = data.items.status;
+                                var oriImg = imglist[i];
+                                $('#otherPicList').children().each(function() {
+                                    if ($(this).hasClass('imgBg')) {
+                                        var src = App.downIp + "user_Image/annexImage/t/320x320/" + oriImg;
+                                        var oriSrc = App.downIp + "user_Image/annexImage/" + oriImg;
+                                        $(this).removeClass('uhide');
+                                        $(this).removeClass('imgBg');
+                                        $(this).css("background-image", 'url(' + src + ')');
+                                        $(this).attr("data-src", oriSrc);
+                                        $(this).attr("data-ori", oriImg);
+                                        if (status != 1 && status != 2) {
+                                            $(this).children().removeClass("uhide");
+                                        }
+                                        var obj = {
+                                            src : src,
+                                            type : 2,
+                                            isChange : false,
+                                            oriImg : oriImg
+                                        }
+                                        otherPicList.push(obj);
+                                        picList.push(obj);
+                                        return false;
+                                    }
+                                });
+                            };
+                            if (otherPicList.length == totalPicNum) {
+                                $('#otherPicList').children().last().addClass('uhide');
+                            } else {
+                                $('#otherPicList').children().last().removeClass('uhide');
+                            }
+                            if (status == 1 || status == 2) {
+                                $('#otherPicList').children().last().addClass('uhide');
+                            }
+                        }
+                        $(".status").html(App.getUserStatus(data.items.status));
+                        if (data.items.status == 1 || data.items.status == 3) {
+                            $(".remark").parent().removeClass("uhide");
+                            if (data.items.status == 3) {
+                                $(".remark").html(data.items.remark);
+                            } else {
+                                $(".remark").html("正在审核中,请耐心等待.");
+                            }
+                        }
+                        App.evalJs({
+                            winName : "userAnnexAudit",
+                            type : 1,
+                            js : "showBtn(" + data.items.status + ")"
+                        })
+                        userinfo.auditstatus = data.items.status;
+                        App.updateUserInfo(userinfo)
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+
+        appcan.button("#otherPicList .picItem", '', function(evt) {
+            type = 1;
+            if ((userinfo.auditstatus == 1 || userinfo.auditstatus == 2) && !edit) {
+                var index = $(this).attr("data-index");
+                var auditInfoList = [];
+                $(".picItem").each(function() {
+                    if (!$(this).hasClass("imgBg")) {
+                        var obj = {
+                            src : $(this).attr("data-src")
+                        }
+                        auditInfoList.push(obj);
+                    }
+                });
+                if (auditInfoList.length > 0) {
+                    var param = {
+                        displayActionButton : false,
+                        displayNavArrows : true,
+                        enableGrid : false,
+                        startOnGrid : false,
+                        startIndex : index,
+                        data : auditInfoList
+                    }
+                    uexImage.openBrowser(App.toJsonStr(param));
+                }
+                return;
+            }
+            var target = $(evt.target);
+            var fileName = $(this).attr("data-src");
+            if (target.hasClass("delBg")) {
+                target.parent().css("background-image", '');
+                target.parent().addClass("imgBg");
+                target.addClass("uhide");
+                target.parent().attr("data-src", "");
+                target.parent().attr("data-change", true);
+                if (fileName.substr(0, 4) != "http") {
+                    uexFileMgr.deleteFileByPath(fileName);
+                }
+                delectPic(fileName);
+                target.parent().addClass("uhide");
+                $('#otherPicList').children().last().removeClass('uhide');
+                return;
+            }
+            if (!$(this).hasClass("imgBg")) {
+                return;
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+        appcan.button("#busiPicList .picItem", '', function(evt) {
+            type = 0;
+            var target = $(evt.target);
+            if ((userinfo.auditstatus == 1 || userinfo.auditstatus == 2) && !edit) {
+                var index = $(this).attr("data-index");
+                var auditInfoList = [];
+                $(".picItem").each(function() {
+                    if (!$(this).hasClass("imgBg")) {
+                        var obj = {
+                            src : $(this).attr("data-src")
+                        }
+                        auditInfoList.push(obj);
+                    }
+                });
+                if (auditInfoList.length > 0) {
+                    var param = {
+                        displayActionButton : false,
+                        displayNavArrows : true,
+                        enableGrid : false,
+                        startOnGrid : false,
+                        startIndex : index,
+                        data : auditInfoList
+                    }
+                    uexImage.openBrowser(App.toJsonStr(param));
+                }
+                return;
+            }
+            var fileName = $(this).attr("data-src");
+            if (target.hasClass("delBg")) {
+                target.parent().css("background-image", '');
+                target.parent().addClass("imgBg");
+                target.addClass("uhide");
+                target.parent().attr("data-src", "");
+                target.parent().attr("data-change", true);
+                if (fileName.substr(0, 4) != "http") {
+                    uexFileMgr.deleteFileByPath(fileName);
+                }
+                delectPic(fileName);
+                return;
+            }
+            if (!$(this).hasClass("imgBg")) {
+                return;
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+        function delectPic(src) {
+            for (var i = 0; i < picList.length; i++) {
+                if (picList[i].src == src) {
+                    picList.splice(i, 1);
+                    break;
+                }
+            };
+            for (var i = 0; i < otherPicList.length; i++) {
+                if (otherPicList[i].src == src) {
+                    otherPicList.splice(i, 1);
+                    break;
+                }
+            };
+        }
+
+        function editAudit() {
+            if(App.isNull(userinfo.cnname)){
+                App.toast("企业名称未填写，请先填写企业名称后在提交");
+                return;
+            }
+            if (userinfo.auditstatus == 1) {
+                App.toast("当前信息正在审核中,暂时无法保存");
+                return;
+            }
+            if ($("#busiPicList .picItem").hasClass("imgBg")) {
+                App.toast("请上传营业执照后，在提交审核.");
+                return;
+            }
+            var isUpdate = checkChange();
+            if (isUpdate && userinfo.auditstatus == 2) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您已经审核过，修改保存后需要在次审核，是否要保存修改?',
+                    buttons : ['暂不保存', '立即保存'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            App.openLoading({
+                                title : '',
+                                msg : '正在保存审核信息...请稍候...',
+                                canCancel : 1
+                            });
+                            var id = $("#busiPicList").attr("data-id");
+                            uploadPic(function(data) {
+                                if (data) {
+                                    App.authApi({
+                                        url : 'audit/submitAudit',
+                                        data : {
+                                            params : {
+                                                userId : userinfo.userid,
+                                                imgList : imgList,
+                                                otherImgList : otherImgList,
+                                                id : id,
+                                                isUpdate : isUpdate,
+                                                status : "0"
+                                            }
+                                        },
+                                        callBack : function(data) {
+                                            App.closeLoading();
+                                            if (data.code == 0) {
+                                                App.toast("信息保存成功");
+                                                $(".picItem").css("background-image", '');
+                                                $(".picItem").addClass("imgBg");
+                                                $(".picItem").children().addClass("uhide");
+                                                $(".picItem").attr("data-src", "");
+                                                $(".picItem").attr("data-change", false);
+                                                if (otherPicList.length == 1) {
+                                                    $("#otherPicList .picItem").addClass("uhide");
+                                                    $("#otherPicList .picItem").first().removeClass("uhide");
+                                                }
+                                                picList = [];
+                                                otherPicList = [];
+                                                imgList = [];
+                                                otherImgList = [];
+                                                loadAuditData();
+                                            } else {
+                                                App.toast(data.message);
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                        }
+                    }
+                });
+            } else {
+                App.openLoading({
+                    title : '',
+                    msg : '正在保存审核信息...请稍候...',
+                    canCancel : 1
+                });
+                var id = $("#busiPicList").attr("data-id");
+                uploadPic(function(data) {
+                    if (data) {
+                        App.authApi({
+                            url : 'audit/submitAudit',
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    imgList : imgList,
+                                    otherImgList : otherImgList,
+                                    id : id,
+                                    isUpdate : isUpdate,
+                                    status : "0"
+                                }
+                            },
+                            callBack : function(data) {
+                                App.closeLoading();
+                                if (data.code == 0) {
+                                    App.toast("信息保存成功");
+                                    $(".picItem").css("background-image", '');
+                                    $(".picItem").addClass("imgBg");
+                                    $(".picItem").children().addClass("uhide");
+                                    $(".picItem").attr("data-src", "");
+                                    $(".picItem").attr("data-change", false);
+                                    if (otherPicList.length == 1) {
+                                        $("#otherPicList .picItem").addClass("uhide");
+                                        $("#otherPicList .picItem").first().removeClass("uhide");
+                                    }
+                                    picList = [];
+                                    otherPicList = [];
+                                    imgList = [];
+                                    otherImgList = [];
+                                    loadAuditData();
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                })
+            }
+
+        }
+
+        function checkChange() {
+            var result = false;
+            $(".picItem").each(function() {
+                var change = $(this).attr('data-change');
+                if (!App.isNull(change) && change == "true") {
+                    result = true;
+                }
+            })
+            return result;
+        }
+
+        function submitAudit() {
+            if (userinfo.auditstatus == 1) {
+                App.toast("当前信息正在审核中,暂时无法提交");
+                return;
+            }
+            if ($("#busiPicList .picItem").hasClass("imgBg")) {
+                App.toast("请上传营业执照后，在提交审核.");
+                return;
+            }
+            var isUpdate = checkChange();
+            if (!isUpdate && userinfo.auditstatus == 2) {
+                App.toast("已经通过审核，不用再次提交");
+                return;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在提交审核信息...请稍候...',
+                canCancel : 1
+            });
+            var id = $("#busiPicList").attr("data-id");
+            uploadPic(function(data) {
+                if (data) {
+                    App.authApi({
+                        url : 'audit/submitAudit',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                imgList : imgList,
+                                otherImgList : otherImgList,
+                                id : id,
+                                isUpdate : isUpdate,
+                                status : "1"
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                App.toast("提交成功，等待客服审核");
+                                userinfo.auditstatus = 1;
+                                userinfo = App.updateUserInfo(userinfo);
+                                App.evalJs({
+                                    winName : 'indexNew',
+                                    type : 2,
+                                    popName : 'myinfo_content',
+                                    js : 'setStatus("审核中")'
+                                });
+                                $(".status").html("审核中");
+                                $(".remark").html("正在审核中");
+                                setTimeout(function() {
+                                    App.evalJs({
+                                        winName : "userAnnexAudit",
+                                        type : 1,
+                                        js : "closeWin()"
+                                    });
+                                }, 1000);
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
+        function uploadPic(callBack) {
+            if (uploadNum >= picList.length || picList.length <= 0) {
+                if (callBack) {
+                    uploadNum = 0;
+                    callBack(true);
+                    return true;
+                }
+            }
+            App.Logs(uploadNum + "," + picList.length)
+            var obj = picList[uploadNum];
+            if (!App.isNull(obj) && obj.src.substr(0, 4) != "http") {
+                App.uploadTMPFile(obj.src, 0, 480, function(status, serverObj) {
+                    if (status == 1) {
+                        var data = {
+                            serverPath : serverObj.serverPath,
+                            oriImg : App.isNull(obj.oriImg) ? "" : obj.oriImg,
+                            isChange : obj.isChange
+                        }
+                        if (obj.type == 0) {
+                            imgList.push(data);
+                        } else {
+                            otherImgList.push(data);
+                        }
+                        window.setTimeout(function() {
+                            uploadNum++;
+                            uploadPic(callBack);
+                        }, 100);
+                    }
+                });
+            } else {
+                window.setTimeout(function() {
+                    var data = {
+                        serverPath : "",
+                        oriImg : App.isNull(obj.oriImg) ? "" : obj.oriImg,
+                        isChange : obj.isChange
+                    }
+                    if (obj.type == 0) {
+                        imgList.push(data);
+                    } else {
+                        otherImgList.push(data);
+                    }
+                    uploadNum++;
+                    uploadPic(callBack);
+                }, 100);
+            }
+        }
+
+        function editMode() {
+            edit = true;
+            $(".picItem").each(function() {
+                if (!$(this).hasClass("imgBg")) {
+                    $(this).children().removeClass("uhide");
+                }
+            })
+            if (otherPicList.length == totalPicNum) {
+                $('#otherPicList').children().last().addClass('uhide');
+            } else {
+                $('#otherPicList').children().last().removeClass('uhide');
+            }
+        }
+    </script>
+</html>

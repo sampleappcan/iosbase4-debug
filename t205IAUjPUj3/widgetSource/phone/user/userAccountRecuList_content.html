@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userAccountRecuList_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #8D969D;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub ub-ver ub-f1" id="listview">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                getRecruitList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                getRecruitList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            getRecruitList(1, 0);
+        }
+
+        function getRecruitList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            var parentId = App.getVal("parentId");
+            var jobCondition = {
+                userId : App.getVal("chatId")
+            }
+            App.authApi({
+                url : "s/searchRecuritList",
+                data : {
+                    params : {
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        jobCondition : jobCondition,
+                        parentId : App.isNull(parentId) ? "" : parentId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pageNumber > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createRecuitHtml(objData.dataList[i], i);
+                            }
+                            if (add) {
+                                $('#listview ul').append(d);
+                            } else {
+                                $('#listview ul').html(d);
+                            }
+                        } else {
+                            d = '<div class="ub ub-ac ub-pc ub-f1" style="padding-top:10em;color:#7C807F">没有找到合适的职位</div>';
+                            $('#listview').removeClass('sc-bg');
+                            $('#listview ul').html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createRecuitHtml(obj) {
+            var h = '';
+            var onboardtime = obj.onboardtime;
+            var payroll = obj.payroll;
+            var timeStr = "";
+            var payrolltype = "￥";
+            if (!App.isNull(onboardtime)) {
+                onboardtime = onboardtime.split("-");
+                timeStr = onboardtime[1] + "月" + onboardtime[2] + "号";
+            }
+            if (!App.isNull(payroll)) {
+                payroll = (Number(payroll) / 1000) + "K";
+            }
+            if (obj.payrolltype == "美元") {
+                payrolltype = "$";
+            }
+            payroll = payrolltype + payroll;
+            h += '<li onclick="openJobTitle(' + obj.id + ')" class="ub ub-f1 uinn umar-b sc-bg ub-ver">';
+            h += '   <div class="ub ub-f1 ub-ver" style="border-bottom: 1px dashed;border-color: #BABABA;padding-bottom: 0.4em">';
+            h += '      <div class="ulev1"><span>' + obj.jobtitle + '</span><span class="ulev-2 sc-text-active" style="padding-left: 0.2em">(' + obj.comptype + ')</span></div>';
+            h += '      <div class="ub ub-f1" style="margin-top: 0.2em">';
+            h += '          <div class="ub ub-f1 ub-ver">';
+            h += '             <div class="ub ub-f1 umar-t ulev-1 txt-color">';
+            h += '                 <div class="uc-a1 umar-r">' + obj.certificatelv + '</div>';
+            h += '                 <div class="uc-a1 umar-r">' + obj.shiptype + '</div>';
+            h += '                 <div class="uc-a1 umar-r" >' + obj.shipline + '</div>';
+            h += '             </div>';
+            h += '          </div>';
+            h += '          <div class="ub sc-text-warn ub-ac ub-pc " style="min-width: 5em">' + payroll + '</div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '   <div class="ulev-4 txt-color" style="border-top: 1px dashed #BABABA;padding-top: 0.4em">';
+            h += '       <span>上船时间：</span><span style="color: red">' + timeStr + '</span>,上船地点:<span style="color: red">' + obj.onboardlocation + '</span>'
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openJobTitle(jobId) {
+            App.setVal("recruitId", jobId);
+            App.openWin({
+                backName : 'jobSearch',
+                name : 'userRecruitPreview',
+                url : '../user/userRecruitPreview.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+    </script>
+</html>

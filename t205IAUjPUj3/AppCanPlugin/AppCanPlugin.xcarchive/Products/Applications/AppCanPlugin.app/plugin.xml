@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexXmlHttpMgr">
+        <method name="open"></method>
+        <method name="send"></method>
+        <method name="setBody"></method>
+        <method name="setHeaders"></method>
+        <method name="setPostData"></method>
+        <method name="setAppVerify"></method>
+        <method name="setInputStream"></method>
+        <method name="setCertificate"></method>
+        <method name="close"></method>
+        <method name="getCookie"></method>
+        <method name="clearCookie"></method>
+        <method name="create"></method>
+    </plugin>
+
+    <plugin name="uexXmlHttpMgr">
+        <method name="open"></method>
+        <method name="send"></method>
+        <method name="setBody"></method>
+        <method name="setHeaders"></method>
+        <method name="setPostData"></method>
+        <method name="setAppVerify"></method>
+        <method name="setInputStream"></method>
+        <method name="setCertificate"></method>
+        <method name="close"></method>
+        <method name="getCookie"></method>
+        <method name="clearCookie"></method>
+        <method name="create"></method>
+    </plugin>
+
+    <plugin name="uexWeiXin">
+        <method name="isSupportPay" sync = "true"></method>
+        <method name="gotoPay"></method>
+        <method name="generateAdvanceOrder"></method>
+        <method name="getAccessToken"></method>
+        <method name="getAccessTokenLocal"></method>
+        <method name="registerApp" sync = "true"></method>
+        <method name="isWXAppInstalled" sync = "true"></method>
+        <method name="isWXAppSupportApi" sync = "true"></method>
+        <method name="getWXAppSupportMaxApiVersion"></method>
+        <method name="getApiVersion"></method>
+        <method name="getWXAppInstallUrl"></method>
+        <method name="openWXApp"></method>
+        <method name="sendTextContent"></method>
+        <method name="sendImageContent"></method>
+        <method name="shareLinkContent"></method>
+        <method name="shareImageContent"></method>
+        <method name="shareTextContent"></method>
+        <method name="generatePrepayID"></method>
+        <method name="sendPay"></method>
+        <method name="getWeiXinLoginRefreshAccessToken"></method>
+        <method name="getWeiXinLoginAccessToken"></method>
+        <method name="getWeiXinLoginCheckAccessToken"></method>
+        <method name="getWeiXinLoginUnionID"></method>
+        <method name="weiXinLogin"></method>
+        <method name="getPrepayId"></method>
+        <method name="startPay"></method>
+        
+        <method name="login"></method>
+        <method name="getLoginAccessToken"></method>
+        <method name="getLoginRefreshAccessToken"></method>
+        <method name="getLoginCheckAccessToken"></method>
+        <method name="getLoginUnionID"></method>
+        <method name="setCallbackWindowName"></method>
+    </plugin>
+
+    <plugin name="uexVideo">
+        <method name="open"></method>
+        <method name="record"></method>
+        <method name="openPlayer"></method>
+        <method name="closePlayer"></method>
+    </plugin>
+
+    <plugin name="uexUploaderMgr">
+        <method name="setHeaders"></method>
+        <method name="createUploader"></method>
+        <method name="closeUploader"></method>
+        <method name="uploadFile"></method>
+        <method name="appendFileData"></method>
+        <method name="startUploader"></method>
+        <method name="getInfo"></method>
+        <method name="observeUploader"></method>
+        <method name="setDebugMode"></method>
+        <method name="create"></method>
+    </plugin>
+    
+
+    <plugin name="uexUpdate">
+        <method name="doUpdate"></method>
+	</plugin>
+
+    <plugin name="uexSocketMgr">
+        <method name="createUDPSocket"></method>
+        <method name="createTCPSocket"></method>
+        <method name="closeSocket"></method>
+        <method name="setTimeOut"></method>
+        <method name="setInetAddressAndPort"></method>
+        <method name="sendData"></method>
+        <method name="send"></method>
+        <method name="write"></method>
+        <method name="connect"></method>
+        <method name="createTCP"></method>
+        <method name="createUDP"></method>
+        <method name="close"></method>
+    </plugin>
+
+    <plugin name="uexSMS">
+        <method name="open"></method>
+		<method name="send"></method>
+	</plugin>
+
+    <plugin name="uexSina">
+        <method name="registerApp"></method>
+        <method name="sendTextContent"></method>
+        <method name="sendImageContent"></method>
+        <method name="getUserInfo"></method>
+        <method name="login"></method>
+        <method name="logout"></method>
+	</plugin>
+
+    <plugin name="uexScanner">
+        <method name="open"></method>
+        <method name="setJsonData"></method>
+	</plugin>
+
+    <plugin name="uexQQ">
+        <method name="login"></method>
+        <method name="shareWebImgTextToQQ"></method>
+        <method name="shareLocalImgToQQ"></method>
+        <method name="shareAudioToQQ"></method>
+        <method name="shareImgTextToQZone"></method>
+        <method name="isQQInstalled" sync = "true" ></method>
+        <method name="logout"></method>
+        <method name="getUserInfo"></method>
+    </plugin>
+
+    <plugin name="uexLocation">
+        <method name="openLocation"></method>
+		<method name="getAddress"></method>
+        <method name="closeLocation"></method>
+        <method name="getBaiduFromGoogle"></method>
+        <method name="convertLocation" sync = "true"></method>
+        <method name="getAddressByType"></method>
+	</plugin>
+
+    <plugin name="uexJPush">
+        
+        <method name="init"></method>
+        <method name="setAliasAndTags"></method>
+        <method name="setAlias"></method>
+        <method name="setTags"></method>
+        <method name="getRegistrationID"></method>
+        <method name="getConnectionState"></method>
+        <method name="addLocalNotification"></method>
+        <method name="removeLocalNotification"></method>
+        <method name="clearLocalNotifications"></method>
+        <method name="setBadgeNumber"></method>
+        <method name="disableLocalNotificationAlertView"></method>
+
+        
+    </plugin>
+
+    <plugin name="uexInputTextFieldView">
+        <method name="open"></method>
+        <method name="close"></method>
+        <method name="changeWebViewFrame"></method>
+        <method name="setInputFocused"></method>
+    </plugin>
+
+    <plugin name="uexIndexBar">
+        <method name="open"></method>
+        <method name="close"></method>
+	</plugin>
+
+    <plugin name="uexImage">
+        <method name="openBrowser"></method>
+        <method name="openPicker"></method>
+        <method name="openCropper"></method>
+        <method name="openBrowser"></method>
+        <method name="saveToPhotoAlbum"></method>
+        <method name="clearOutputImages"></method>
+        <method name="setIpadPopEnable"></method>
+    </plugin>
+
+    <plugin name="uexGaodeMap">
+            
+        <method name="open"></method>
+        <method name="close"></method>
+        <method name="setMapType"></method>
+        <method name="setTrafficEnabled"></method>
+        <method name="setCenter"></method>
+        <method name="setZoomLevel"></method>
+        <method name="zoomIn"></method>
+        <method name="zoomOut"></method>
+        <method name="rotate"></method>
+        <method name="overlook"></method>
+        <method name="setZoomEnable"></method>
+        <method name="setRotateEnable"></method>
+        <method name="setCompassEnable"></method>
+        <method name="setScrollEnable"></method>
+        <method name="addMarkersOverlay"></method>
+        <method name="setMarkerOverlay"></method>
+        <method name="addPolylineOverlay"></method>
+        <method name="removeOverlay"></method>
+        <method name="addCircleOverlay"></method>
+        <method name="addPolygonOverlay"></method>
+        <method name="addGroundOverlay"></method>
+        <method name="removeMarkersOverlay"></method>
+        <method name="poiSearch"></method>
+        <method name="geocode"></method>
+        <method name="reverseGeocode"></method>
+        <method name="getCurrentLocation"></method>
+        <method name="startLocation"></method>
+        <method name="stopLocation"></method>
+        <method name="setMyLocationEnable"></method>
+        <method name="setUserTrackingMode"></method>
+        <method name="removeMarkersOverlays"></method>
+        <method name="removeOverlays"></method>
+        <method name="setScaleVisible"></method>
+        <method name="download"></method>
+        <method name="pause"></method>
+        <method name="restart"></method>
+        <method name="getAvailableCityList"></method>
+        <method name="getAvailableProvinceList"></method>
+        <method name="getDownloadList"></method>
+        <method name="getDownloadingList"></method>
+        <method name="isUpdate"></method>
+        <method name="delete"></method>
+        <method name="clear"></method>
+        <method name="setCustomButton"></method>
+        <method name="deleteCustomButton"></method>
+        <method name="showCustomButtons"></method>
+        <method name="hideCustomButtons"></method>
+        
+
+            
+            
+            
+    </plugin>
+        
+
+    <plugin name="uexFileMgr">
+        <method name="createSecure"></method>
+        <method name="openSecure"></method>
+        <method name="createFile"></method>
+        <method name="createDir"></method>
+        <method name="openFile"></method>
+        <method name="openDir"></method>
+        <method name="deleteFileByPath"></method>
+        <method name="deleteFileByID"></method>
+        <method name="getFileTypeByPath"></method>
+        <method name="getFileTypeByID"></method>
+        <method name="isFileExistByPath"></method>
+        <method name="isFileExistByID"></method>
+        <method name="explorer"></method>
+        <method name="multiExplorer"></method>
+        <method name="seekFile"></method>
+        <method name="seekBeginOfFile"></method>
+        <method name="seekEndOfFile"></method>
+        <method name="readFile"></method>
+        <method name="writeFile"></method>
+        <method name="getFileSize"></method>
+        <method name="getFileSizeByPath"></method>
+        <method name="getFilePath"></method>
+        <method name="closeFile"></method>
+        <method name="getReaderOffset"></method>
+        <method name="readPercent"></method>
+        <method name="readNext"></method>
+        <method name="readPre"></method>
+        <method name="getFileRealPath"></method>
+        <method name="getFileCreateTime"></method>
+        <method name="renameFile"></method>
+        <method name="getFileListByPath"></method>
+        <method name="search"></method>
+        <method name="copyFile"></method>
+        <method name="create"></method>
+        <method name="mkdir"></method>
+        <method name="open"></method>
+        <method name="copy"></method>
+        <method name="openWithPassword"></method>
+        <method name="createWithPassword"></method>
+    </plugin>
+
+    <plugin name="uexEasemob">
+        
+        <method name="initEasemob"></method>
+        <method name="login"></method>
+        <method name="logout"></method>
+        <method name="registerUser"></method>
+        
+        <method name="getConversationByName"></method>
+        <method name="sendText"></method>
+        <method name="sendVoice"></method>
+        <method name="sendPicture"></method>
+        <method name="sendLocationMsg"></method>
+        <method name="sendFile"></method>
+        <method name="getMessageHistory"></method>
+        <method name="getUnreadMsgCount"></method>
+        <method name="resetUnreadMsgCount"></method>
+        <method name="deleteConversation"></method>
+        <method name="removeMessage"></method>
+        <method name="deleteAllConversation"></method>
+        <method name="setNotifyBySoundAndVibrate"></method>
+        <method name="sendCmdMessage"></method>
+        
+        <method name="getContactUserNames"></method>
+        <method name="addContact"></method>
+        <method name="deleteContact"></method>
+        <method name="acceptInvitation"></method>
+        <method name="refuseInvitation"></method>
+        <method name="getBlackListUsernames"></method>
+        <method name="addUserToBlackList"></method>
+        <method name="deleteUserFromBlackList"></method>
+        
+        <method name="createPrivateGroup"></method>
+        <method name="createPublicGroup"></method>
+        <method name="addUsersToGroup"></method>
+        <method name="removeUserFromGroup"></method>
+        <method name="joinGroup"></method>
+        <method name="exitFromGroup"></method>
+        <method name="exitAndDeleteGroup"></method>
+        <method name="getGroupsFromServer"></method>
+        <method name="getAllPublicGroupsFromServer"></method>
+        <method name="getGroup"></method>
+        <method name="blockGroupMessage"></method>
+        <method name="unblockGroupMessage"></method>
+        <method name="changeGroupName"></method>
+        <method name="blockUser"></method>
+        <method name="unblockUser"></method>
+        <method name="getBlockedUsers"></method>
+        <method name="acceptJoinApplication"></method>
+        <method name="declineJoinApplication"></method>
+        <method name="acceptInvitationFromGroup"></method>
+        <method name="declineInvitationFromGroup"></method>
+        
+        <method name="makeVoiceCall"></method>
+        <method name="answerCall"></method>
+        <method name="rejectCall"></method>
+        <method name="endCall"></method>
+        
+        <method name="updateCurrentUserNickname"></method>
+        <method name="getLoginInfo"></method>
+        <method name="registerRemoteNotification"></method>
+        <method name="updatePushOptions"></method>
+        <method name="ignoreGroupPushNotification"></method>
+        <method name="getChatterInfo"></method>
+        <method name="setIsAutoLoginEnabled"></method>
+        <method name="sendVideo"></method>
+        <method name="sendHasReadResponseForMessage"></method>
+        <method name="getMessageById"></method>
+        <method name="getTotalUnreadMsgCount"></method>
+        <method name="getRecentChatters"></method>
+        
+        
+    </plugin>
+    
+    
+
+    <plugin name="uexDownloaderMgr">
+        <method name="createDownloader"></method>
+        <method name="download"></method>
+        <method name="closeDownloader"></method>
+        <method name="getInfo"></method>
+        <method name="setHeaders"></method>
+        <method name="cancelDownload"></method>
+        <method name="setDebugMode"></method>
+        <method name="create"></method>
+    </plugin>
+
+    <plugin name="uexDevice">
+        <method name="getInfo" sync="true"></method>
+        <method name="vibrate"></method>
+        <method name="cancelVibrate"></method>
+        <method name="screenCapture"></method>
+        <method name="setVolume"></method>
+        <method name="getVolume" sync="true"></method>
+        <method name="setScreenAlwaysBright"></method>
+        <method name="setScreenBrightness"></method>
+        <method name="openWiFiInterface"></method>
+        <method name="getScreenBrightness" sync="true"></method>
+        <method name="isFunctionEnable"></method>
+        <method name="openSetting"></method>
+    </plugin>
+
+    <plugin name="uexDataBaseMgr">
+        <method name="openDataBase"></method>
+        <method name="executeSql"></method>
+        <method name="selectSql"></method>
+        <method name="transaction"></method>
+        <method name="closeDataBase"></method>
+        <method name="beginTransaction"></method>
+        <method name="endTransaction"></method>
+        <method name="open"></method>
+        <method name="sql"></method>
+        <method name="select"></method>
+        <method name="transactionEx"></method>
+        <method name="close"></method>
+    </plugin>
+
+    <plugin name="uexDataAnalysis">
+        <method name="setEvent"></method>
+        <method name="beginEvent"></method>
+        <method name="endEvent"></method>
+        <method name="setErrorReport"></method>
+    </plugin>
+
+    <plugin name="uexControl">
+        <method name="openDatePicker"></method>
+        <method name="openDatePickerWithoutDay"></method>
+        <method name="openDatePickerWithConfig"></method>
+		<method name="openTimePicker"></method>
+        <method name="openInputDialog"></method>
+        <method name="setDatePickerConfirmBtnColor"></method>
+        <method name="setDatePickerWithoutDayConfirmBtnColor"></method>
+	</plugin>
+
+    <plugin name="uexContact">
+        <method name="open"></method>
+		<method name="addItem"></method>
+        <method name="addItemWithVCard"></method>
+        <method name="searchItem"></method>
+        <method name="deleteItem"></method>
+        <method name="modifyItem"></method>
+        <method name ="multiOpen"></method>
+        <method name ="modifyMultiItem"></method>
+        <method name="deleteWithId"></method>
+        <method name="search"></method>
+        <method name="modifyWithId"></method>
+	</plugin>
+
+    <plugin name="uexClipboard">
+        <method name="copy"></method>
+		<method name="getContent"></method>
+	</plugin>
+
+    <plugin name="uexChatKeyboard">
+        <method name="open"></method>
+        <method name="close"></method>
+        <method name="getInputBarHeight"></method>
+        <method name="hideKeyboard"></method>
+        <method name="changeWebViewFrame"></method>
+    </plugin>
+
+    <plugin name="uexCamera">
+        <method name="open"></method>
+        <method name="openInternal"></method>
+        <method name="openViewCamera"></method>
+        <method name="removeViewCameraFromWindow"></method>
+        <method name="changeFlashMode" sync = "true"></method>
+        <method name="changeCameraPosition" sync = "true"></method>
+	</plugin>
+
+    <plugin name="uexCall">
+        <method name="call"></method>
+		<method name="dial"></method>
+        <method name="facetime"></method>
+	</plugin>
+
+    <plugin name="uexButton">
+        <method name="open"></method>
+        <method name="create" sync = "true"></method>
+        <method name="close"></method>
+	</plugin>
+
+    <plugin name="uexAudio">
+        <method name="open"></method>
+		<method name="play"></method>
+        <method name="pause"></method>
+        <method name="stop"></method>
+        <method name="replay"></method>
+        <method name="volumeDown"></method>
+        <method name="volumeUp"></method>
+        <method name="openPlayer"></method>
+        <method name="record"></method>
+        <method name="openSoundPool"></method>
+        <method name="addSound"></method>
+        <method name="playFromSoundPool"></method>
+        <method name="stopFromSoundPool"></method>
+        <method name="closeSoundPool"></method>
+        <method name="startBackgroundRecord"></method>
+        <method name="stopBackgroundRecord"></method>
+        <method name="setPlayMode"></method>
+        <method name="setProximityState"></method>
+	</plugin>
+
+    <plugin name="uexAliPay">
+		<method name="setPayInfo"></method>
+        <method name="pay"></method>
+        <method name="gotoPay"></method>
+	</plugin>
+
+    
+    
+</uexplugins>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../message_content/css/main.css">
+        <style>
+            .tab_badge2 {
+                width: 1.8em;
+                height: 1.8em;
+                -webkit-border-radius: 1.8em;
+                border-radius: 1.8em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="bc-bg uinn ulev-5">
+            最近的联系人
+        </div>
+        <div class="ub ub-ver sc-bg" id="comment">
+            <ul class="ub-f1">
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/Base64-80.js"></script>
+        <script src="../wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var recentChatters;
+        var firendData;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            // appcan.window.enableBounce();
+            loadData();
+            // getRecentChatters('[{"chatType":"0","chatter":"admin","isGroup":"0","lastMsg":{"chatType":"0","from":"admin","isAcked":"0","isGroup":"0","isRead":"1","messageBody":{"text":"测试消息"},"messageId":"176308233579790776","messageTime":"1458614759329","messageType":"text","to":"1000007"},"unreadMsgCount":"1"},{"chatType":"0","chatter":"1000003","isGroup":"0","lastMsg":{"chatType":"0","ext":"18116252470","from":"1000007","isAcked":"1","isGroup":"0","isRead":"1","messageBody":{"address":"上海市杨浦区大桥街道九州丽园","latitude":"31.261001","longitude":"121.531959"},"messageId":"176024924085813808","messageTime":"1458548795851","messageType":"location","to":"1000003"},"unreadMsgCount":"0"}]')
+        })
+        function loadData() {
+            if (!isdebug) {
+                App.ajaxLoading(1, true);
+                uexEasemob.getRecentChatters();
+            }
+        }
+
+        function getChatters() {
+            var chatters = new Array();
+            if (!App.isNull(recentChatters)) {
+                for (var i = 0; i < recentChatters.length; i++) {
+                    if (recentChatters[i].chatter != "appcan" && recentChatters[i].chatter != "admin") {
+                        chatters.push(recentChatters[i].chatter);
+                    }
+                };
+            }
+            return chatters;
+        }
+
+        function getRecentChatters(data) {
+            App.Logs('forwardList_getRecentChatters:' + data);
+            var data = App.getVal("cbGetRecentChatters");
+            recentChatters = eval('(' + data + ')');
+            if (!App.isNull(recentChatters.length)) {
+                var list = getChatters();
+                if (list.length <= 0) {
+                    App.ajaxLoading(0);
+                    return;
+                }
+                var d = '';
+                for (var i = 0; i < recentChatters.length; i++) {
+                    if (recentChatters[i].chatter != "appcan" && recentChatters[i].chatter != "admin") {
+                        d += createMsgHtml(recentChatters[i], i);
+                    }
+                }
+                $('#comment ul').html(d);
+                // var list = getChatters();
+                App.authApi({
+                    url : "friend/getFriendMsg",
+                    data : {
+                        params : {
+                            list : list
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            for (var i = 0; i < data.items.length; i++) {
+                                if (data.items[i].cnname == "系统消息" || data.items[i].cnname == "招聘助手")
+                                    continue;
+                                if (!App.isNull(data.items[i].compname) && !App.isNull(data.items[i].parentid)) {
+                                    $('#u' + data.items[i].userid + " .compName").html("|" + data.items[i].compname);
+                                }
+                                if (data.items[i].auditstatus == 2) {
+                                    $('#u' + data.items[i].userid + ' .verify').removeClass("uhide");
+                                }
+                                $('#u' + data.items[i].userid + " .userName").html(data.items[i].cnname);
+                                $('#u' + data.items[i].userid).attr("data-id", data.items[i].userid);
+                                $('#u' + data.items[i].userid).attr("data-gnum", data.items[i].groupnumber);
+                                $('#u' + data.items[i].userid).attr("data-maxnum", data.items[i].maxusers);
+                                var headuri = App.isNull(data.items[i].headuri) ? "../wgtRes/comImg.png" : data.items[i].headuri;
+                                var oUri = "../wgtRes/comImg.png";
+                                if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                                    headuri = App.headUri + headuri;
+                                    oUri = data.items[i].headuri;
+                                }
+                                if (data.items[i].userid == "1000002") {
+                                    headuri = "./message_content/css/myImg/zhaopin.png";
+                                    oUri = headuri;
+                                }
+                                if (data.items[i].userid != 'admin') {
+                                    $('#u' + data.items[i].userid + " .ub-img1").attr("data-imgo", oUri);
+                                    $('#u' + data.items[i].userid + " .ub-img1").attr("data-img", headuri);
+                                    $('#u' + data.items[i].userid + " .message").css('background-image', 'url(' + headuri + ')');
+                                }
+
+                            };
+                        }
+                    }
+                })
+            } else {
+
+            }
+            App.ajaxLoading(0);
+            App.removeVal("cbGetRecentChatters");
+        }
+
+        function createMsgHtml(obj, index) {
+            var h = '';
+            var text = obj.lastMsg.messageType;
+            var str = "";
+            var timeStr = App.setMsgTime(parseInt(obj.lastMsg.messageTime));
+            //setMsgTime(parseInt(obj.lastMsg.messageTime))
+            var count = obj.unreadMsgCount;
+            var cStyle = "sc-bg-alert";
+            if (count > 99) {
+                count = "99+"
+            } else if (count == 0) {
+                count = "";
+                cStyle = "";
+            }
+            switch (text) {
+            case 'image':
+                str = "[图片]";
+                break;
+            case 'text':
+                str = decode64(obj.lastMsg.messageBody.text);
+                var reg = /\[([^\]]+)\]/g;
+                str = str.replace(reg, function($1) {
+                    return emoarr1[$1] || $1;
+                });
+                break;
+            case 'audio':
+                str = "[语音]";
+                break;
+            case 'location':
+                str = "[位置]";
+                break;
+            case 'video':
+                str = "[视屏]";
+                break;
+            }
+            h += '<li onclick="forwordMsg(this)" id="u' + obj.chatter + '" data-id="' + obj.chatter + '" data-type="' + obj.chatType + '" class="ub uinn5 ubb bc-border">';
+            h += '   <div class="ub-img1 message" data-img="" style="min-width:3em;min-height:3em;"></div>';
+            h += '   <div class="ub ub-f1 ub-ver tip-right">';
+            h += '      <div class="ub ub-f1">';
+            h += '         <div class="userName ulev-3"></div>';
+            h += '         <div class="compName ulev-1 tip-cont ut-s tx-l"></div>';
+            h += '         <div class="ub-img verify umw1 umh1 uhide"></div>';
+            h += '      </div>';
+            h += '      <div id="logicContent" class="ulev-5 tip-cont">' + str + '</div>';
+            h += '   </div>';
+            h += '   <div class="ub ub-ac ub-pe ub-ver">';
+            h += '      <div class="tx-c ulev-1 tip-time" style="margin-bottom: 1em">' + timeStr + '</div>';
+            h += '      <div class="ub ub-ac ub-pc">';
+            h += '         <div class="ub ub-ac ub-pc ulev-4 t-wh tab_badge2 "></div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function forwordMsg(li) {
+            var sendId = $(li).attr("data-id");
+            var chatObj = App.getJson("chatObj");
+            var cnName = $(li).find(".userName").html();
+            var chatType = $(li).attr("data-type");
+            var chatId = App.getVal('chatId');
+            var win = App.getWin("chatRoom");
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定发送给' + cnName + '?',
+                buttons : ['取消', '发送'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        var str = "";
+                        if (chatObj.type == 1) {
+                            var sendData = {
+                                username : sendId,
+                                chatType : chatType,
+                                content : encode64(chatObj.text),
+                                ext : ""
+                            };
+                            uexEasemob.sendText(JSON.stringify(sendData));
+                        } else if (chatObj.type == 2) {
+                            var index = chatObj.text.lastIndexOf("/") + 1;
+                            var displayName = chatObj.text.substring(index);
+                            var picData = {
+                                username : sendId,
+                                chatType : chatType,
+                                filePath : chatObj.text,
+                                displayName : displayName,
+                                ext : ""
+                            }
+                            uexEasemob.sendPicture(JSON.stringify(picData));
+                        } else if (chatObj.type == 3) {
+                            var index = chatObj.text.lastIndexOf("/") + 1;
+                            var displayName = chatObj.text.substring(index);
+                            var voiceData = {
+                                username : sendId,
+                                chatType : chatType,
+                                filePath : chatObj.text,
+                                length : chatObj.text,
+                                displayName : displayName,
+                                ext : ''
+                            };
+                            uexEasemob.sendVoice(JSON.stringify(voiceData));
+                        } else if (chatObj.type == 5) {
+                            var locationMsg = {
+                                username : sendId,
+                                chatType : "0",
+                                locationAddress : chatObj.address,
+                                latitude : chatObj.lat,
+                                longitude : chatObj.lng,
+                                ext : ''
+                            }
+                            uexEasemob.sendLocationMsg(JSON.stringify(locationMsg));
+                            str = chatObj.lat + "," + chatObj.lng;
+                        }
+                        if (chatId == sendId) {
+                            if (!App.isNull(win)) {
+                                App.evalJs({
+                                    winName : "chatRoom",
+                                    js : "addmychat('" + chatObj.text + "'," + chatObj.type + "," + chatObj.len + ")"
+                                });
+                            } else {
+                                App.evalJs({
+                                    winName : "groupChatRoom",
+                                    js : "addmychat('" + chatObj.text + "'," + chatObj.type + "," + chatObj.len + ")"
+                                });
+                            }
+                        }
+                        App.toast("已转发");
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "forwardList",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }, 500);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

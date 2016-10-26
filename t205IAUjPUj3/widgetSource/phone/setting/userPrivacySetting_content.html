@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userPrivacySetting_content/css/main.css">
+        <style>
+            .uinn-a8 {
+                padding: 0.625em 0em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="uinn-a8">
+            <div class="ub ub-ver ub-f1">
+                <div id="listview1" class="ubt bc-border c-wh">
+
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv = appcan.listview({
+            selector : "#listview1",
+            type : "singleLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true
+        });
+        var userinfo;
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            App.authApi({
+                url : "user/getUserPrivicy",
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    var dataList=[];
+                    if (data.code == 0) {
+                        var index = 0;
+                        for (key in data.items) {
+                            if (key == "_id" || key == "userid")
+                                continue;
+                            var obj = data.items[key];
+                            var data = {
+                                title : obj.name,
+                                value : obj.value,
+                                subTitle : '<div id="seeMyInfo" class="ulev-5 t-gra">'+obj.value+'</div>',
+                                id : index
+                            }
+                            dataList.push(data);
+                            index++;
+                        }
+                        lv.set(dataList);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+
+       /* lv.set([{
+            title : "谁可以看我资料",
+            subTitle : '<div id="seeMyInfo" class="ulev-5 t-gra">仅好友</div>',
+            id : 0
+        }]);*/
+
+        lv.on('click', function(ele, data, subobj) {
+            switch(parseInt(data.id)) {
+            case 0:
+                App.setVal('seemyinfo',data.value);
+                App.openWin({
+                    backName : 'userPrivacySetting',
+                    name : 'seeMyInfo',
+                    url : 'seeMyInfo.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            }
+        })
+
+    </script>
+</html>

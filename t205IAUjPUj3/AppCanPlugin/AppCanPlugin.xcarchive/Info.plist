@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ApplicationProperties</key>
+	<dict>
+		<key>ApplicationPath</key>
+		<string>Applications/AppCanPlugin.app</string>
+		<key>CFBundleIdentifier</key>
+		<string>com.css.hywang</string>
+		<key>CFBundleShortVersionString</key>
+		<string>00.00.0452</string>
+		<key>CFBundleVersion</key>
+		<string>00.00.0452</string>
+		<key>SigningIdentity</key>
+		<string>iPhone Distribution: Shanghai Seatrader Info.&amp;Tech. Co,. Ltd. (8526A36KG5)</string>
+	</dict>
+	<key>ArchiveVersion</key>
+	<integer>2</integer>
+	<key>CreationDate</key>
+	<date>2016-10-21T11:43:23Z</date>
+	<key>Name</key>
+	<string>AppCanPlugin</string>
+	<key>SchemeName</key>
+	<string>AppCanPlugin</string>
+</dict>
+</plist>

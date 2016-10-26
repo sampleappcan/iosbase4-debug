@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../dynamic/publishDynamic_content/css/main.css">
+        <link rel="stylesheet" href="report_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class=" ub ub-ac ulev-1 t-gra" style="padding: 1em">
+            请选择举报原因
+        </div>
+        <div class="ub ub-ver sc-bg" id="listview">
+
+        </div>
+        <div class="ub ub-ac ub-f1 ulev-1 ubb bc-border t-gra" style="padding: 1em">
+            证据补充说明(选填)
+        </div>
+        <div class="ub ub-f1">
+            <div class="uinput ub ub-f1 ulev-1" style="overflow-y: visible">
+                <textarea style="padding-left: 0.4em" id="contentMsg" placeholder="输入文字或上传截图证明..." type="text" class="ub-f1" oninput="changeHeight(this)"></textarea>
+            </div>
+            <div class="ub umar-t-ec3 ">
+                <div data-index="0" class="ub-img1 uwh-bg imgBg ufl umar-a picItem"></div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv1 = appcan.listview({
+            selector : "#listview",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasSubTitle : false,
+            multiLine : 1,
+            hasCheckbox : true,
+            align : 'right'
+        });
+        lv1.set([{
+            title : "广告"
+        }, {
+            title : "色情"
+        }, {
+            title : "违法/政治敏感"
+        }, {
+            title : "身份做假"
+        }, {
+            title : "其它(鸡汤、段子、水帖等)"
+        }]);
+        var userinfo;
+        appcan.ready(function() {
+            userinfo = App.getUserInfo();
+        })
+
+        appcan.button('.picItem', 'btn-act', function() {
+            uexCamera.cbOpen = function(opCode, dataType, data) {
+                $('.picItem').css("background-image", 'url(' + data + ')');
+                $('.picItem').attr('data-img', data);
+            }
+            uexImage.onPickerClosed = function(data) {
+                var obj = JSON.parse(data);
+                if (obj.isCancelled == false || obj.isCancelled == "false") {
+                    $('.picItem').css("background-image", 'url(' + obj.data[0] + ')');
+                    $('.picItem').attr('data-img', obj.data[0]);
+                }
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 70);
+                    break;
+                case 1:
+                    var data = {
+                        min : 1,
+                        max : 1,
+                        quality : 0.7,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                }
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+        function changeHeight(item) {
+            if (item.scrollHeight > $(item).height()) {
+                $(item).css('height', item.scrollHeight);
+            }
+        }
+
+        function submitReport() {
+            var reoprtReason = [];
+            $('input').each(function() {
+                if ($(this)[0].checked) {
+                    var text = $(this).parent().prev().html();
+                    reoprtReason.push(text);
+                }
+            })
+            if (reoprtReason.length == 0) {
+                App.toast("请选择一个投诉理由");
+                return;
+            }
+            var reportType = App.getVal('reportType');
+            var contentMsg = $('#contentMsg').val();
+            var pic = $('.picItem').attr('data-img');
+            var reportId;
+            if (App.isNull(reportType)) {
+                reportId = App.getVal('chatId')
+            } else {
+                var groupInfo = App.getJson('groupInfo');
+                reportId = groupInfo.groupId;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在提交举报信息...',
+                canCancel : 1
+            });
+            if (App.isNull(pic)) {
+                App.authApi({
+                    url : 'hyw/submitReport',
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            reportId : reportId,
+                            reason : reoprtReason.join(","),
+                            remark : contentMsg,
+                            image : ""
+                        }
+                    },
+                    callBack : function(data) {
+                        App.closeLoading();
+                        if (data.code == 0) {
+                            App.toast("举报信息提交成功，我们会尽快处理.");
+                            App.evalJs({
+                                winName : 'report',
+                                type : 1,
+                                js : 'closeWin()'
+                            });
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            } else {
+                App.uploadTMPFile(pic, 0, 720, function(status, obj) {
+                    if (status == 1) {
+                        uexFileMgr.deleteFileByPath(pic);
+                        var image = obj.serverPath;
+                        App.authApi({
+                            url : 'hyw/submitReport',
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    reportId : reportId,
+                                    reason : reoprtReason.join(","),
+                                    remark : contentMsg,
+                                    image : image
+                                }
+                            },
+                            callBack : function(data) {
+                                App.closeLoading();
+                                if (data.code == 0) {
+                                    App.toast("举报信息提交成功，我们会尽快处理.");
+                                    uexFileMgr.deleteFileByPath(pic);
+                                    App.evalJs({
+                                        winName : 'report',
+                                        type : 1,
+                                        js : 'closeWin()'
+                                    });
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</html>

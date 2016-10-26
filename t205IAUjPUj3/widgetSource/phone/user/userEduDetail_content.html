@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub uinn ub-ac ub-f1">
+                <div class="ub-f1 ulev-5 t-gra">
+                    我的教育经历
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1 c-wh">
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    学校
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="school" placeholder="请输入学校名(必填)" type="text" class="ub-f1 tx-r txt-color" maxlength="10">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    专业
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="specialty" placeholder="请输入专业名(必填)" type="text" class="ub-f1 tx-r txt-color" maxlength="20">
+                    </div>
+                </div>
+            </div>
+            <div id="eduCational" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    学历
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        选择学历(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div id="startTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    在校开始年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择开始年份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="startMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    在校开始月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择开始月份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startMonth" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    在校结束年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择结束年份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    在校结束月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择结束月份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endMonth" selectedindex="0"></select>
+                </div>
+            </div>
+        </div>
+        <div class="ulev-5 uinn5 sc-text" style="background-color: #F9F9F9">
+            教育经历描述
+        </div>
+        <div class="ub ub-ver ub-f1 c-wh">
+            <div class="ub ub-ac ub-f1 ubb bc-border">
+                <div class="tx-r ulev-1 txt-gray ub-f1">
+                    <div class="uba bc-border uinput ub ub-f1">
+                        <textarea id="remark" placeholder="请填写在校期间参与的活动和获得的荣誉" type="text" class="ub-f1" style="min-height: 10em"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var type = 0;
+        var userinfo;
+        var eduStr;
+        var eduType;
+        var eduexpid;
+        var startTime = "请选择开始年份(必填)";
+        var endTime = "请选择结束年份(必填)";
+        var startMonth = "请选择开始月份(必填)";
+        var endMonth = "";
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                App.Logs(eduStr[data])
+                if (eduStr[data] != "取消") {
+                    $('#eduCational .txt-color').html(eduStr[data]);
+                }
+            }
+            loaddata();
+        })
+        function loadDateAndMonth() {
+            var year = new Date().getFullYear();
+           //console.log(year - 1970)
+            var option = "";
+            var option1 = "";
+            for (var i = 1970; i <= year; i++) {
+                option += "<option value=" + i + ">" + i + "</option>";
+            };
+            for (var i = 1; i <= 12; i++) {
+                option1 += "<option value=" + i + ">" + i + "</option>";
+            };
+            $("#startTime select").html(option);
+            option += "<option value='至今'>至今</option>"
+            $("#endTime select").html(option);
+            $("#startMonth select").html(option1);
+            $("#endMonth select").html(option1);
+        }
+
+        function loaddata() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadDateAndMonth();
+            eduType = App.getVal('eduType');
+            eduexpid = App.getVal('eduexpid');
+            eduStr = "中专,大专,本科,硕士,博士,博士后,其他,取消".split(",");
+            if (eduType == 0) {
+                App.authApi({
+                    url : "user/getUserEduExp",
+                    data : {
+                        params : {
+                            expId : eduexpid
+                        }
+                    },
+                    callBack : function(data) {
+                        App.Logs(JSON.stringify(data))
+                        if (data.code == 0) {
+                            //$('#startTime .txt-color').html(data.items.starttime);
+                            // $('#endTime .txt-color').html(data.items.endtime);
+                            $('#school').val(data.items.school);
+                            $('#specialty').val(data.items.specialty);
+                            $('#remark').val(data.items.remark);
+                            $('#eduCational .txt-color').html(data.items.educational);
+                            var tempStr = data.items.starttime;
+                            var tempStr1 = data.items.endtime;
+                            tempStr = tempStr.split("-");
+                            tempStr1 = tempStr1.split("-");
+                            if (tempStr.length > 1) {
+                                startTime = tempStr[0];
+                                startMonth = tempStr[1];
+                                $('#startTime .text').html(startTime);
+                                $('#startMonth .text').html(startMonth);
+                            }
+                            if (tempStr1[0] == "至今") {
+                                $('#endTime .text').html("至今");
+                                endTime = "至今";
+                                $('#endMonth').addClass("uhide");
+                            } else {
+                                endTime = tempStr1[0];
+                                endMonth = tempStr1[1];
+                                $('#endTime .text').html(endTime);
+                                $('#endMonth .text').html(endMonth);
+                            }
+                        }
+                        App.ajaxLoading(0);
+                    }
+                })
+            } else {
+                App.ajaxLoading(0);
+            }
+        }
+
+
+        appcan.button('#eduCational', '', function() {
+            uexWindow.actionSheet("选择学历", "取消", "中专,大专,本科,硕士,博士,博士后,其他");
+        })
+        function deleteEduExp() {
+            if (App.isNull(eduexpid)) {
+                return;
+            }
+            appcan.window.confirm({
+                title : '提醒',
+                content : '您确定要删除当前的学历信息吗？',
+                buttons : ['不了！我在想想', '是的！我要删除'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        App.openLoading({
+                            title : '提交数据',
+                            msg : "正在提交数据",
+                            canCancel : 1
+                        });
+                        App.authApi({
+                            url : "user/deleteUserEdu",
+                            data : {
+                                params : {
+                                    expId : eduexpid
+                                }
+                            },
+                            callBack : function(data) {
+                                App.closeLoading();
+                                if (data.code == 0) {
+                                    App.alertEx("学历删除成功", function() {
+                                        App.evalJs({
+                                            type : 0,
+                                            winName : "userEduExp",
+                                            js : 'loaddata()'
+                                        });
+                                        App.evalJs({
+                                            type : 1,
+                                            winName : 'userEduDetail',
+                                            js : 'closeWin()'
+                                        });
+                                    })
+                                } else {
+                                    App.alertEx(data.message);
+                                }
+
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function addOrUpdateEduExp() {
+            var school = appcan.trim($('#school').val());
+            var specialty = appcan.trim($('#specialty').val());
+            var eduCational = appcan.trim($('#eduCational .txt-color').html());
+            var remark = appcan.trim($('#remark').val());
+            var startDate = new Date();
+            var endDate = new Date();
+            if (App.isNull(school)) {
+                App.toast("请输入学校名称");
+                return;
+            }
+            if (App.isNull(specialty)) {
+                App.toast("请输入专业名称");
+                return;
+            }
+            if (App.isNull(eduCational) || eduCational == "选择学历(必填)") {
+                App.toast("请选技您的学历");
+                return;
+            }
+            if (startTime == "请选择开始时间(必填)" || App.isNull(startTime)) {
+                App.toast("请选择开始时间");
+                return;
+            }
+            if (endTime == "请选择结束时间(必填)" || App.isNull(endTime)) {
+                App.toast("请选择结束时间");
+                return;
+            }
+            startDate.setFullYear(startTime);
+            startDate.setMonth(startMonth - 1);
+            startDate.setDate(1);
+            var endTimeStr = "至今";
+            if (endTime != "至今") {
+                if (App.isNull(endMonth) || endMonth == "请选择结束月份") {
+                    App.toast("请选择结束月份");
+                    return;
+                }
+                endDate.setFullYear(endTime);
+                endDate.setMonth(endMonth - 1);
+                endDate.setDate(1);
+                if (startDate - endDate > 0) {
+                    App.toast("开始时间不能大于结束时间!");
+                    return;
+                }
+                endTimeStr = endTime + "-" + (endMonth < 10 ? "0" + endMonth : endMonth);
+            }
+            var startTimeStr = startTime + "-" + (startMonth < 10 ? "0" + startMonth : startMonth);
+            App.openLoading({
+                title : '提交数据',
+                msg : "正在提交数据...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : "user/addOrUpdateEduExp",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        school : school,
+                        specialty : specialty,
+                        eduCational : eduCational,
+                        startTime : startTimeStr,
+                        endTime : endTimeStr,
+                        remark : remark,
+                        type : eduType,
+                        expId : eduexpid
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("保存成功");
+                        setTimeOut(function() {
+                            App.evalJs({
+                                type : 0,
+                                winName : "userEduExp",
+                                js : 'loaddata()'
+                            });
+                            App.evalJs({
+                                type : 1,
+                                winName : 'userEduDetail',
+                                js : 'closeWin()'
+                            });
+                        }, 1500);
+                    } else {
+                        App.alertEx(data.message);
+                    }
+
+                }
+            });
+        }
+
+
+        appcan.select(".select", function(ele, value) {
+            var id = ele.attr("data-id");
+            switch(id) {
+            case "startTime":
+                startTime = value;
+                break;
+            case "startMonth":
+                startMonth = value;
+                break;
+            case "endTime":
+                endTime = value;
+                if (endTime == "至今") {
+                    $("#endMonth").addClass("uhide");
+                    endMonth = "";
+                } else {
+                    $("#endMonth").removeClass("uhide");
+                }
+                break;
+            case "endMonth":
+                endMonth = value;
+                break;
+            }
+        });
+    </script>
+</html>

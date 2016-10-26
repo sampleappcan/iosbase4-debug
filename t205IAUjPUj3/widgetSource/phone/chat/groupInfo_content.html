@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="groupInfo_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1 umar-t">
+            <div class="c-wh uinn bc-border ubb">
+                <ul onclick="changeHead()" ontouchstart="appcan.touch('btn-act')" class="ub t-bla ub-ac">
+                    <li class="ub-f1 ut-s ulev-5">
+                        群头像
+                    </li>
+                    <li class="ub-img1 umar-r userHeader" style="background-image: url(../wgtRes/comImg.png);min-width:3.5em;min-height: 3.5em"></li>
+                    <li class="fa fa-angle-right ulev2 sc-text"></li>
+                </ul>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1 c-wh">
+                <div class="ulev-5 umar-r">
+                    群名称
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="groupName" placeholder="请输入群名称" type="text" class="ub-f1 tx-r sc-text-active" maxlength="20" style="padding-right: 1.5em;">
+                    </div>
+                </div>
+            </div>
+            <div class="uinn ub ub-ae ulev-1 sc-text" style="margin-top: 0.8em">
+                群描述(<span class="charCount">0</span>/140)
+            </div>
+            <div class="uba bc-border uinput ub ub-f1 c-wh uinn ulev-1">
+                <textarea id="desc" oninput="textLimitCheck(140)" maxlength="140" placeholder="群主太懒了，什么也没留下" type="text" class="ub-f1"></textarea>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var group;
+        var lv1 = appcan.listview({
+            selector : "#listview1",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasControl : true,
+        });
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            group = App.getJson('groupInfo');
+            var groupNum = App.getVal('groupNumber');
+            var groupHeadUri = App.getVal('groupHeadUri');
+            $(".userHeader").css("background-image", "url(" + groupHeadUri + ")");
+            $('#groupName').val(group.groupName);
+            if (!App.isNull(group.groupDescription) && group.groupDescription != "群主太懒了，什么也没留下") {
+                $('#desc').val(group.groupDescription);
+            }
+            textLimitCheck(140);
+        }
+
+        function textLimitCheck(maxLength) {
+            var text = $('#desc').val();
+            var strlen = maxLength - text.length;
+            $(".charCount").html(text.length);
+            if (text.length > maxLength) {
+                $('#desc').val(text.substring(0, maxLength));
+            }
+        }
+
+        function uploadImg(pic) {
+            App.openLoading({
+                title : "",
+                msg : "正在更新头像...请稍后...",
+                canCancel : 1
+            });
+            App.uploadTMPFile(pic, 2, 480, function(status, obj) {
+                App.Logs("uploadImg:" + status + "," + App.toJsonStr(obj));
+                if (status == 1) {
+                    uexFileMgr.deleteFileByPath(pic);
+                    App.authApi({
+                        url : 'group/updateGroupLogo',
+                        data : {
+                            params : {
+                                groupId : group.groupId,
+                                fileName : obj.serverPath
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                App.setVal('groupHeadUri', App.headUri + data.items.logo);
+                                $('.userHeader').css('background-image', 'url(' + App.headUri + data.items.logo + ')');
+                                var param = {
+                                    chatType : "1", //0-单聊,1-群聊
+                                    action : "updateLogo$$" + group.groupId + "$$" + data.items.logo, //
+                                    toUsername : group.groupId,
+                                    ext : ""
+                                };
+                                uexEasemob.sendCmdMessage(App.toJsonStr(param));
+                            } else {
+                                App.alertEx(data.message);
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+        function updateGroupInfo() {
+            var groupName = appcan.trim($("#groupName").val());
+            var desc = appcan.trim($("#desc").val());
+            if (App.isNull(groupName)) {
+                App.toast("群名称不能为空");
+                return;
+            }
+            if (App.isNull(desc)) {
+                desc = "群主很懒，什么也没留下";
+            }
+            if (App.containSpecial(groupName)) {
+                App.toast("群名称不能包含特殊字符");
+                return;
+            }
+            if (App.containSpecial(desc)) {
+                App.toast("群描述不能包含特殊字符");
+                return;
+            }
+            App.openLoading({
+                title : "",
+                msg : "正在更新信息...请稍后...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : 'group/updateGroupInfo',
+                data : {
+                    params : {
+                        groupId : group.groupId,
+                        groupName : groupName,
+                        desc : desc
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        var param = {
+                            chatType : "1", //0-单聊,1-群聊
+                            action : "updateGroupInfo$$" + group.groupId + "$$" + groupName + "$$" + desc, //
+                            toUsername : group.groupId
+                        };
+                        uexEasemob.sendCmdMessage(App.toJsonStr(param));
+                        group.groupDescription = desc;
+                        group.groupName = groupName;
+                        group.groupSubject = desc;
+                        App.setVal("groupInfo", group);
+                        App.evalJs({
+                            winName : "groupInfo",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function changeHead() {
+            uexImage.onCropperClosed = function(data) {
+                App.Logs("uexImage.onCropperClosed:" + data);
+                var obj = App.toJson(data);
+                if (obj.isCancelled == false || obj.isCancelled == "false") {
+                    uploadImg(obj.data);
+                }
+            }
+            uexCamera.cbOpen = function(opCode, dataType, data) {
+                if (!App.isNull(data)) {
+                    var params = {
+                        src : data,
+                        quality : 0.8,
+                        usePng : false,
+                        mode : 1
+                    }
+                    uexImage.openCropper(App.toJsonStr(params));
+                }
+            }
+            uexImage.onPickerClosed = function(data) {
+                var obj = JSON.parse(data);
+                if (obj.isCancelled == false || obj.isCancelled == "false") {
+                    var params = {
+                        src : obj.data[0],
+                        quality : 0.8,
+                        usePng : false,
+                        mode : 1
+                    }
+                    uexImage.openCropper(App.toJsonStr(params));
+                }
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 70);
+                    break;
+                case 1:
+                    var data = {
+                        min : 1,
+                        max : 1,
+                        quality : 0.7,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                }
+            }
+            uexWindow.actionSheet("", "取消", "拍照,从相册选择");
+        }
+    </script>
+</html>

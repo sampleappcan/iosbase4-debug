@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../user/userResumeDetail_content/css/main.css">
+        <link rel="stylesheet" href="orderDetail_content/css/main.css">
+        <style>
+            .btn1 {
+                padding: .2em 0.7em;
+                text-align: center;
+                font-size: 0.9125em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub uinn-eo1 sc-bg ubt bc-border ub-ver">
+            <div class="ub ub-f1 ub-ac">
+                <div class="ub-img umw1 umh1 status umar-r"></div>
+                <div class="ub ub-f1 ">
+                    <div class="ulev-5">
+                        订单状态:
+                    </div>
+                    <div id="status" class="ulev-5 t-red">
+                        超时已过期
+                    </div>
+                </div>
+            </div>
+            <div class="ulev-5 t-red uhide">
+                将在(<span id="remainTime"></span>)后过期
+            </div>
+        </div>
+        <div class="ub ub-f1 ub-ver recruitMent uhide">
+            <div class="t-red ulev-5 uinn">(注意：担保金将被支付到海员港平台,待上船成功后将会退回船员90%,其中10%为平台手续费)</div>
+            <div class="ub t-gra sc-bg uinn ubb bc-border">
+                <div class="ub-img1 resume_info umw1 umh1"></div>
+                <div class="ulev-5 umar-l">
+                    招聘信息
+                </div>
+            </div>
+            <div class="ub ub-f1 ub-ver ubb bc-border uinn sc-bg" >
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div  class="t-gra">
+                        招聘职位:
+                    </div>
+                    <div id="jobTitle" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div  class="t-gra">
+                        薪资待遇:
+                    </div>
+                    <div id="payroll" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div  class="t-gra">
+                        证书要求:
+                    </div>
+                    <div id="certificateLv" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船舶类型:
+                    </div>
+                    <div id="shipType" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船舶总吨:
+                    </div>
+                    <div id="shipTonnage" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        航行区域:
+                    </div>
+                    <div id="shipLine" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        船龄:
+                    </div>
+                    <div id="shipAge" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        上船时间:
+                    </div>
+                    <div id="onBoardTime" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        上船地点:
+                    </div>
+                    <div id="onBoardLocation" class="umar-l">
+
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        合同期限:
+                    </div>
+                    <div id="contactDeadline" class="umar-l">
+
+                    </div>
+                </div>
+                <div id="remark" class="ub ub-f1 ulev-5 umar-t ub-ver">
+                    <div class="t-gra">
+                        具体要求:
+                    </div>
+                    <div class="ub ub-f1 ub-ver uinn contentP" style="padding-left: 0.4em;padding-right: 0.4em;height: 3.5em">
+                        <div  class="content" style="text-indent: 2em"></div>
+                    </div>
+                    <div id="more" class="ub ub-pc ub-f1 ubt bc-border uhide" style="padding: 0.2em">
+                        <div class="ulev-5">
+                            展开
+                        </div>
+                        <div class="fa fa-angle-double-down"></div>
+                    </div>
+                </div>
+                <div class="ub ub-f1 ulev-5 umar-t">
+                    <div class="t-gra">
+                        发布时间:
+                    </div>
+                    <div id="regTime" class="umar-l">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ub sc-bg-active ub-ac" style="margin-top: 0.625em"></div>
+        <div class="sc-bg">
+            <div class="ub ub-ac ">
+                <div class="ub ub-ac ub-f1 " style="padding: 0.25em">
+                    <div id="sellerName" class="ub-f1 uinn-order1 ulev-5 ut-s" style="margin-right: 0.6em;margin-left: 0.4em;color: #3D4245">
+                        收款项目
+                    </div>
+                    <div class="fa fa-angle-right sc-text" style="font-size: 1.3em"></div>
+                </div>
+            </div>
+            <div id="itemList" style="background-color: #F8F8F8">
+                <ul></ul>
+            </div>
+        </div>
+        <div class="uinn-eo3 ubb ubt bc-border">
+            <div class="ub sc-bg ub-ac" style="padding:0.4em">
+                <div class="ub-f1 ulev-5 ">
+                    实付款:
+                </div>
+                <div class="ulev-5 tx-r umar-ar3 sc-text-warn">
+                    ￥<span id="totalMoney"></span>
+                </div>
+            </div>
+        </div>
+        <div class="uinn-eo3 ubb bc-border sc-bg">
+            <div class="ub ub-ver ">
+                <div class="ulev-5 " style="color: #3D4245;padding-top: 0.4em;padding-left: 0.4em;padding-right: 0.4em">
+                    订单号:<span id="orderId"></span>
+                </div>
+                <div class="ulev-5 " style="color: #3D4245;padding:0.4em">
+                    订单时间:<span id="orderTime"></span>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var orderId = "";
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            orderId = App.getVal("orderId");
+            getOrderDetail();
+        }
+
+        function getOrderDetail() {
+            App.authApi({
+                url : "pay/getOrderDetail",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $("#orderId").html(data.items.orderid);
+                        $("#orderTime").html(data.items.ordertime);
+                        $("#totalMoney").html(data.items.totalmoney.toFixed(2));
+                        $("#status").html(App.getOrderStatus(data.items.status));
+                        $("#status").attr("status", data.items.status);
+                        if (data.items.status == 1 || data.items.status == 0) {
+                            var time = 1000 * 60 * 30;
+                            var endTime = getDate(data.items.ordertime).getTime() + time;
+                            var nowT = App.getLocalTime(endTime, "yyyy-MM-dd hh:mm:ss");
+                            var nowTime = new Date().getTime();
+                            if (nowTime >= endTime) {
+                                $("#status").html("超时已过期");
+                                data.items.status = 7;
+                            } else {
+                                $("#remainTime").parent().removeClass("uhide");
+                                $("#remainTime").html(nowT);
+                            }
+                        }
+                        if (data.items.ordertype == 0) {
+                            $(".recruitMent").removeClass("uhide");
+                            loadRecruitMent(data.items.extid);
+                        }
+                        var d = '';
+                        for (var i = 0; i < data.items.itemList.length; i++) {
+                            d += createItemListHtml(data.items.itemList[i], i);
+                        };
+                        $("#itemList ul").html(d);
+                        App.evalJs({
+                            winName : "orderDetail",
+                            type : 1,
+                            js : "showBtn(" + data.items.status + ",'" + userinfo.usertype + "')"
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function getDate(strDate) {
+            var date = eval('new Date(' + strDate.replace(/\d+(?=-[^-]+$)/, function(a) {
+                return parseInt(a, 10) - 1;
+            }).match(/\d+/g) + ')');
+            return date;
+        }
+
+        function createItemListHtml(obj, index) {
+            var h = '';
+            var uri = App.downIp + "item_Image/" + obj.itemuri;
+            h += '<li class="uinn-eo4 ub ub-ac">';
+            h += '   <div class="ub ub-f1">';
+            h += '      <div class="uh-app1 uw-app2 ub-img1 uc-a1 " style="background-image:url(' + uri + ');margin-right: 0.4em;"></div>';
+            h += '      <div class="ub ub-ver ub-f1">';
+            h += '         <div class="ub ub-ac ub-f1 ulev-5 mar-ar1 ut-m">' + obj.itemname + '</div>';
+            h += '         <div class="ub ub-ac ub-f1 ulev-5 mar-ar1 ut-m">' + obj.remark + '</div>';
+            h += '      </div>';
+            h += '      <div class="ub ub-ver ub-ae">';
+            h += '          <div class="ufm1 ulev-1 sc-text-warn">￥' + obj.itempirce.toFixed(2) + '</div>';
+            h += '          <div class="t-gra-48 ufm1 ulev-1" style="margin-top: 1.2em">x' + obj.itemcount + '</div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function loadRecruitMent(id) {
+            App.authApi({
+                url : "user/getUserRecruitMent",
+                data : {
+                    params : {
+                        recruitId : id
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $("#jobTitle").html(data.items.jobtitle);
+                        $("#payroll").html(data.items.payroll + data.items.payrolltype + "/月");
+                        $("#compName").html(data.items.compname);
+                        $("#certificateLv").html(data.items.certificatelv);
+                        $("#shipType").html(data.items.shiptype);
+                        $("#shipTonnage").html(data.items.shiptonnage);
+                        $("#shipLine").html(data.items.shipline);
+                        $("#shipAge").html(data.items.shipage);
+                        var onboardtime = data.items.onboardtime;
+                        if (!App.isNull(onboardtime)) {
+                            onboardtime = onboardtime.split("-");
+                            onboardtime = onboardtime[1] + "月" + onboardtime[2] + "日";
+                        } else {
+                            onboardtime = "";
+                        }
+                        $("#onBoardTime").html(onboardtime);
+                        $("#onBoardLocation").html(data.items.onboardlocation);
+                        $("#contactDeadline").html(data.items.contactdeadline);
+                        $("#remark .content").html(data.items.remark);
+                        if ($("#remark .content").height() > $("#remark .contentP").height()) {
+                            $("#remark .contentP").css("height", '');
+                            $("#remark .content").addClass("spec-title");
+                            $("#remark [id='more']").removeClass("uhide");
+                        } else {
+                            $("#remark .contentP").css("height", '');
+                        }
+                        var regtime = data.items.regtime;
+                        if (!App.isNull(regtime)) {
+                            regtime = regtime.split(" ");
+                            regtime = regtime[0];
+                        } else {
+                            regtime = "最近";
+                        }
+                        $("#regTime").html(regtime);
+                    }
+                }
+            })
+        }
+
+        function payNow() {
+            var status = parseInt($("#status").attr("status"));
+            if (status == 0 || status == 1) {
+                var orderTime = appcan.trim($("#orderTime").html());
+                var time = 1000 * 60 * 30;
+                var endTime = getDate(orderTime).getTime() + time;
+                var nowTime = new Date().getTime();
+                if (nowTime >= endTime) {
+                    $("#status").html("超时已过期");
+                    App.toast("订单已超时");
+                    return;
+                }
+            } else if (status == 3) {
+                App.toast("订单已经支付过了");
+                return;
+            }
+            App.setVal("orderId", orderId);
+            App.openWin({
+                backName : "orderPreview",
+                name : 'confirmPay',
+                url : '../pay/confirmPay.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function onBoardConfirm() {
+            var status = parseInt($("#status").attr("status"));
+            if (status != 3) {
+                App.toast("该订单还未付款，不能进行上船确认.");
+                return;
+            }
+            App.authApi({
+                url : "pay/onBoardConfirm",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var win = App.getWin("chatRoom");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "chatRoom",
+                                js : "onBoardConfirm('" + data.items.orderId + "','" + data.items.chatId + "')"
+                            });
+                        }
+                        App.evalJs({
+                            winName : "orderDetail",
+                            type : 1,
+                            js : "closeWin()"
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function refound() {
+            var status = parseInt($("#status").attr("status"));
+            if (status != 4) {
+                App.toast("该订单未上船确认，暂不能发起退款申请.");
+                return;
+            }
+            App.authApi({
+                url : "pay/refound",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.alertEx("退款申请成功,客服会在1-2个工作日内将钱退回至你支付时的支付宝账号，请注意查看.", function() {
+                            App.evalJs({
+                                winName : "orderDetail",
+                                type : 1,
+                                js : "closeWin()"
+                            })
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

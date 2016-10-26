@@ -1,0 +1,204 @@
+.c-gra-list {
+    background-color: #bbbbbb;
+}
+.umar-r-list {
+    margin-right: 0.4375em;
+}
+.uwh-list {
+    width: 3.6em;
+    height: 1.8em;
+}
+.uc-a-list {
+    -webkit-border-radius: 1.8em;
+    border-radius: 1.8em;
+}
+.marg-bottom {
+    /*margin-bottom: 2em;*/
+    padding-bottom: 2em;
+}
+.send-msg {
+    margin-top: 0.5em;
+    margin-bottom: .5em;
+}
+.receive-msgs {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+.receive-msg {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+.r-user {
+    /*border-radius:2.2em;
+     -webkit-border-radius:2.2em;*/
+    width: 2.5em;
+    height: 2.5em;
+}
+.r-text {
+    padding: .3em .5em;
+    /*border: 1px #BABABA solid;*/
+    border-radius: .3em;
+    word-break: break-all;
+    text-align: left;
+    background-color: #f1f1f1;
+}
+.pingTriangle {
+    position: absolute;
+    top: 0.5em;
+    right: 2.8em;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    border-style: dashed dashed dashed solid;
+    border-color: transparent transparent transparent #fff;
+    border-width: 0.425em;
+}
+.pingTriangleleft {
+    position: absolute;
+    top: 0.5em;
+    left: 2.8em;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    border-style: dashed solid dashed dashed;
+    border-color: transparent #c4effe transparent transparent;
+    border-width: 0.425em;
+}
+.pingTriangleleft1 {
+    position: absolute;
+    top: 0.5em;
+    right: 6.3em;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    border-style: dashed solid dashed dashed;
+    border-color: transparent #FFF transparent transparent;
+    border-width: 0.425em;
+}
+.l-users {
+    width: 2em;
+    height: 2em;
+    margin-left: .5em;
+}
+.l-user {
+    /* border-radius:2.2em;
+     -webkit-border-radius:2.2em;*/
+    width: 2.5em;
+    height: 2.5em;
+}
+.l-text {
+    padding: .3em .5em;
+    border: 1px #FFF solid;
+    border-radius: .3em;
+    word-break: break-all;
+    text-align: left;
+}
+.icon_group {
+    background-image: url(./myImg/icon_group.png);
+}
+.icon_chat{
+    background-image: url(./myImg/chat_icon.png);
+}
+.tips {
+    margin-bottom: 0.8em;
+    margin-top: 0.8em;
+    background-color: rgba(0,0,0,0.1);
+    padding: 0.3em;
+}
+.timestr {
+    margin-bottom: 0.8em;
+    margin-top: 0.8em;
+}
+.timestr span {
+    background-color: rgba(0,0,0,0.1);
+    padding: 0.3em;
+}
+.leftUserHead {
+    width: 2.8em;
+    height: 2.8em;
+    float: left;
+    display: inline-block;
+    margin-right: 0.8em;
+}
+.leftContent {
+    background-color: #c4effe;
+    display: inline-block;
+    padding: 0.7em 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+    -webkit-border-radius: 0.3em;
+    line-height: 1.3em;
+    overflow: hidden;
+    max-width: 70%;
+}
+.leftContent span {
+    line-height: 1em;
+}
+.rightContent {
+    text-align: left;
+    background-color: #fff;
+    display: inline-block;
+    padding: 0.7em 1em;
+    word-wrap: break-word;
+    word-break: break-all;
+    -webkit-border-radius: 0.3em;
+    line-height: 1.3em;
+    overflow: hidden;
+    max-width: 70%;
+}
+.rightContent span {
+    line-height: 1em;
+}
+.rightUserHead {
+    width: 2.8em;
+    height: 2.8em;
+    float: right;
+    display: inline-block;
+    margin-left: 0.8em;
+}
+.spec-content {
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.rightGroupContent {
+    text-align: left;
+    background-color: #fff;
+    display: inline-block;
+    padding: 0.7em 0.5em;
+    word-wrap: break-word;
+    word-break: break-all;
+    -webkit-border-radius: 0.3em;
+}
+.leftGroupContent {
+    background-color: #c4effe;
+    display: inline-block;
+    padding: 0.7em 0.5em;
+    word-wrap: break-word;
+    word-break: break-all;
+    -webkit-border-radius: 0.3em;
+}
+.gpingTriangle {
+    position: absolute;
+    top: 1.5em;
+    right: 2.8em;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    border-style: dashed dashed dashed solid;
+    border-color: transparent transparent transparent #fff;
+    border-width: 0.425em;
+}
+.gpingTriangleleft {
+    position: absolute;
+    top: 1.5em;
+    left: 2.8em;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    border-style: dashed solid dashed dashed;
+    border-color: transparent #c4effe transparent transparent;
+    border-width: 0.425em;
+}

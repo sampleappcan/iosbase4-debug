@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userQrCode_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div style="margin: 0.625em">
+                <div id="listview1"  class="uba bc-border c-wh">
+                    <ul>
+                        <li class="ub t-bla ub-ac lis" data-index="0">
+                            <ul class="ub ub ub-ver umar-r">
+                                <li class="">
+                                    <div id="userHead" class="ub-img1" style="background-image:url(../wgtRes/comImg.png);width: 3.5em;height: 3.5em"></div>
+                                </li>
+                            </ul>
+                            <ul class="ub-f1 ub ub-pj ub-ac">
+                                <ul class="ub-f1 ub ub-ver marg-l">
+                                    <li id="cnName" class="bc-text ub ub-ver ulev1">
+
+                                    </li>
+                                    <li id="compName" class="ulev-1 uinn3 t-gra">
+
+                                    </li>
+                                    <li id="jobTitle" class="ulev-1  uinn3 t-gra">
+
+                                    </li>
+                                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div style="margin-top: 1.5em">
+                    <div class="ub ub-ac ub-pc ub-f1">
+                        <div>
+                            <img id="qrcode" src="" style="width: 100%" />
+                        </div>
+                    </div>
+                </div>
+                <div class="umar-at2 t-gra ulev1 tx-c">
+                    用海员港扫瞄二维码,加我好友
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            $('#qrcode').css('width', window.innerWidth * 0.7)
+            App.ajaxLoading(1, true);
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            var userId = App.getVal('userId');
+            if (App.isNull(userId)) {
+                userId = userinfo.userid;
+            }
+            App.authApi({
+                url : 'hyw/getUserQrCode',
+                data : {
+                    params : {
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    //App.Logs(App.toJsonStr(data))
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        var headuri = App.isNull(data.items.headuri) ? "../wgtRes/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + "t/100x100/" + data.items.headuri;
+                        }
+                        $('#userHead').css('background-image', 'url(' + headuri + ')');
+                        $('#cnName').html(data.items.cnname);
+                        $('#compName').html(data.items.compname);
+                        $('#jobTitle').html(data.items.jobtitle);
+                        $('#qrcode').attr('src', App.downIp + "user_Image/qrcodeImg/" + data.items.qrcodeimg)
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

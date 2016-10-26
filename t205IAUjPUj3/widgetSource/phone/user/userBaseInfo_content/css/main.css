@@ -1,0 +1,20 @@
+.reader-c-bla{
+	background-color:#000000;
+}
+.reader-base{
+	min-height: 1em; 
+	min-width: 1.2em;
+	margin:0.5em 0 0.5em 0;
+}
+.reader-c-gra{
+	background-color:#d4d1ca;
+}
+.reader-t-color{
+	color:#26221f;
+}
+.reader-umw15{
+	min-width:14em;
+}
+.reader-border1{
+	border-top:1px solid rgba(245,245,245,0.3);border-bottom:1px solid rgba(1,1,1,1);
+}

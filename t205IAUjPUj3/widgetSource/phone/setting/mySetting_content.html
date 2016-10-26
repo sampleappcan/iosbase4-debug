@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="mySetting_content/css/main.css">
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver" style="padding-top: 0.625em;height:100%;">
+            <div class="umar-t c-wh ubr ubl ubt bc-border" id="sortList"></div>
+            <div class="umar-at1 uhide" style="margin-top:0.175em;">
+                <ul id="privacySetting" onclick="openPrivacySetting()" ontouchstart="appcan.touch('btn-act')" class="c-wh ubb ubt ub bc-border t-bla ub-ac lis">
+                    <li class="lis-icon-s ub ub-ac ub-pc">
+                        <div class="ub-img bg-remindnew uwh-icon5"></div>
+                    </li>
+                    <li class="ub-f1 ut-s">
+                        隐私设置
+                    </li>
+                </ul>
+                <ul id="messageSet" onclick="openSetting()" ontouchstart="appcan.touch('btn-act')" class="c-wh ubb ubt ub bc-border t-bla ub-ac lis">
+                    <li class="lis-icon-s ub ub-ac ub-pc">
+                        <div class="ub-img bg-remindnew uwh-icon5"></div>
+                    </li>
+                    <li class="ub-f1 ut-s">
+                        消息提醒设置
+                    </li>
+                </ul>
+                <ul onclick="clearCache()" ontouchstart="appcan.touch('btn-act')" class="c-wh ubb ub bc-border t-bla ub-ac lis">
+                    <li class="lis-icon-s ub ub-ac ub-pc">
+                        <div class="ub-img bg-clearup uwh-icon5"></div>
+                    </li>
+                    <li class="ub-f1 ut-s">
+                        清除缓存
+                    </li>
+                </ul>
+                <ul onclick="about()" ontouchstart="appcan.touch('btn-act')" class="c-wh ubb ub bc-border t-bla ub-ac lis">
+                    <li class="lis-icon-s ub ub-ac ub-pc">
+                        <div class="ub-img bg-aboutus uwh-icon5"></div>
+                    </li>
+                    <li class="ub-f1 ut-s">
+                        关于海员港
+                    </li>
+
+                </ul>
+
+            </div>
+            <div class="ub ub-f1 ub-ac ub-pc umar-at1 " style="position:absolute;bottom:2em;width:100%;">
+                <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" style="width:50%" id="btn2">
+                    退出当前账号
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var lv1 = appcan.listview({
+            selector : "#sortList",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1,
+            hasCheckbox : false,
+            align : 'left'
+        });
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            userinfo = App.getUserInfo();
+            var arrData = [{
+                "sort" : "隐私设置",
+                "subTitle" : "",
+                "id" : 4
+            }, {
+                "sort" : "消息提醒设置",
+                "subTitle" : "",
+                "id" : 0
+            }, {
+                "sort" : "邀请好友加入海员港",
+                "subTitle" : "",
+                "id" : 1
+            }, {
+                "sort" : "清除缓存",
+                "subTitle" : "",
+                "id" : 2
+            }, {
+                "sort" : "关于海员港",
+                "subTitle" : "",
+                "id" : 3
+            }];
+            var listData = [];
+            for (var i = 0,
+                len = arrData.length; i < len; i++) {
+                var list = {
+                    id : arrData[i].id,
+                    title : arrData[i].sort,
+                    subTitle : arrData[i].subTitle
+                }
+                listData.push(list);
+            }
+            lv1.set(listData);
+        })
+        lv1.on('click', function(ele, data, subobj) {
+            switch(parseInt(data.id)) {
+            case 0:
+                App.openWin({
+                    backName : 'mySetting',
+                    name : 'messageSetting',
+                    url : 'messageSetting.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            case 1:
+                var shareData = {
+                    thumbImg : "res://version.png",
+                    wedpageUrl : App.userRegHtmlUrl + userinfo.userid,
+                    title : "跟我一起玩海员港吧,找工作找人才,交流行业新鲜事",
+                    description : "海员港-海员的港湾,欢迎您加入.",
+                    windowName : "mySetting"
+                }
+                App.setVal("shareData", shareData);
+                App.evalJs({
+                    winName : "mySetting",
+                    type : 1,
+                    js : "openShareMunu()"
+                });
+                break;
+            case 2:
+                clearCache();
+                break;
+            case 3:
+                App.openWin({
+                    backName : 'mySetting',
+                    name : 'about',
+                    url : 'about.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            case 4:
+                App.openWin({
+                    backName : 'mySetting',
+                    name : 'userPrivacySetting',
+                    url : 'userPrivacySetting.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            }
+        })
+        appcan.button('#btn2', 'btn-act', function() {
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定要退出登陆吗?',
+                buttons : ['先不退出', '去意已决'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        if (!App.isNull(userinfo)) {
+                            var opts = {
+                                userId : userinfo.userid,
+                                loginType : "APP"
+                            }
+                            App.userLogout(opts, function(data) {
+                                App.openWin({
+                                    backName : "root",
+                                    name : 'indexMain',
+                                    url : '../main.html',
+                                    type : 0,
+                                    aniId : 0,
+                                    animDuration : 200
+                                });
+                            })
+                        }
+                    }
+                }
+            });
+
+        })
+        function about() {
+            App.openWin({
+                backName : 'mySetting',
+                name : 'about',
+                url : 'about.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function openSetting() {
+            App.openWin({
+                backName : 'mySetting',
+                name : 'messageSetting',
+                url : 'messageSetting.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function clearCache() {
+            uexWidgetOne.cleanCache();
+        }
+    </script>
+
+</html>

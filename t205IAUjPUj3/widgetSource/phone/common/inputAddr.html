@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .lis {
+                padding: 0.25em;
+                min-height: 2em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div id="title" class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">
+                    详细地址
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    确定
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l" style="overflow: hidden">
+                <div class="ub ub-ver">
+                    <!--列表-->
+                    <div class="ub ub-ver ub-f1">
+                        <ul  class="ubb ub bc-border t-bla ub-ac ub-f1">
+                            <li class="ub tx-r ub-f1 ub-ac" style="padding-left: 0.825em;padding-right: 0.825em">
+                                <div class="uinput ub ub-f1">
+                                    <textarea id="inputTxt" placeholder="请输入详细地址" type="text" class="ub-f1" maxlength="100"></textarea>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="listview" class="ubt bc-border sc-bg "></div>
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            userinfo = App.getUserInfo();
+            $('#inputTxt').focus();
+            if (!App.isNull(userinfo.compaddr)) {
+                $('#inputTxt').val(userinfo.compaddr);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.showSoftKeyboard();
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+
+        appcan.button("#nav-left", "btn-act", function() {
+            closeWin();
+        })
+
+        appcan.button('#nav-right', 'btn-act', function() {
+            var txt = appcan.trim($('#inputTxt').val());
+            if (!App.isNull(txt)) {
+                App.authApi({
+                    url : 'user/updateUserInfo',
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            updateKey : "compAddr",
+                            updateVal : txt
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            App.evalJs({
+                                type : 0,
+                                winName : "userInfo",
+                                js : 'setUserAddr(\'' + txt + '\')'
+                            })
+                            closeWin()
+                        } else {
+                            App.alertEx(data.message)
+                        }
+                    }
+                });
+            }
+        })
+        function closeWin(type) {
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+    </script>
+</html>

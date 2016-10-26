@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+    <plugin
+        uexName="uexUpdate" version="3.0.12" build="12">
+        <info>12:补丁包下载请求头增加"Accept"</info>
+        <build>11.3:解决升级更新失败后点击"重试"按钮无效的问题</build>
+        <build>11.2:更新失败时由回调改为之前的自动提示</build>
+        <build>11.1:增加uexUpdate.onWidgetPatchUpdate回调方法,解决启动卡死的问题</build>
+        <build>10:增加uexUpdate.onWidgetPatchUpdate回调方法</build>
+        <build>9:支持增量更新</build>
+        <build>8:配合引擎修复objc_msgSend方法在 arm64 上崩溃问题</build>
+        <build>7:支持arm64</build>
+        <build>6:修复doUpdate无法提示更新的bug</build>
+        <build>5:doUpdate方法改为在子线程中使用异步请求向服务器上报</build>
+        <build>4:doUpdate方法改为在子线程中使用异步请求向服务器上报</build>
+        <build>3:修复提示网络链接错误的问题</build>
+        <build>2:删除mLoadingView相关代码</build>
+        <build>1:升级的相关功能</build>
+    </plugin>
+</uexplugins>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userCertificateDetail_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="bodyCont" class="ub ub-ver ub-f1">
+            <ul>
+                
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var certData;
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            certData = App.getJson("certData");
+            loadCertList()
+        }
+
+        function loadCertList() {
+            var list = certData.certList;
+            var d = '';
+            for (var i = 0; i < list.length; i++) {
+                d += createCertHtml(list[i]);
+            };
+            $("#bodyCont").html(d);
+        }
+
+        function createCertHtml(obj) {
+            var h = '';
+            h += '<li class="ub ub-ver uinn-a1 ub-f1">';
+            h += '   <div class="uba bc-border c-wh">';
+            if (obj.certificateid) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">证书编号 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.certificateid + '</li>';
+                h += '</ul>';
+            }
+            if (obj.shippingline) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">适用航线</li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.shippingline + '</li>';
+                h += '</ul>';
+            }
+            if (obj.jobtitle) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">证书职务</li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.jobtitle + '</li>';
+                h += '</ul>';
+            }
+            if (obj.trainingname) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">培训项目 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.trainingname + '</li>';
+                h += '</ul>';
+            }
+            if (obj.doctor) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">主检医师 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.doctor + '</li>';
+                h += '</ul>';
+            }
+            if (obj.issueoffice) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">签发机关 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.issueoffice + '</li>';
+                h += '</ul>';
+            }
+            if (obj.issuedate) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">签发日期 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.issuedate + '</li>';
+                h += '</ul>';
+            }
+            if (obj.validitydate) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">有效期至 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.validitydate + '</li>';
+                h += '</ul>';
+            }
+            if (obj.status) {
+                h += '<ul  class="ubb ub bc-border bc-text ub-ac uinn-a9">';
+                h += '   <li class="uw-infor ub-f1 sc-text  umar-r-infor ulev-5" style="min-width:4em">证书状态 </li>';
+                h += '   <li class="ub-f1 ulev-5 ut-m tx-r">' + obj.status + '</li>';
+                h += '</ul>';
+            }
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+    </script>
+</html>

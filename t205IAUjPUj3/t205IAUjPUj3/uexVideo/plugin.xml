@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexVideo">
+        <method name="open"></method>
+        <method name="record"></method>
+        <method name="openPlayer"></method>
+        <method name="closePlayer"></method>
+    </plugin>
+</uexplugins>

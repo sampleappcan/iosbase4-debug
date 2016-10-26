@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="jobTitlePop_content/css/main.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.5em;
+                min-height: 2.2em;
+            }
+            .leftBg {
+                background-color: #EDF0F9;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="c-wh-pLG" style="top:0;padding:0;background: rgba(0, 0, 0, 0.3);height: 100%"></div>
+        <div class="ub ub-f1 " style="width:100%;height: 70%;overflow: hidden;position: absolute;top:0;z-index: 999999">
+            <div id="listview1" class="sc-bg tx-c us" >
+                <ul>
+                    <li data-id="shipLine" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2">
+                        <div class="line1 ulev-5 ub-f1">
+                            船舶航线
+                        </div>
+                    </li>
+                    <li data-id="date" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2 leftBg">
+                        <div class="line1 ulev-5 ub-f1">
+                            发布日期
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="listview" class=" sc-bg tx-c us ub-f1" >
+                <ul></ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/options.js"></script>
+        <script src="../js/iscorll.js"></script>
+    </body>
+    <script>
+        var jobCondition;
+        var rightScroll;
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            jobCondition = App.getJson("jobCondition");
+            rightScroll = new IScroll('#listview', {
+                useTransform : true,
+                useTransition : true,
+                HWCompositing : true,
+                scrollbars : false,
+                mouseWheel : false,
+                interactiveScrollbars : false,
+                shrinkScrollbars : 'clip',
+                fadeScrollbars : false,
+                scrollY : true,
+                bounce : false,
+                probeType : 1,
+                click : true
+            });
+            loadRightScroll("shipLine");
+        }
+
+
+        $("#listview1").on("click", "li", function(evt) {
+            var id = $(this).attr("data-id");
+            $("#listview1 li").addClass("leftBg");
+            $(this).removeClass("leftBg");
+            loadRightScroll(id);
+        })
+        function loadRightScroll(type) {
+            var dataList = [];
+            var icon = "unselect_icon";
+            if (type == "shipLine") {
+                dataList = lineAreaArray;
+                if (App.isNull(jobCondition) || App.isNull(jobCondition.shipLine)) {
+                    icon = "select_icon";
+                }
+            } else {
+                dataList = [{
+                    id : 3,
+                    name : "近三天"
+                }, {
+                    id : 7,
+                    name : "近七天"
+                }, {
+                    id : 15,
+                    name : "近半个月"
+                }, {
+                    id : 30,
+                    name : "近一个月"
+                }]
+                if (App.isNull(jobCondition) || App.isNull(jobCondition.date)) {
+                    icon = "select_icon";
+                }
+            }
+            var d = '';
+            d += '<li data-id="" data-type="'+type+'" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+            d += '   <div class="line1 ulev-5 ub-f1">不限</div>';
+            d += '   <div class="ub ub-ac ub-pc" style="margin-right: 1em">';
+            d += '      <div class="ub ub-img ' + icon + '" style="min-width: 1.5em;min-height: 1.5em"></div>';
+            d += '   </div>';
+            d += '</li>';
+            for (var i = 0; i < dataList.length; i++) {
+                d += createHtml(dataList[i], type);
+            };
+            $("#listview ul").html(d);
+            $("#listview").on("click", "li", function(evt) {
+                var target = $(evt.target);
+                var id = $(this).attr('data-id');
+                var type = $(this).attr("data-type");
+                if (App.isNull(jobCondition)) {
+                    jobCondition = {};
+                }
+                jobCondition[type] = id;
+                App.setVal("jobCondition", jobCondition);
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    js : "loadData()"
+                });
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    type : 1,
+                    js : "setFilter()"
+                });
+                closepop();
+            })
+            rightScroll.refresh();
+        }
+
+        function createHtml(str, type) {
+            var h = '';
+            var icon = "unselect_icon";
+            if (type == "shipLine") {
+                if (!App.isNull(jobCondition) && appcan.trim(jobCondition.shipLine) == appcan.trim(str)) {
+                    icon = "select_icon";
+                }
+            } else {
+                if (!App.isNull(jobCondition) && appcan.trim(jobCondition.date) == appcan.trim(str.id)) {
+                    icon = "select_icon";
+                }
+            }
+            var idvalue = "";
+            if ( typeof str == "string") {
+                idvalue = str;
+            } else {
+                idvalue = str.id;
+                str = str.name;
+            }
+            h += '<li data-id="' + idvalue + '" data-type="'+type+'" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+            h += '   <div class="line1 ulev-5 ub-f1">' + str + '</div>';
+            h += '   <div class="ub ub-ac ub-pc" style="margin-right: 1em">';
+            h += '      <div class="ub ub-img ' + icon + '" style="min-width: 1.5em;min-height: 1.5em"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+
+        appcan.button("#pop", "", function(evt) {
+            closepop();
+        })
+        function closepop() {
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : "closePop()"
+            })
+        }
+    </script>
+</html>

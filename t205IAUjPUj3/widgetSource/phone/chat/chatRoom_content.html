@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="chatRoom_content/css/main.css">
+        <style>
+            .umw2 {
+                min-width: 2em;
+            }
+            .umh4 {
+                min-height: 2em;
+            }
+            .spec-content {
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                word-break: break-all;
+            }
+            .topTips {
+                background-color: #FCB606;
+                position: fixed;
+                top: 0;
+                z-index: 9999;
+                color: #FFFFFF;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" style="background-color: #EBEBEB" ontouchstart>
+        <div class="ub ub-ver ub-f1 bc-text uinn marg-bottom" id="list">
+            <ul>
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/Base64-80.js"></script>
+        <script src="../wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var status = false;
+        var sendId;
+        var myId;
+        var stremo;
+        var myImage = "../wgtRes/comImg.png";
+        var sendImage = "../wgtRes/comImg.png";
+        var lastSendTime = 0;
+        var chatHeight;
+        var lat;
+        var lon;
+        var address;
+        var winHeight = 0;
+        var picList = [];
+        var mapType = 0;
+        var msgAddType = 0;
+        var recordStartTime;
+        var bounceType;
+        var isPlaying = false;
+        var playItem;
+        var chatname = "";
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            try {
+                App.setPageUpBounce(function(type) {
+                    var msgId = $('#list ul li').eq(0).attr("data-id");
+                    var lastMsgId = App.getLastMsgId(sendId);
+                    msgAddType = 1;
+                    var startMsgId = '';
+                    if (App.isNull(msgId)) {
+                        startMsgId = lastMsgId;
+                    } else {
+                        startMsgId = msgId;
+                    }
+                    bounceType = type;
+                    var params = {
+                        username : sendId,
+                        chatType : "0",
+                        startMsgId : startMsgId,
+                        pagesize : 8
+                    }
+                    uexEasemob.getMessageHistory(App.toJsonStr(params));
+                    //uexEasemob.getMessageHistory('{"username":"' + sendId + '",' + startMsgId + '"chatType":"0","pagesize":"8"}');
+                    App.Logs("setPageUpBounce:" + App.toJsonStr(params));
+                    App.Logs("setPageUpBounce:" + $('#list ul li').eq(0).attr("data-id") + "," + startMsgId + "," + lastMsgId);
+                })
+                chatHeight = App.getVal('chatHeight');
+                userinfo = App.getUserInfo();
+                sendId = App.getVal('chatId');
+                myId = userinfo.userid;
+                var temp = App.getVal('chatpic');
+                chatname = App.getVal("chatname");
+                winHeight = window.innerHeight;
+                //alert(winHeight)
+                if (!App.isNull(temp)) {
+                    sendImage = temp;
+                    if (sendImage.substr(0, 2) == "./") {
+                        sendImage = "." + sendImage;
+                    }
+                }
+                if (!App.isNull(userinfo.headuri)) {
+                    if (userinfo.headuri.substr(0, 4) != "http" && (userinfo.headuri.substr(0, 3) != "../" || userinfo.headuri.substr(0, 2) != "./")) {
+                        myImage = App.headUri + userinfo.headuri;
+                    } else {
+                        myImage = userinfo.headuri;
+                    }
+                }
+                var plat = App.getAppPlat();
+                if (!plat) {
+                    winHeight = screen.availHeight;
+                }
+                if (!isdebug) {
+                    uexGaodeMap.onReceiveLocation = function(data) {
+                        App.Logs("uexGaodeMap.onReceiveLocation:" + data);
+                        var obj = App.toJson(data);
+                        var marklist = [];
+                        var marker = {
+                            id : 10002,
+                            latitude : obj.latitude,
+                            longitude : obj.longitude,
+                            icon : "res://index-icon.png",
+                            bubble : {
+                                title : "当前位置",
+                                subTitle : "我的位置"
+                            }
+                        };
+                        marklist.push(marker);
+                        uexGaodeMap.addMarkersOverlay(JSON.stringify(marklist));
+                    }
+                    uexGaodeMap.cbOpen = function(data) {
+                        App.Logs("uexGaodeMap.cbOpen:" + data)
+                        var params = {
+                            level : "18"
+                        };
+                        uexGaodeMap.setZoomLevel(JSON.stringify(params));
+                        if (mapType == 0) {
+                            var params = {
+                                type : "1"
+                            };
+                            uexGaodeMap.setMyLocationEnable(JSON.stringify(params));
+                            var params = {
+                                type : "2"
+                            };
+                            uexGaodeMap.setUserTrackingMode(JSON.stringify(params));
+                            uexGaodeMap.startLocation();
+                        } else {
+                            var params = {
+                                longitude : lon,
+                                latitude : lat
+                            };
+                            uexGaodeMap.setCenter(JSON.stringify(params));
+                            var marklist = [];
+                            var chatname = App.getVal('chatname');
+                            var marker = {
+                                id : 10001,
+                                latitude : lat,
+                                longitude : lon,
+                                icon : "res://mark.png",
+                                bubble : {
+                                    title : chatname,
+                                    subTitle : address
+                                }
+                            };
+                            marklist.push(marker);
+                            uexGaodeMap.addMarkersOverlay(JSON.stringify(marklist));
+                        }
+                    }
+                    uexGaodeMap.cbReverseGeocode = function(json) {
+                        App.Logs("cbReverseGeocode:" + json);
+                        var data = JSON.parse(json);
+                        lat = data.latitude;
+                        lon = data.longitude;
+                        address = data.address;
+                        uexGaodeMap.stopLocation();
+                        sendmap();
+                    };
+
+                    uexGaodeMap.cbGetCurrentLocation = function(json) {
+                        App.Logs("cbGetCurrentLocation:" + json);
+                        uexGaodeMap.reverseGeocode(json);
+                    }
+                    var startMsgId = '';
+                    if (msgAddType != 0) {
+                        var lastMessageId = App.getLastMsgId(sendId);
+                        if (!App.isNull(lastMessageId)) {
+                            startMsgId = lastMessageId;
+                        }
+                    }
+                    var params = {
+                        username : sendId,
+                        chatType : "0",
+                        startMsgId : startMsgId,
+                        pagesize : 8
+                    }
+                    App.Logs("getMessageHistory:" + App.toJsonStr(params));
+                    uexEasemob.getMessageHistory(App.toJsonStr(params));
+                    uexChatKeyboard.cbGetInputBarHeight = function(data) {
+                        var obj = JSON.parse(data);
+                        if (App.getAppPlat()) {
+                            if (status == true || status == "true") {
+                                appcan.window.evaluateScript('chatRoom', 'reSizeWin(' + obj.height + ',' + winHeight + ',1,' + obj.emHeight + ')');
+                            } else {
+                                appcan.window.evaluateScript('chatRoom', 'reSizeWin(' + obj.height + ',' + winHeight + ',0,' + obj.emHeight + ')');
+                            }
+                            if (parseInt(obj.emHeight) > 0) {
+                                $("#list").css("padding-bottom", (parseInt(obj.emHeight) + 30) + "px");
+                            } else {
+                                $("#list").css("padding-bottom", "2em");
+                                scrollWin();
+                            }
+                        } else {
+                            scrollWin();
+                        }
+                    }
+                    uexChatKeyboard.onKeyBoardShow = function(json) {
+                        var obj = JSON.parse(json);
+                        if (parseInt(obj.status) == 0) {
+                            status = false;
+                            uexChatKeyboard.getInputBarHeight();
+                        } else {
+                            status = true;
+                            uexChatKeyboard.getInputBarHeight();
+                        }
+                    }
+                    uexChatKeyboard.onCommitJson = function(data) {
+                        App.Logs("uexChatKeyboard.onCommitJson:" + data.emojiconsText)
+                        var str = data.emojiconsText
+                        addmychat({
+                            str : str,
+                            typestr : 1
+                        });
+                        str = encode64(str);
+                        var sendData = {
+                            username : sendId,
+                            chatType : "0",
+                            content : str,
+                            ext : ""
+                        };
+                        uexEasemob.sendText(JSON.stringify(sendData));
+                    }
+                    uexChatKeyboard.onShareMenuItem = function(data) {
+                        if (data == 0) {
+                            Cameraopen();
+                        }
+                        if (data == 1) {
+                            photoopen();
+                        }
+                        if (data == 2) {
+                            mapopen(0);
+                        }
+                        if (data == 3) {
+                            //generatePayOrder();
+                            App.evalJs({
+                                winName : "chatRoom",
+                                type : 1,
+                                js : "openJobPop()"
+                            });
+                        }
+                    }
+                    uexChatKeyboard.onVoiceAction = function(data) {
+                        var str = JSON.parse(data);
+                        App.Logs("进入录音:" + data)
+                        if (parseInt(str.status) == 0) {
+                            ly();
+                        }
+                        if (parseInt(str.status) == 1) {
+                            stoply();
+                        }
+                        if (parseInt(str.status) == -1) {
+                            return;
+                        }
+                    }
+                    var jsonstr = '{"emojicons":"res://emojicons/emojicons.xml","shares":"res://shares/shares.xml","placeHold":"","touchDownImg":"res://3.png","dragOutsideImg":"res://4.png","textColor":"#FFF","textSize":"12.5"}';
+                    var jsonstr1 = '{"emojicons":"res://emojicons/emojicons.xml","shares":"res://shares/shares1.xml","placeHold":"","touchDownImg":"res://3.png","dragOutsideImg":"res://4.png","textColor":"#FFF","textSize":"12.5"}';
+                    if (!App.isNull(sendId) && sendId != "admin" && sendId != "1000000" && sendId != "1000001" && sendId != "1000002" && sendId != "1000003") {
+                        if (userinfo.usertype == "企业") {
+                            uexChatKeyboard.open(jsonstr1);
+                        } else {
+                            uexChatKeyboard.open(jsonstr);
+                        }
+                    }
+                }
+                ///var obj = {
+                //    text : chatname + "向你发起了上船确认邀请",
+                //   fontSize : "ulev-5",
+                //   isFriend : "",
+                //   type : "onBoard",
+                //    timeStr : "16-06-23",
+                //    isSend : 0,
+                //    orderId : "HY201607041467625750217",
+                //    subType:"req"
+                //}
+                // html = createTipsHtml(obj);
+                //$('#list ul').append(html);
+                //         scrollWin();
+                // var message = "{\"chatType\":\"0\",\"from\":\"1000003\",\"isAcked\":\"0\",\"isGroup\":\"0\",\"isRead\":\"0\",\"messageBody\":{\"text\":\"hello\",\"longitute\":\"1\",\"latitude\":\"1\",\"thumbnailRemotePath\":\"http://img.i-css.com:88/cn/user_image/t/333x333/6c05333465fabe06ad0141d359e8b761/A4a06f59ec1ed42debbf.jpg\"},\"messageId\":\"116324502178103868\",\"messageTime\":\"1444648708478\",\"messageType\":\"audio\",\"to\":\"1000010\"}"
+                //var message ='{"chatType":"0","ext":"杉杉","from":"1000003","isAcked":"1","isGroup":"0","isRead":"1","messageBody":{"address":"上海市杨浦区大桥街道九州丽园","latitude":"31.261006","longitude":"121.531957"},"messageId":"182682132584333856","messageTime":"1460098798104","messageType":"location","to":"1000003"}';
+                //var receiveMsg = JSON.parse(message);
+                //sethtml(receiveMsg);
+                //mapopen()
+                //addhistory();
+                //console.log(appcan.getLocalTime(1444541627841));
+                //addmychat(createDynamicHtml("吴亚", "http://img.4006865980.com:66/hsquan/user_Logo/59e711d152de7bec7304a8c2ecaf9f0f/A4d4cf43b4f7a49dfbbd.png", "1000001"), 1);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 1, 1);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 1,1);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 3,7);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 3,50);
+                // addmychat('http://img.4006865980.com:66/hsquan/user_Image/msgImage/o/f31c147335274c56d801f833d3c26a70/175189911542956576.png', 2);
+                // addmychat('http://img.4006865980.com:66/hsqua/user_Image/msgImage/o/f31c147335274c56d801f833d3c26a70/182357591219765712.png', 2);
+                //newMessage();
+            }
+            catch(err) {
+                App.Logs(err.message);
+            }
+        })
+        function sendOnBoardConfirm(str) {
+            App.Logs("sendOnBoardConfirm:" + str);
+            var obj = App.toJson(str);
+            App.authApi({
+                url : "pay/generatePayOrder",
+                data : {
+                    params : {
+                        payUserId : sendId,
+                        payToUserId : userinfo.userid,
+                        itemId : "PAY0001",
+                        remark : obj.remark,
+                        extId : obj.id
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var str = "[上船确认消息]";
+                        var ext = {
+                            extObj : {
+                                "type" : "onBoard",
+                                "orderId" : data.items.orderid,
+                                "cnName" : userinfo.cnname,
+                                "subType" : "req"
+                            }
+                        };
+                        var sendData = {
+                            username : sendId,
+                            chatType : "0",
+                            content : encode64(str),
+                            ext : "",
+                            extObj : ext
+                        };
+                        uexEasemob.sendText(JSON.stringify(sendData));
+                        addmychat({
+                            str : str,
+                            typestr : 1,
+                            len : 0,
+                            ext : "onBoard",
+                            subStr : "req",
+                            orderId : data.items.orderid
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function createTipsHtml(obj) {
+            var tipsStr,
+                fontSize,
+                isFriend,
+                type;
+            tipsStr = obj.text;
+            fontSize = obj.fontSize;
+            isFriend = obj.isFriend;
+            type = obj.type;
+            if (App.isNull(fontSize)) {
+                fontSize = "ulev-5";
+            }
+            if (App.isNull(type)) {
+                type = "tips";
+            }
+            var payhtml = '';
+            var h = '';
+            var addFriend = '';
+            var accept = '';
+            var refuse = '';
+            var onBoardHtml = "";
+            /*if (isFriend != 1) {
+             accept = "";
+             refuse = "";
+             addFriend = '<div onclick="addFriend(\'' + sendId + '\')" style="color:#050EF3;background: transparent;">加为好友</div>';
+             }
+             if (isFriend == 2) {
+             addFriend = "";
+             accept = '<div onclick=""  style="color:#050EF3;background: transparent;">接收申请</div>';
+             refuse = '<div onclick=""  style="color:#050EF3;background: transparent;margin-left:0.4em">拒绝申请</div>';
+             }*/
+            if (type == "pay") {
+                addFriend = "";
+                payhtml = '<div class="ub" style="margin-top:0.2em">';
+                if (obj.isSend == 0) {
+                    payhtml += '  <div onclick="openPayConfrim(\'' + obj.orderId + '\')"  style="color:#050EF3;background: transparent;">立即支付</div>';
+                    payhtml += '  <div onclick="" style="color:#050EF3;background: transparent;margin-left:0.4em;">暂不支付</div>';
+                } else {
+                    payhtml += '  <div onclick="" style="color:#050EF3;background: transparent;margin-left:0.4em;">取消订单</div>';
+                }
+                payhtml += '</div>'
+            }
+            if (type == "onBoard") {
+                addFriend = "";
+                onBoardHtml = '<div class="ub" style="margin-top:0.2em">';
+                if (obj.subType == "req") {
+                    if (obj.isSend == 0) {
+                        onBoardHtml += '  <div onclick="confirmReq(\'' + obj.orderId + '\')" style="color:#050EF3;background: transparent;">点击查看</div>';
+                    }
+                } else {
+                    onBoardHtml += '  <div onclick="openOrder(\'' + obj.orderId + '\')" style="color:#050EF3;background: transparent;">查看订单</div>';
+                }
+                onBoardHtml += '</div>';
+            }
+            // App.Logs(App.toJsonStr(obj))
+            h += '<li id="m' + obj.messageId + '" data-id="' + obj.messageId + '" class="ub ub-ver ub-f1">';
+            if (!App.isNull(obj.timeStr)) {
+                h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 " >';
+                h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+                h += '   </div>';
+            }
+            h += '   <div class="ub ub-f1 uc-a1 ' + fontSize + ' t-gra-1 tips ub-ver" >';
+            h += '       <div class="umar-r">' + tipsStr + '</div>' + addFriend + accept + refuse + payhtml + onBoardHtml;
+            h += '   </div>';
+            h += '</li>'
+            return h;
+        }
+
+        function paySuccess(orderId) {
+            var str = "[上船确认消息]";
+            var ext = {
+                extObj : {
+                    "type" : "onBoard",
+                    "orderId" : orderId,
+                    "cnName" : userinfo.cnname,
+                    "subType" : "accpectPay"
+                }
+            };
+            var sendData = {
+                username : sendId,
+                chatType : "0",
+                content : encode64(str),
+                ext : "",
+                extObj : ext
+            };
+            uexEasemob.sendText(JSON.stringify(sendData));
+            addmychat({
+                str : str,
+                typestr : 1,
+                len : 0,
+                ext : "onBoard",
+                subStr : "accpectPay",
+                orderId : orderId
+            });
+        }
+
+        function confirmReq(orderId) {
+            App.openLoading({
+                title : '',
+                msg : '正在跳转...请稍后...',
+                canCancel : 1
+            });
+            App.authApi({
+                url : "pay/checkOrder",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.setVal("orderId", orderId);
+                        App.openWin({
+                            backName : 'chatRoom',
+                            name : 'orderDetail',
+                            url : '../order/orderDetail.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else if (data.code == 405) {
+                        App.setVal("orderId", orderId);
+                        App.openWin({
+                            backName : 'chatRoom',
+                            name : 'orderPreview',
+                            url : '../order/orderPreview.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+
+        }
+
+        function cancleReq(orderId) {
+
+        }
+
+        function openPayConfrim(orderId) {
+            if (App.isNull(orderId)) {
+                return;
+            }
+            App.authApi({
+                url : "pay/checkOrder",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.setVal("orderId", orderId);
+                        App.openWin({
+                            backName : 'chatRoom',
+                            name : 'confirmPay',
+                            url : '../pay/confirmPay.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function addmychat(opts) {
+            var str = opts.str;
+            var typestr = opts.typestr;
+            var len = opts.len;
+            var ext = opts.ext;
+            var subStr = opts.subStr;
+            var html = "";
+            var timeStr = "";
+            var nowTime = new Date().getTime();
+            if ((nowTime - lastSendTime) / (1000 * 60) >= 1) {
+                timeStr = App.setMsgTime(nowTime, true);
+            }
+            var obj = {};
+            obj.content = "rightContent";
+            lastSendTime = nowTime;
+            if (!App.isNull(timeStr)) {
+                obj.timeStr = timeStr;
+            }
+            if (typestr == 1) {
+                stremo = str;
+                obj.oriText = str;
+                var reg = /\[([^\]]+)\]/g;
+                stremo = stremo.replace(reg, function($1) {
+                    return emoarr1[$1] || $1;
+                });
+                obj.type = 1;
+                if (!App.isNull(ext)) {
+                    obj.fontSize = "ulev-5";
+                    obj.isFriend = "";
+                    obj.type = ext;
+                    obj.isSend = 1;
+                    obj.subType = subStr;
+                    obj.orderId = opts.orderId;
+                    if (ext == "onBoard") {
+                        if (subStr == "req") {
+                            obj.text = "你向" + chatname + "发起一条上船确认邀请.";
+                        } else if (subStr == "refuse") {
+                            obj.text = "你谢绝了" + chatname + "上船确认邀请.";
+                        } else if (subStr == "accpect") {
+                            obj.text = "你接受了" + chatname + "上船确认邀请.";
+                        } else if (subStr == "accpectPay") {
+                            obj.text = "你接受了" + chatname + "上船确认邀请并完成了担保金支付.";
+                        } else if (subStr == "confirm") {
+                            obj.text = "你确认了" + chatname + "上船确认邀请.";
+                        }
+                    } else if (ext == "pay") {
+                        obj.text = "你向" + chatname + "发起一笔担保金支付请求(注意：担保金将被支付到海员港平台,待对方上船成功后将会退回对方90%,其中10%为平台手续费)";
+                    }
+                } else {
+                    obj.text = stremo;
+                }
+            }
+            if (typestr == 2) {
+                var imgId = 'img' + nowTime;
+                var chatImgList = App.getJson('chatImgList');
+                if (App.isNull(chatImgList)) {
+                    chatImgList = [];
+                }
+                chatImgList.push(imgId);
+                //如果是发送图片，，加上遮罩层。
+                var picObj = {
+                    src : str
+                }
+                picList.push(picObj);
+                obj.oriText = str;
+                obj.type = 2;
+                obj.text = str;
+                obj.imgId = imgId;
+                obj.mask = true;
+                App.setVal('chatImgList', chatImgList);
+            }
+            if (typestr == 3) {
+                obj.type = 3;
+                obj.text = str;
+                obj.len = len;
+                obj.oriText = str;
+            }
+            if (typestr == 4) {
+                obj.type = 4;
+                obj.text = str;
+                obj.oriText = str;
+            }
+            if (typestr == 5) {
+                var lat = str.split(",")[0];
+                var lon = str.split(",")[1];
+                obj.type = 5;
+                obj.lat = lat;
+                obj.lon = lon;
+                obj.address = address;
+                obj.oriText = str;
+            }
+            if (!App.isNull(ext)) {
+                html = createTipsHtml(obj);
+                $('#list ul').append(html);
+            } else {
+                html = createRightHtml(obj);
+                $('#list ul').append(html);
+                setContentEvent(obj.content);
+            }
+            scrollWin();
+        }
+
+        function addFriend(toId) {
+            if (!isdebug) {
+                var cnName = App.getVal("chatname");
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : toId,
+                            remark : userinfo.cnname + "请求添加你为好友",
+                            remark1 : "你请求添加" + cnName + "为好友"
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : toId,
+                                reason : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            App.toast("请求发送成功,待对方通过验证");
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        function createLeftHtml(obj) {
+            // App.Logs("createLeftHtml:" + App.toJsonStr(obj));
+            var h = '';
+            h += '<li id="m' + obj.messageId + '" data-id="' + obj.messageId + '" class="ub ub-ver ub-f1">';
+            if (!App.isNull(obj.timeStr)) {
+                h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 " >';
+                h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+                h += '   </div>';
+            }
+            h += '   <div style="text-align: left;margin-top:0.8em;margin-bottom:0.8em;">';
+            h += '      <img onclick="openUserDetail(\'' + sendId + '\')" src="' + sendImage + '" class="leftUserHead uc-a1"/>';
+            h += '     ' + createContentHtml(obj);
+            h += '      <div class="pingTriangleleft"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            if (App.isNull(userId)) {
+                userId = sendId;
+            }
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function createRightHtml(obj) {
+            //App.Logs("createRightHtml:" + App.toJsonStr(obj));
+            var h = '';
+            h += '<li id="m' + obj.messageId + '" data-id="' + obj.messageId + '" class="ub ub-ver ub-f1">';
+            if (!App.isNull(obj.timeStr)) {
+                h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 uc-a1" >';
+                h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+                h += '   </div>';
+            }
+            h += '   <div style="text-align: right;margin-top:0.8em;margin-bottom:0.8em;">';
+            h += '      <img src="' + myImage + '" class="rightUserHead uc-a1"/>';
+            h += '     ' + createContentHtml(obj);
+            h += '      <div class="pingTriangle"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function createContentHtml(obj) {
+            var h = '';
+            switch(obj.type) {
+            case 1:
+                if (!App.isNull(obj.ext)) {
+                    var text = obj.ext;
+                    text = text.split('$$');
+                    if (text[0] == "sm") {
+                        if (text.length > 3) {
+                            text = createDynamicHtml(text[1], text[2], text[3]);
+                        } else {
+                            text = obj.text;
+                        }
+                        h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-ext="' + obj.ext + '">' + text + '</div>';
+                    } else {
+                        h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '">' + obj.text + '</div>';
+                    }
+                } else {
+                    h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '">' + obj.text + '</div>';
+                }
+                break;
+            case 2:
+                h += ' <div onclick="openPic(' + (picList.length - 1) + ');" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-picindex="' + (picList.length - 1) + '">';
+                h += '    <img class="chatpic" src="' + obj.text + '" style="width:6em;height:8em" />';
+                if (!App.isNull(obj.mask)) {
+                    h += '    <div id="' + obj.imgId + '" class="ub ub-pc ub-ac" style="position: absolute;width:100%;height:100%;top:0;left:0;background-color: rgba(255,255,255,0.7);color:#fff"><img src="../wgtRes/loading.gif" style="width:1.8em"></div>';
+                }
+                h += '</div>';
+                break;
+            case 3:
+                var widthStr = "3em";
+                var align = "right";
+                var hiStr = "0.5em";
+                if (App.getAppPlat()) {
+                    hiStr = "1em";
+                }
+                var isRead = "uhide";
+                if (obj.isRead == 0) {
+                    isRead = "";
+                }
+                if (!App.isNull(obj.len)) {
+                    var width = (window.innerWidth * 0.5) * obj.len / 15;
+                    if (width >= (window.innerWidth * 0.5)) {
+                        widthStr = (window.innerWidth * 0.5) + "px";
+                    } else {
+                        widthStr = width + "px";
+                    }
+                }
+                if (obj.content == "leftContent") {
+                    align = "left";
+                    h += ' <div onclick="playly(\'' + obj.text + '\',\'' + obj.messageId + '\',this);" class="ulev-5 ' + obj.content + ' " data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-len="' + obj.len + '">';
+                    h += '    <div style="text-align:' + align + ';width:' + widthStr + '">'
+                    h += '      <img src="../wgtRes/audio_play' + align + '.png" style="width:1em"/>';
+                    h += '    </div>';
+                    h += ' </div>';
+                    h += ' <div class="leftLen t-gra ulev-5" style="display: inline-block;bottom:' + hiStr + ';">' + obj.len + '"</div>';
+                    h += ' <div class="leftCirle t-gra ' + isRead + '" style="display: inline-block;bottom:1.5em;-webkit-border-radius: 1.2em;width:0.5em;height:0.5em;background-color: red"></div>';
+                } else {
+                    h += ' <div class="rightCirle t-gra ' + isRead + '" style="display: inline-block;bottom:1.5em;-webkit-border-radius: 1.2em;width:0.5em;height:0.5em;background-color: red"></div>';
+                    h += ' <div class="rightLen t-gra ulev-5" style="display: inline-block;bottom:' + hiStr + ';">' + obj.len + '"</div>';
+                    h += ' <div onclick="playly(\'' + obj.text + '\',\'' + obj.messageId + '\',this);" class="ulev-5 ' + obj.content + ' " data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-len="' + obj.len + '">';
+                    h += '    <div style="text-align:' + align + ';width:' + widthStr + '">'
+                    h += '      <img src="../wgtRes/audio_play' + align + '.png" style="width:1em"/>';
+                    h += '    </div>';
+                    h += ' </div>';
+                }
+                break;
+            case 4:
+                h += ' <div onclick="openfile(\'' + obj.text + '\');" class="ulev-5 ' + obj.content + '">[文件]</div>';
+                break;
+            case 5:
+                h += ' <div onclick="openmap(' + obj.lat + ',' + obj.lon + ',\'' + obj.address + '\');" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '">';
+                h += '     <img class="mappic" src="../wgtRes/map.png" style="width:5em"/>';
+                h += '     <div class="uhide lat">' + obj.lat + '</div>';
+                h += '     <div class="uhide lng">' + obj.lon + '</div>';
+                h += '     <div class="uhide addr">' + obj.oriText + '</div>';
+                h += ' </div>';
+                break;
+            }
+            return h;
+        }
+
+        function createDynamicHtml(str, headuri, id) {
+            var h = '';
+            h += '<div onclick="openContent(\'' + id + '\')" class="ub ub-ver ub-f1">';
+            h += '   <div class="ub-f1 spec-content">' + str + '</div>';
+            h += '   <div class="ub ub-f1 ub-ac umar-t">';
+            h += '       <img src="' + headuri + '" style="width:3em;height:3em">';
+            h += '       <div class="umar-l">商友圈实名动态</div>';
+            h += '   </div>';
+            h += '</div>';
+            return h;
+        }
+
+        function openContent(id) {
+            if (App.isNull(id)) {
+                return;
+            }
+            App.setVal("dynamicId", id);
+            App.openWin({
+                backName : 'chatRoom',
+                winId : id,
+                name : 'dynamic',
+                url : '../dynamic/dynamic.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function sendPosition() {
+            uexGaodeMap.stopLocation();
+            uexGaodeMap.getCurrentLocation();
+        }
+
+        function ly() {
+            App.Logs("开始录音...")
+            recordStartTime = new Date().getTime();
+            var t = Math.round(new Date().getTime()) + "";
+            //按时间做为文件名称
+            uexAudio.startBackgroundRecord(2, t);
+        }
+
+        function stoply() {
+            App.Logs("录音结束...");
+            var fileName = "";
+            uexAudio.cbBackgroundRecord = function(opCode, dataType, data) {
+                var recordStopTime = new Date().getTime();
+                var length = Math.floor((recordStopTime - recordStartTime) / 1000);
+                if (App.isNull(length)) {
+                    length = 1;
+                }
+                App.Logs("cbBackgroundRecord文件保存路径:" + data + ",length:" + length);
+                postly(data, length);
+            }
+            uexAudio.stopBackgroundRecord();
+        }
+
+        function postly(str, len) {
+            if (App.isNull(str)) {
+                return;
+            }
+            var index = str.lastIndexOf("/") + 1;
+            var displayName = str.substring(index);
+            App.Logs("postly:" + index + "," + displayName);
+            var opts = {
+                str : str,
+                typestr : 3,
+                len : len
+            }
+            addmychat(opts);
+            //播放音频
+            var voiceData = {
+                username : sendId,
+                chatType : "0",
+                filePath : str,
+                length : len,
+                displayName : displayName,
+                ext : ''
+            };
+            uexEasemob.sendVoice(JSON.stringify(voiceData));
+        }
+
+        function closemap() {
+            uexGaodeMap.close();
+        }
+
+        function mapopen(type, Lat, Lng) {
+            mapType = type;
+            if (App.isNull(Lat)) {
+                Lat = "31.238068";
+            }
+            if (App.isNull(Lng)) {
+                Lng = "121.501654";
+            }
+            if (type == 0) {
+                appcan.window.evaluateScript('chatRoom', 'changeTitle(1)');
+            } else {
+                appcan.window.evaluateScript('chatRoom', 'changeTitle(2)');
+            }
+            var height = screen.availHeight;
+            if (App.getAppPlat()) {
+                uexChatKeyboard.hideKeyboard();
+                appcan.window.evaluateScript('chatRoom', 'reSizeWin(0,0,1,0)');
+                height = screen.availHeight - chatHeight - 50;
+            }
+            App.Logs("mapopen:" + chatHeight + "," + screen.availHeight + "," + window.innerHeight);
+            var data = {
+                left : 0,
+                top : chatHeight,
+                width : window.innerWidth,
+                height : height,
+                isScrollWithWeb : false,
+                latitude : Lat,
+                longitude : Lng
+            }
+            if (!isdebug) {
+                uexGaodeMap.open(JSON.stringify(data));
+            }
+        }
+
+        function sendmap() {
+            appcan.window.evaluateScript('chatRoom', 'changeTitle(0)');
+            var locationMsg = {
+                username : sendId,
+                chatType : "0",
+                locationAddress : address,
+                latitude : lat,
+                longitude : lon,
+                ext : ''
+            }
+            uexEasemob.sendLocationMsg(JSON.stringify(locationMsg));
+            var str = lat + "," + lon;
+            addmychat({
+                str : str,
+                typestr : 5
+            });
+            uexGaodeMap.close();
+        }
+
+        function photoopen() {
+            uexImage.onPickerClosed = function(data) {
+                var obj = JSON.parse(data);
+                if (!obj.isCancelled) {
+                    var pic = obj.data[0];
+                    sendpic(pic);
+                }
+            }
+            var data = {
+                min : 1,
+                max : 1,
+                quality : 0.5,
+                usePng : false,
+                detailedInfo : false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+        }
+
+        function Cameraopen() {
+            uexCamera.cbOpen = function(opId, dataType, data) {
+                if (!App.isNull(data)) {
+                    sendpic(data);
+                }
+            }
+            uexCamera.open(0, 80);
+        }
+
+        function sendpic(str) {
+            if (str == "") {
+                return;
+            }
+            imgurl = str;
+            addmychat({
+                str : str,
+                typestr : 2
+            });
+            //发送的是图片
+            var index = str.lastIndexOf("/") + 1;
+            var displayName = str.substring(index);
+            var picData = {
+                username : sendId,
+                chatType : "0",
+                filePath : str,
+                displayName : displayName,
+                ext : ""
+            }
+            uexEasemob.sendPicture(JSON.stringify(picData));
+            //uexEasemob.sendPicture('{"username":"' + sendId + '","chatType":"0","filePath":"' + str + '","displayName":"mypic"}');
+        }
+
+        function closeKeyBoard() {
+            //alert(status)
+            if (status == true || status == "true") {
+                if (!isdebug) {
+                    uexChatKeyboard.hideKeyboard();
+                    status = false;
+                }
+            } else {
+                if (!isdebug) {
+                    uexEasemob.getRecentChatters();
+                }
+                appcan.window.evaluateScript('chatRoom', 'closeWin()');
+            }
+        }
+
+        function GetMessageById() {
+            var data = App.getVal("cbGetMessageById");
+            var obj = eval('(' + data + ')');
+            var josn = [];
+            josn.push(obj);
+            historyhtml(josn, msgAddType);
+            App.removeVal("cbGetMessageById");
+        }
+
+        function addhistory() {
+            var data = App.getVal("historyMsg");
+            var historymessage = eval('(' + data + ')');
+            var lastMessageId = App.getLastMsgId(sendId);
+            if (!App.isNull(historymessage)) {
+                if (!App.isNull(historymessage.messages)) {
+                    historymessage = historymessage.messages;
+                }
+                App.Logs("addhistory:" + lastMessageId + "," + msgAddType + "," + historymessage.length);
+                if (historymessage.length > 0) {
+                    historyhtml(historymessage, msgAddType);
+                }
+                if (msgAddType > 0) {
+                    App.toast("没有更多记录了");
+                }
+                /*App.isFriend(userinfo.userid, sendId, function(data) {
+                 if (data == 2) {
+                 html = createTipsHtml(chatname + "请求加你为好友", "ulev-5", data);
+                 } else {
+                 html = createTipsHtml("你们还不是好友，是否添加对方为好友?", "ulev-5", data);
+                 }
+                 if ($('#list ul .tips').length == 0) {
+                 $('#list ul').append(html);
+                 scrollWin();
+                 }
+
+                 })*/
+                if (bounceType != null && bounceType != undefined) {
+                    uexWindow.resetBounceView(bounceType);
+                }
+            }
+            App.removeVal('historyMsg');
+        }
+
+        function newMessage() {
+            var data = App.getVal('newMessage');
+            var receiveMsg = eval('(' + data + ')');
+            if (!App.isNull(receiveMsg)) {
+                App.addLastMsgId(sendId, receiveMsg.messageId);
+                uexEasemob.sendHasReadResponseForMessage('{"msgId":"' + receiveMsg.messageId + '"}');
+                var data = {
+                    username : sendId,
+                    chatType : "0"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                sethtml(receiveMsg);
+                uexEasemob.getRecentChatters();
+            }
+            App.removeVal("newMessage");
+        }
+
+        function sethtml(message) {
+            var json = message;
+            if (sendId == json.from) {
+                var html = "";
+                var timeStr = "";
+                var nowTime = parseInt(json.messageTime);
+                if ((lastSendTime - nowTime ) / (1000 * 60) >= 1) {
+                    timeStr = App.setMsgTime(nowTime, true);
+                }
+                lastSendTime = nowTime;
+                var obj = {};
+                obj.content = "leftContent";
+                obj.messageId = json.messageId;
+                obj.isRead = json.isRead;
+                obj.ext = json.ext;
+                var extObj = json.extObj;
+                if (!App.isNull(extObj) && !App.isNull(extObj.extObj)) {
+                    extObj = extObj.extObj;
+                    if (!App.isNull(extObj.extObj)) {
+                        extObj = extObj.extObj;
+                    }
+                }
+                if (!App.isNull(timeStr)) {
+                    obj.timeStr = timeStr;
+                }
+                if (json.messageType == 'text') {
+                    obj.type = 1;
+                    stremo = decode64(json.messageBody.text);
+                    obj.oriText = stremo;
+                    var reg = /\[([^\]]+)\]/g;
+                    stremo = stremo.replace(reg, function($1) {
+                        return emoarr1[$1] || $1;
+                    });
+                    if (!App.isNull(extObj) && !App.isNull(extObj.type)) {
+                        obj.fontSize = "ulev-5";
+                        obj.isFriend = "";
+                        obj.type = extObj.type;
+                        obj.isSend = 0;
+                        obj.orderId = extObj.orderId;
+                        obj.subType = extObj.subType;
+                        if (extObj.type == "pay") {
+                            obj.text = extObj.cnName + "向你发起一笔担保金支付请求(注意：担保金将被支付到海员港平台,待你上船成功后将会退回90%,其中10%为平台手续费)";
+                        } else if (extObj.type == "onBoard") {
+                            if (extObj.subType == "req") {
+                                obj.text = extObj.cnName + "向你发起了一个上船确认邀请.(请在30分钟内查看并确认，超时将失效)";
+                            } else if (extObj.subType == "refuse") {
+                                obj.text = extObj.cnName + "谢绝了你的上船确认邀请.";
+                            } else if (extObj.subType == "accpect") {
+                                obj.text = extObj.cnName + "接受了你的上船确认邀请.";
+                            } else if (extObj.subType == "accpectPay") {
+                                obj.text = extObj.cnName + "接受了你的上船确认邀请并完成了担保金支付.";
+                            } else if (extObj.subType == "confirm") {
+                                obj.text = extObj.cnName + "确认了你的上船确认邀.";
+                            }
+                        }
+                    } else {
+                        obj.text = stremo;
+                    }
+                }
+                if (json.messageType == 'image') {
+                    var picObj = {
+                        src : json.messageBody.remotePath
+                    }
+                    picList.push(picObj);
+                    obj.type = 2;
+                    obj.text = json.messageBody.remotePath;
+                    obj.oriText = json.messageBody.remotePath;
+                }
+                if (json.messageType == 'audio') {
+                    obj.type = 3;
+                    obj.text = json.messageBody.remotePath;
+                    obj.len = json.messageBody.length;
+                    obj.oriText = json.messageBody.remotePath;
+                }
+                if (json.messageType == 'file') {
+                    obj.type = 4;
+                }
+                if (json.messageType == 'location') {
+                    obj.type = 5;
+                    var longitute = json.messageBody.longitute;
+                    var latitude = json.messageBody.latitude;
+                    var addr = json.messageBody.address;
+                    if (App.isNull(longitute)) {
+                        longitute = json.messageBody.longitude;
+                    }
+                    obj.text = json.messageBody.address;
+                    obj.lat = latitude;
+                    obj.lon = longitute;
+                    obj.oriText = json.messageBody.address;
+                }
+                if (!App.isNull(obj.fontSize)) {
+                    html = createTipsHtml(obj);
+                    $('#list ul').append(html);
+                } else {
+                    html = createLeftHtml(obj);
+                    $('#list ul').append(html);
+                    setContentEvent(obj.content);
+                }
+            }
+            scrollWin();
+        }
+
+        function setContentEvent(name) {
+            if (!App.isNull(name)) {
+                $('.' + name).off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    App.setVal("chatObj", chatObj);
+                    /*App.evalJs({
+                        winName : "chatRoom",
+                        type : 1,
+                        js : "openMessageMenu()"
+                    });*/
+                })
+            } else {
+                $('.rightContent').off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    App.setVal("chatObj", chatObj);
+                    /*App.evalJs({
+                        winName : "chatRoom",
+                        type : 1,
+                        js : "openMessageMenu()"
+                    });*/
+                });
+                $('.leftContent').off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    App.setVal("chatObj", chatObj);
+                    /*App.evalJs({
+                        winName : "chatRoom",
+                        type : 1,
+                        js : "openMessageMenu()"
+                    });*/
+                });
+            }
+            var msg = {
+                username : sendId,
+                chatType : "0"
+            }
+            uexEasemob.resetUnreadMsgCount(JSON.stringify(msg));
+            App.evalJs({
+                winName : "indexNew",
+                type : 1,
+                js : 'shwoTabBage("xiaoxi",0)'
+            });
+        }
+
+        function deleteMsg(type) {
+            var chatObj = App.getJson("chatObj");
+            var msgId = "";
+            if (chatObj.msgId == App.getLastMsgId(sendId)) {
+                msgId = $("#m" + chatObj.msgId).prev().attr("data-id");
+                App.addLastMsgId(sendId, msgId, true);
+            }
+            App.Logs("deleteMsg:" + type + "," + msgId + "," + App.getLastMsgId(sendId) + "," + chatObj.msgId);
+            $("#m" + chatObj.msgId).remove();
+            if (chatObj.type == 2 && picList.length > 0) {
+                picList.splice(chatObj.picIndex, 1);
+            }
+            var param = {
+                username : sendId, //username | groupid
+                msgId : chatObj.msgId,
+                chatType : type,//0-个人 1-群组(默认0,此参数仅iOS需要)
+            };
+            uexEasemob.removeMessage(App.toJsonStr(param));
+            uexEasemob.getRecentChatters();
+        }
+
+        function copyText() {
+            var chatObj = App.getJson("chatObj");
+            uexClipboard.copy(chatObj.text);
+            App.toast("已复制");
+        }
+
+        function canleImgMask() {
+            //发送完后取消遮罩
+            var chatImgList = App.getJson('chatImgList');
+            App.Logs("canleImgMask:" + JSON.stringify(chatImgList));
+            if (!App.isNull(chatImgList)) {
+                for (var i = 0; i < chatImgList.length; i++) {
+                    $('#' + chatImgList[i]).remove();
+                    chatImgList.splice(i, 1);
+                };
+                App.setVal('chatImgList', chatImgList);
+            }
+        }
+
+        function historyhtml(json) {
+            var lastMessageId = App.getLastMsgId(sendId);
+            var msgTime = 0;
+            if (json.length > 0) {
+                json = App.listSortBy(json, "messageTime", "asc");
+            }
+            var html = "";
+            for (var i = 0; i < json.length; i++) {
+                var longitude;
+                var latitude;
+                var addr;
+                if (json[i].messageType == 'location') {
+                    longitude = json[i].messageBody.longitude;
+                    latitude = json[i].messageBody.latitude;
+                    addr = json[i].messageBody.address;
+                    if (App.isNull(longitude)) {
+                        longitude = json[i].messageBody.longitute;
+                    }
+                }
+                var timeStr = "";
+                if (Math.abs((json[i].messageTime - msgTime) / (1000 * 60)) >= 1) {
+                    msgTime = parseInt(json[i].messageTime);
+                    timeStr = App.setMsgTime(msgTime, true);
+                    if (msgAddType != 1) {
+                        lastSendTime = parseInt(msgTime);
+                    }
+                }
+                var extObj = json[i].extObj;
+                if (!App.isNull(extObj) && !App.isNull(extObj.extObj)) {
+                    extObj = extObj.extObj;
+                }
+                if (myId == json[i].to) {
+                    if (sendId == json[i].from) {
+                        if (!isdebug) {
+                            if (json[i].isRead == false || json[i].isRead == "false") {
+                                uexEasemob.sendHasReadResponseForMessage('{"msgId":"' + json[i].messageId + '"}');
+                            }
+                        }
+                        var obj = {};
+                        obj.content = "leftContent";
+                        obj.messageId = json[i].messageId;
+                        obj.isRead = json[i].isRead;
+                        obj.ext = json[i].ext;
+                        if (!App.isNull(extObj) && !App.isNull(extObj.extObj)) {
+                            extObj = extObj.extObj;
+                        }
+                        if (!App.isNull(timeStr)) {
+                            obj.timeStr = timeStr;
+                        }
+                        if (json[i].messageType == 'text') {
+                            obj.type = 1;
+                            stremo = decode64(json[i].messageBody.text);
+                            obj.oriText = stremo;
+                            var reg = /\[([^\]]+)\]/g;
+                            stremo = stremo.replace(reg, function($1) {
+                                return emoarr1[$1] || $1;
+                            });
+                            if (!App.isNull(extObj) && !App.isNull(extObj.type)) {
+                                obj.fontSize = "ulev-5";
+                                obj.isFriend = "";
+                                obj.type = extObj.type;
+                                obj.isSend = 0;
+                                obj.orderId = extObj.orderId;
+                                obj.subType = extObj.subType;
+                                if (extObj.type == "pay") {
+                                    obj.text = extObj.cnName + "向你发起一笔担保金支付请求(注意：担保金将被支付到海员港平台,待你上船成功后将会退回90%,其中10%为平台手续费)";
+                                } else if (extObj.type == "onBoard") {
+                                    if (extObj.subType == "req") {
+                                        obj.text = extObj.cnName + "向你发起了一个上船确认邀请.(请在30分钟内查看并确认，超时将失效)";
+                                    } else if (extObj.subType == "refuse") {
+                                        obj.text = extObj.cnName + "谢绝了你的上船确认邀请.";
+                                    } else if (extObj.subType == "accpect") {
+                                        obj.text = extObj.cnName + "接受了你的上船确认邀请.";
+                                    } else if (extObj.subType == "accpectPay") {
+                                        obj.text = extObj.cnName + "接受了你的上船确认邀请并完成了担保金支付.";
+                                    } else if (extObj.subType == "confirm") {
+                                        obj.text = extObj.cnName + "确认了你的上船确认邀请.";
+                                    }
+                                }
+                            } else {
+                                obj.text = stremo;
+                            }
+                            if (!App.isNull(obj.fontSize)) {
+                                html += createTipsHtml(obj);
+                            } else {
+                                html += createLeftHtml(obj);
+                            }
+                        }
+                        if (json[i].messageType == 'image') {
+                            // App.Logs(hex_md5(json[i].from).toLowerCase() + "," + json[i].messageId);
+                            var fileName = hex_md5(json[i].from).toLowerCase() + "/" + json[i].messageId + ".png";
+                            filename = App.downIp + "user_Image/msgImage/o/" + fileName;
+                            App.Logs(json[i].to + "-->图片路径:" + filename);
+                            var picObj = {
+                                src : filename
+                            }
+                            picList.push(picObj);
+                            obj.type = 2;
+                            obj.text = filename;
+                            obj.oriText = filename;
+                            html += createLeftHtml(obj);
+                        }
+                        if (json[i].messageType == 'audio') {
+                            //App.Logs("audio:" + JSON.stringify(json[i]));
+                            obj.type = 3;
+                            obj.text = json[i].messageBody.remotePath;
+                            obj.len = json[i].messageBody.length;
+                            obj.oriText = json[i].messageBody.remotePath;
+                            html += createLeftHtml(obj);
+                        }
+                        if (json[i].messageType == 'file') {
+
+                        }
+                        if (json[i].messageType == 'location') {
+                            obj.lon = longitude;
+                            obj.lat = latitude;
+                            obj.address = json[i].messageBody.address;
+                            obj.type = 5;
+                            obj.oriText = json[i].messageBody.address;
+                            html += createLeftHtml(obj);
+                        }
+                    }
+                }
+                if (myId == json[i].from) {
+                    if (sendId == json[i].to) {
+                        var obj = {};
+                        obj.content = "rightContent";
+                        obj.messageId = json[i].messageId;
+                        obj.isRead = json[i].isRead;
+                        obj.ext = json[i].ext;
+                        if (!App.isNull(timeStr)) {
+                            obj.timeStr = timeStr;
+                        }
+                        if (json[i].messageType == 'text') {
+                            obj.type = 1;
+                            stremo = decode64(json[i].messageBody.text);
+                            obj.oriText = stremo;
+                            var reg = /\[([^\]]+)\]/g;
+                            stremo = stremo.replace(reg, function($1) {
+                                return emoarr1[$1] || $1;
+                            });
+                            if (!App.isNull(extObj) && !App.isNull(extObj.extObj)) {
+                                extObj = extObj.extObj;
+                            }
+                            if (!App.isNull(extObj) && !App.isNull(extObj.type)) {
+                                obj.fontSize = "ulev-5";
+                                obj.isFriend = "";
+                                obj.type = extObj.type;
+                                obj.isSend = 1;
+                                obj.orderId = extObj.orderId;
+                                obj.subType = extObj.subType;
+                                if (extObj.type == "pay") {
+                                    obj.text = "你向" + chatname + "发起一笔担保金支付请求(注意：担保金将被支付到海员港平台,待你上船成功后将会退回90%,其中10%为平台手续费)";
+                                } else if (extObj.type == "onBoard") {
+                                    if (extObj.subType == "req") {
+                                        obj.text = "你向" + chatname + "发起了上船确认邀请.";
+                                    } else if (extObj.subType == "refuse") {
+                                        obj.text = "你谢绝了" + chatname + "上船确认邀请.";
+                                    } else if (extObj.subType == "accpect") {
+                                        obj.text = "你接受了" + chatname + "上船确认邀请.";
+                                    } else if (extObj.subType == "accpectPay") {
+                                        obj.text = "你接受了" + chatname + "上船确认邀请并完成了担保金支付.";
+                                    } else if (extObj.subType == "confirm") {
+                                        obj.text = "你确认了" + chatname + "上船确认邀请.";
+                                    }
+                                } else {
+                                    obj.text = extObj.extStr;
+                                }
+                            } else {
+                                obj.text = stremo;
+                            }
+                            if (!App.isNull(obj.fontSize)) {
+                                html += createTipsHtml(obj);
+                            } else {
+                                html += createRightHtml(obj);
+                            }
+                        }
+                        if (json[i].messageType == 'image') {
+                            var fileName = hex_md5(json[i].from).toLowerCase() + "/" + json[i].messageId + ".png";
+                            filename = App.downIp + "user_Image/msgImage/o/" + fileName;
+                            App.Logs(json[i].from + "-->图片路径:" + filename);
+                            var picObj = {
+                                src : filename
+                            }
+                            picList.push(picObj);
+                            obj.type = 2;
+                            obj.text = filename;
+                            obj.oriText = filename;
+                            html += createRightHtml(obj);
+                        }
+                        if (json[i].messageType == 'audio') {
+                            // App.Logs("audio:" + JSON.stringify(json[i]));
+                            obj.type = 3;
+                            obj.text = json[i].messageBody.remotePath;
+                            obj.len = json[i].messageBody.length;
+                            obj.oriText = json[i].messageBody.remotePath;
+                            html += createRightHtml(obj);
+                        }
+                        if (json[i].messageType == 'file') {
+                        }
+                        if (json[i].messageType == 'location') {
+                            obj.lon = longitude;
+                            obj.lat = latitude;
+                            obj.address = json[i].messageBody.address;
+                            obj.oriText = json[i].messageBody.address;
+                            obj.type = 5;
+                            html += createRightHtml(obj);
+                        }
+
+                    }
+                }
+            }
+            if (msgAddType == 1) {
+                $('#list ul').prepend(html);
+            } else {
+                $('#list ul').append(html);
+                scrollWin();
+            }
+            if (bounceType != null && bounceType != undefined) {
+                uexWindow.resetBounceView(bounceType);
+            }
+            setContentEvent();
+        }
+
+        function playly(str, messageId, item) {
+            App.Logs("playly:" + str + ",messageId:" + messageId);
+            uexAudio.onPlayFinished = function(loopTime) {
+                App.Logs("uexAudio.onPlayFinished:" + loopTime);
+                var playing = '../wgtRes/audio_playright.png';
+                if ($(item).hasClass('leftContent')) {
+                    playing = '../wgtRes/audio_playleft.png';
+                    $(item).next().next().addClass("uhide");
+                } else {
+                    $(item).prev().prev().addClass("uhide");
+                }
+                if (!App.isNull(playItem)) {
+                    $(playItem).find('img').attr('src', playing);
+                } else {
+                    $(item).find('img').attr('src', playing);
+                }
+                isPlaying = false;
+                playItem = null;
+            }
+            if (!App.isNull(messageId) && (str.startWith("http") || str.startWith("https"))) {
+                App.Logs("开始下载语音.");
+                var opId = Math.floor(Math.random() * (10000 + 1));
+                var audioPath = "wgt://audio/" + messageId + ".mp3";
+                App.Logs("本地保存路径:" + audioPath);
+                uexFileMgr.cbIsFileExistByPath = function(opId, dataType, data) {
+                    if (parseInt(data) == 1) {
+                        App.Logs("文件已存在:" + audioPath + "," + data + ",开始播放语音");
+                        if (isPlaying) {
+                            uexAudio.stop();
+                            isPlaying = false;
+                        }
+                        if (!isPlaying) {
+                            setTimeout(function() {
+                                uexAudio.open(audioPath);
+                                uexAudio.play(0);
+                                var playing = '../wgtRes/audio_playingright.gif';
+                                if ($(item).hasClass('leftContent')) {
+                                    playing = '../wgtRes/audio_playingleft.gif';
+                                }
+                                $(item).find('img').attr('src', playing);
+                                isPlaying = true;
+                                playItem = item;
+                            }, 200);
+                        }
+                    } else {
+                        App.Logs("文件不存在:" + audioPath + ",开始处理下载语音.");
+                        App.authApi({
+                            url : "chat/getAppMsgAudio",
+                            data : {
+                                params : {
+                                    messageId : messageId
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    var fileName = App.downIp + "userAudio/" + data.items.audioPath;
+                                    App.Logs("服务器语音路径:" + fileName + ",本地保存路径:" + audioPath);
+                                    uexDownloaderMgr.onStatus = function(opCode, fileSize, percent, status) {
+                                        switch (parseInt(status)) {
+                                        case 0:
+                                            App.Logs("下载进度:" + percent);
+                                            break;
+                                        case 1 :
+                                            App.Logs("下载成功:" + opCode + ",开始播放语音");
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                            if (isPlaying) {
+                                                uexAudio.stop();
+                                                isPlaying = false;
+                                            }
+                                            if (!isPlaying) {
+                                                setTimeout(function() {
+                                                    uexAudio.open(audioPath);
+                                                    uexAudio.play(0);
+                                                    var playing = '../wgtRes/audio_playingright.gif';
+                                                    if ($(item).hasClass('leftContent')) {
+                                                        playing = '../wgtRes/audio_playingleft.gif';
+                                                    }
+                                                    $(item).find('img').attr('src', playing);
+                                                    isPlaying = true;
+                                                    playItem = item;
+                                                }, 200);
+                                            }
+                                            break;
+                                        case 2 :
+                                            App.Logs("下载失败:" + opCode);
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                            break;
+                                        }
+                                    }
+                                    uexDownloaderMgr.cbCreateDownloader = function(opCode, dataType, data) {
+                                        if (parseInt(data) == 0) {
+                                            App.Logs("创建下载成功:opCode:" + opCode + ",开始下载.");
+                                            uexDownloaderMgr.download(opCode, fileName, audioPath, '1');
+                                        } else {
+                                            App.Logs("创建下载失败.");
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                        }
+                                    }
+                                    App.Logs("开始创建下载.");
+                                    uexDownloaderMgr.createDownloader(opId);
+                                } else {
+                                    App.Logs(data.message);
+                                }
+                            }
+                        });
+                    }
+                }
+                App.Logs("检查本地是否存在文件:" + audioPath);
+                uexFileMgr.isFileExistByPath(opId, audioPath);
+            } else {
+                if (isPlaying) {
+                    uexAudio.stop();
+                    isPlaying = false;
+                }
+                if (!isPlaying) {
+                    setTimeout(function() {
+                        uexAudio.open(str);
+                        uexAudio.play(0);
+                        var playing = '../wgtRes/audio_playingright.gif';
+                        if ($(item).hasClass('leftContent')) {
+                            playing = '../wgtRes/audio_playingleft.gif';
+                        }
+                        $(item).find('img').attr('src', playing);
+                        isPlaying = true;
+                        playItem = item;
+                        App.Logs("playinggif:" + playing, $(item).find('img').attr('src'));
+                    }, 200);
+                }
+            }
+        }
+
+        function openmap(Lat, Lng, Addr) {
+            App.Logs("openmap:" + Lat + "," + Lng + "," + Addr);
+            lat = Lat;
+            lon = Lng
+            address = Addr;
+            mapopen(1, Lat, Lng);
+        }
+
+        function scrollWin() {
+            //App.Logs("scrollWin:" + $('#list').height() + "," + screen.availHeight + "," + window.innerHeight + "," + document.body.scrollHeight);
+            window.scrollTo(0, $('#list').height());
+            if (!App.getAppPlat()) {
+                uexChatKeyboard.changeWebViewFrame($('#list').height());
+            }
+            $('#list .chatpic').each(function() {
+                $(this).on('load', function() {
+                    var isload = $(this).attr('data-load');
+                    if (App.isNull(isload)) {
+                        var img = new Image();
+                        img.src = $(this).attr('src');
+                        if (img.width > img.height) {
+                            $(this)[0].style.width = "8em";
+                            $(this)[0].style.height = "6em";
+                        }
+                        $(this).attr('data-load', true);
+                        window.scrollTo(0, $('#list').height());
+                        if (!App.getAppPlat()) {
+                            uexChatKeyboard.changeWebViewFrame($('#list').height());
+                        }
+                    }
+                })
+            });
+            $('#list .mappic').each(function() {
+                $(this).on('load', function() {
+                    window.scrollTo(0, $('#list').height());
+                    if (!App.getAppPlat()) {
+                        uexChatKeyboard.changeWebViewFrame($('#list').height());
+                    }
+                })
+            })
+        }
+
+        function openPic(index) {
+            if (App.isNull(picList) || picList.length < 1) {
+                return;
+            }
+            var data = {
+                displayActionButton : false,
+                displayNavArrows : false,
+                enableGrid : false,
+                startOnGrid : false,
+                startIndex : index,
+                data : picList
+            }
+            var json = JSON.stringify(data);
+            uexImage.openBrowser(json);
+        }
+
+        function openOrder(orderId) {
+            if (App.isNull(orderId)) {
+                return;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在跳转...请稍后...',
+                canCancel : 1
+            });
+            App.authApi({
+                url : "pay/checkOrder",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.setVal("orderId", orderId);
+                        App.openWin({
+                            backName : 'chatRoom',
+                            name : 'orderDetail',
+                            url : '../order/orderDetail.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function accpectOrder(orderId, chatId) {
+            App.Logs("accpectOrder:" + orderId + "," + chatId + "," + sendId);
+            if (chatId == sendId) {
+                var str = "[上船确认消息]";
+                var ext = {
+                    extObj : {
+                        "type" : "onBoard",
+                        "orderId" : orderId,
+                        "cnName" : userinfo.cnname,
+                        "subType" : "accpect"
+                    }
+                };
+                var sendData = {
+                    username : sendId,
+                    chatType : "0",
+                    content : encode64(str),
+                    ext : "",
+                    extObj : ext
+                };
+                uexEasemob.sendText(JSON.stringify(sendData));
+                addmychat({
+                    str : str,
+                    typestr : 1,
+                    len : 0,
+                    ext : "onBoard",
+                    subStr : "accpect",
+                    orderId : orderId
+                });
+            }
+
+        }
+
+        function refuseOrder(orderId, chatId) {
+            App.Logs("refuseOrder:" + orderId + "," + chatId + "," + sendId);
+            if (chatId == sendId) {
+                var str = "[上船确认消息]";
+                var ext = {
+                    extObj : {
+                        "type" : "onBoard",
+                        "orderId" : orderId,
+                        "cnName" : userinfo.cnname,
+                        "subType" : "refuse"
+                    }
+                };
+                var sendData = {
+                    username : sendId,
+                    chatType : "0",
+                    content : encode64(str),
+                    ext : "",
+                    extObj : ext
+                };
+                uexEasemob.sendText(JSON.stringify(sendData));
+                addmychat({
+                    str : str,
+                    typestr : 1,
+                    len : 0,
+                    ext : "onBoard",
+                    subStr : "refuse",
+                    orderId : orderId
+                });
+            }
+        }
+
+        function onBoardConfirm(orderId, chatId) {
+            App.Logs("onBoardConfirm:" + orderId + "," + chatId + "," + sendId);
+            if (chatId == sendId) {
+                var str = "[上船确认消息]";
+                var ext = {
+                    extObj : {
+                        "type" : "onBoard",
+                        "orderId" : orderId,
+                        "cnName" : userinfo.cnname,
+                        "subType" : "confirm"
+                    }
+                };
+                var sendData = {
+                    username : sendId,
+                    chatType : "0",
+                    content : encode64(str),
+                    ext : "",
+                    extObj : ext
+                };
+                uexEasemob.sendText(JSON.stringify(sendData));
+                addmychat({
+                    str : str,
+                    typestr : 1,
+                    len : 0,
+                    ext : "onBoard",
+                    subStr : "confirm",
+                    orderId : orderId
+                });
+            }
+        }
+    </script>
+</html>

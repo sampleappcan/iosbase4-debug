@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .btn2 {
+                height: 3em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header">
+                <div id="header1" class="uh bc-text-head ub bc-head">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-angle-left fa-2x"></div>
+                    </div>
+                    <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                        手机联系人
+                    </div>
+                    <div class="nav-btn nav-bt" id="nav-right" >
+                        <div id="edit">
+                            编辑
+                        </div>
+                        <div id="cancel" class="uhide">
+                            取消
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+            <div id="footer" class="uf t-bla ub ubt bc-border ub-pc ub-ac sc-bg uhide" >
+                <div id="selectAll" class="ub ub-f1 ub-ac ub-pc"  style="margin-right: 0.1em">
+                    <div class="checkbox umar-r">
+                        <input type="checkbox" class="uabs ub-con" disabled="true">
+                    </div>
+                    <div class="btn2 ub ub-ac bc-text ub-pc">
+                        全选
+                    </div>
+                </div>
+                <div id="sendYq" class="btn2 ub ub-ac t-wh ub-pc bc-head ub-f1">
+                    发送邀请
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var isLoading = true;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "phoneContacts_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+        appcan.button('#nav-right', 'btn-act', function() {
+            if (isLoading) {
+                return;
+            }
+            if ($('#edit').hasClass('uhide')) {
+                $('#edit').removeClass('uhide')
+                $('#cancel').addClass('uhide');
+                $('#footer').addClass('uhide');
+                App.evalJs({
+                    js : 'showCheckBtn(false)'
+                })
+                checked = $('#selectAll').find('input')[0].checked = false;
+            } else {
+                $('#edit').addClass('uhide')
+                $('#cancel').removeClass('uhide');
+                $('#footer').removeClass('uhide');
+                App.evalJs({
+                    js : 'showCheckBtn(true)'
+                })
+            }
+            var titHeight = $('#header').offset().height;
+            appcan.frame.resize("content", 0, titHeight);
+        })
+        appcan.button("#nav-left", "btn-act", function() {
+            closeWin();
+        })
+        appcan.button('#selectAll', 'btn-act', function() {
+            var checked = $(this).find('input')[0].checked;
+            $(this).find('input')[0].checked = !checked;
+            App.evalJs({
+                js : 'selectAll(' + !checked + ')'
+            })
+        })
+        appcan.button('#sendYq', 'btn-act', function() {
+            App.evalJs({
+                js : 'sendYq()'
+            })
+        })
+        function setLoading(type) {
+            isLoading = type;
+        }
+
+        function closeWin(type) {
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+    </script>
+</html>

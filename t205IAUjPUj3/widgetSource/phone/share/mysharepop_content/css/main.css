@@ -1,0 +1,46 @@
+.c-bla-50{
+	background-color:rgba(0,0,0,0.5);
+}
+.c-pink{
+	background-color:#f6ebe6;
+}
+.uwh-share{
+	width:3.125em;
+	height:3.125em;
+}
+.hsq{
+	background-image:url('myImg/hsq.png');
+}
+.hsq_friend{
+	background-image:url('myImg/hsq_friend.png');
+}
+.qq{
+	background-image:url('myImg/qq.png');
+}
+.qqzone{
+	background-image:url('myImg/qqzone.png');
+}
+.sinawb{
+	background-image:url('myImg/sinawb.png');
+}
+.wx{
+	background-image:url('myImg/wx.png');
+}
+.wx_friend{
+    background-image:url('myImg/wx_friend.png');
+}
+.umar-t-share{
+	margin-top:1.25em;
+}
+.uinn-share{
+	padding:0 0.625em 1.25em 0.625em; 
+}
+.umar-at1{
+    margin-top:0.625em;
+}
+.t-gra3{
+    color:#484848;
+}
+.t-wh{
+    color: #FFFFFF
+}

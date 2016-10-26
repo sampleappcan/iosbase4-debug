@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ac t-gra" style="padding: 1em">
+            谁可以看我资料
+        </div>
+        <div id="listview"  class="ubt bc-border sc-bg"></div>
+
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv = appcan.listview({
+            selector : "#listview",
+            type : "thinLine",
+            hasAngle : false,
+            hasRadiobox : true,
+            align : 'right'
+        });
+        var userinfo;
+        appcan.ready(function() {
+            lv.set([{
+                title : "仅好友",
+                id : "0"
+            }, {
+                title : "所有人",
+                id : "1"
+            }])
+            loadData();
+        });
+
+        function loadData() {
+            userinfo = App.getUserInfo();
+            var seemyinfo = App.getVal('seemyinfo');
+            $('.lv_title').each(function() {
+                var data = $(this).html();
+                //console.log(data, seemyinfo)
+                if (data == seemyinfo) {
+                    $(this).parent().find('input').attr('checked', true);
+                    return false;
+                }
+            })
+        }
+
+
+        lv.on("click", function(ele, obj, curEle) {
+            //console.log(obj);
+            updateUserPrivicy(data.title);
+        })
+        lv.on("radio:change", function(obj, data) {
+            //  console.log(data);
+            updateUserPrivicy(data.title);
+        })
+        function updateUserPrivicy(type) {
+            App.authApi({
+                url : "user/updateUserPrivicy",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        key : 'seemyinfo',
+                        name : "谁可以看我资料",
+                        value : type
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data);
+                    if (data.code == 0) {
+                        App.setVal('seemyinfo', type);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

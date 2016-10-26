@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <link rel="stylesheet" href="userContactDetail_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="c-gra1 uinn-a1 ub uhide">
+            <div id="userHead" class="ub-f1 ub ub-ver ub-ac ub-pc">
+                <div class="uwh-set3 pos_re">
+                    <div id="headUri" class="ub-img1 uwh-set3 uc-a-set3 uba bc-border ub ub-ac ub-pc">
+                        <div class="lis-icon ub-img userHeader" ></div>
+                    </div>
+                </div>
+                <div class="umar-at1 ulev-4">
+                    点击上传头像
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver c-wh">
+            <div id="userId" class="ub uinn ub-ac ub-f1 ubb bc-border uhide">
+                <div class="ub-f1 ulev-5">
+                    登陆账号
+                </div>
+                <div class="ub tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="loginId" placeholder="请设置账号(必填)" type="text" class="ub-f1 tx-r" >
+                    </div>
+                    <div class="ub ub-ac ub-pc umar-l txt-color"></div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border uhide">
+                <div class="ub-f1 ulev-5">
+                    登陆密码
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="loginPass" placeholder="请输入6-20位密码(必填)" type="password" class="ub-f1 tx-r " style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    姓名
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input onblur="checkContactName()" id="contactName" placeholder="请输入姓名(必填)" type="text" class="ub-f1 tx-r " style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div id="sex" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    性别
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        选择性别(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    部门/职位
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="jobTitle" placeholder="部门/职位(必填)" type="text" class="ub-f1 tx-r " style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    手机号
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="mobile" placeholder="手机号(必填)" type="text" class="ub-f1 tx-r " style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    电子邮箱
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="email" placeholder="电子邮箱(必填)" type="text" class="ub-f1 tx-r " style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    QQ
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="QQ" placeholder="QQ号(选填)" type="text" class="ub-f1 tx-r" style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    微信
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="wechat" placeholder="微信号(选填)" type="text" class="ub-f1 tx-r" style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uhide" id="listview">
+                <ul class="ub ub-f1">
+                    <li class=" ub  bc-text ub-ac lis ub-f1" >
+                        <div class="checkbox umar-r">
+                            <input type="checkbox" class="uabs ub-con" data-index="0">
+                        </div>
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            设为默认
+                        </div>
+                    </li>
+                    <li class=" ub  bc-text ub-ac lis  ub-f1" >
+                        <div class="checkbox umar-r">
+                            <input type="checkbox" class="uabs ub-con" data-index="1">
+                        </div>
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            允许登陆
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var contactMode;
+        var userinfo;
+        var contactId;
+        var type = 0;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexImage.onCropperClosed = function(data) {
+                    App.Logs("uexImage.onCropperClosed:" + data);
+                    var obj = App.toJson(data);
+                    if (obj.isCancelled == false || obj.isCancelled == "false") {
+                        uploadImg(obj.data);
+                    }
+                }
+                uexImage.onPickerClosed = function(data) {
+                    var obj = JSON.parse(data);
+                    if (!obj.isCancelled) {
+                        var pic = obj.data[0];
+                        var params = {
+                            src : pic,
+                            quality : 1,
+                            usePng : false,
+                            mode : 1
+                        }
+                        uexImage.openCropper(App.toJsonStr(params));
+                    }
+                };
+                uexCamera.cbOpen = function(opId, dataType, data) {
+                    if (!App.isNull(data)) {
+                        var params = {
+                            src : data,
+                            quality : 1,
+                            usePng : false,
+                            mode : 1
+                        }
+                        uexImage.openCropper(App.toJsonStr(params));
+                    }
+                }
+            }
+
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    if (type == 0) {
+                        uexCamera.open(0, 90);
+                    } else {
+                        $('#sex .txt-color').html("女士");
+                    }
+                    break;
+                case 1:
+                    if (type == 0) {
+                        var data = {
+                            min : 1,
+                            max : 1,
+                            quality : 0.9,
+                            usePng : false,
+                            detailedInfo : false
+                        }
+                        var json = JSON.stringify(data);
+                        uexImage.openPicker(json);
+                    } else {
+                        $('#sex .txt-color').html("先生");
+                    }
+                    break;
+                }
+            }
+            loadData();
+        });
+        function loadData() {
+            contactMode = App.getVal("contactMode");
+            contactId = App.getVal("contactId");
+            userinfo = App.getUserInfo();
+            if (contactMode == "edit") {
+                getContactDetail(contactId);
+            }else{
+                $("#userId .txt-color").html("#" + userinfo.userid);
+            }
+            if (App.isNull(userinfo.parentid)) {
+                $("#listview").removeClass("uhide");
+            } else {
+                $("#userHead").parent().removeClass("uhide");
+            }
+        }
+
+        function getContactDetail(id) {
+            if (App.isNull(id)) {
+                return;
+            }
+            App.authApi({
+                url : "user/getContactDetail",
+                data : {
+                    params : {
+                        id : id
+                    }
+                },
+                callBack : function(data) {
+                    console.log(data)
+                    if (data.code == 0) {
+                        var headuri = App.isNull(data.items.headuri) ? "../wgtRes/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + data.items.headuri;
+                        }
+                        if (App.isNull(userinfo.parentid) && parseInt(data.items.iseanblelogin) > 0) {
+                            $("#loginPass").parent().parent().parent().removeClass("uhide");
+                        }
+                        if (parseInt(data.items.iseanblelogin) > 0) {
+                            $("#loginId").parent().parent().parent().removeClass("uhide");
+                            if (!App.isNull(data.items.loginid)) {
+                                $("#loginId").attr("disabled", true);
+                                $("#loginId").attr("readonly", true);
+                            }
+                        }
+                        $("#loginPass").val(data.items.loginpass);
+                        $("#loginId").val(data.items.loginid);
+                        $('#headUri').children().removeClass('userHeader');
+                        $('#headUri').css('background-image', 'url(' + headuri + ')');
+                        $("#userId .txt-color").html("#" + data.items.userid);
+                        $("#contactName").val(data.items.contactname);
+                        $("#sex .txt-color").html(data.items.sex);
+                        $("#jobTitle").val(data.items.jobtitle);
+                        $("#mobile").val(data.items.mobile);
+                        $("#email").val(data.items.email);
+                        $("#QQ").val(data.items.qq);
+                        $("#wechat").val(data.items.wechat);
+                        $(".checkbox input")[0].checked = parseInt(data.items.isdefalut) > 0 ? true : false;
+                        $(".checkbox input")[1].checked = parseInt(data.items.iseanblelogin) > 0 ? true : false;
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button('#sex', '', function() {
+            type = 1;
+            uexWindow.actionSheet("选择性别", "取消", "女士,先生");
+        })
+        function checkContactName() {
+            var contactName = appcan.trim($("#contactName").val());
+            if (App.isNull(contactName) || contactMode != 'add') {
+                return;
+            }
+            App.authApi({
+                url : "user/checkContactName",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        contactName : contactName
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 405) {
+                        App.toast("这个联系人已经存在了,请输入其他名字.");
+                    } else if (data.code == 404) {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+        function addUserContact() {
+            var contactName = appcan.trim($("#contactName").val());
+            var sex = appcan.trim($("#sex .txt-color").html());
+            var jobTitle = appcan.trim($("#jobTitle").val());
+            var mobile = appcan.trim($("#mobile").val());
+            var email = appcan.trim($("#email").val());
+            var qq = appcan.trim($("#QQ").val());
+            var wechat = appcan.trim($("#wechat").val());
+            var isDefalut = $(".checkbox input")[0].checked ? 1 : 0;
+            var isUpdate = App.isNull(contactId) ? false : true;
+            var isEanbleLogin = $(".checkbox input")[1].checked ? 1 : 0;
+            var loginId = appcan.trim($("#loginId").val());
+            var loginPass = appcan.trim($("#loginPass").val());
+            if (App.isNull(contactName)) {
+                App.toast("联系人不能为空");
+                return;
+            }
+            if (App.isNull(jobTitle)) {
+                App.toast("部门/职位不能为空");
+                return;
+            }
+            if (sex == "选择性别(必填)" || App.isNull(sex)) {
+                App.toast("请选择性别");
+                return;
+            }
+            if (App.isNull(mobile) || !App.isMobile(mobile)) {
+                App.toast("请输入正确的手机号");
+                return;
+            }
+            if ( !App.isNull(email) && !App.isEmail(email)) {
+                App.toast("请输入正确的电子邮箱");
+                return;
+            }
+            var pass = "";
+            if (isEanbleLogin && App.isNull(userinfo.parentid)) {
+                if (App.isNull(loginId)) {
+                    App.toast("请先设置一个登陆账号");
+                    return;
+                }
+                if (App.isNull(loginPass) || loginPass.length < 6) {
+                    App.toast("密码不能为空或小于6位");
+                    return;
+                }
+            }
+            pass = hex_md5(loginPass);
+            if (loginPass.length == 32) {
+                pass = loginPass;
+            }
+            App.openLoading({
+                title : "",
+                msg : "正在保存信息，请稍后...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : "user/addUserContact",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        contactName : contactName,
+                        sex : sex,
+                        jobTitle : jobTitle,
+                        mobile : mobile,
+                        email : email,
+                        qq : qq,
+                        wechat : wechat,
+                        isDefalut : isDefalut,
+                        isUpdate : isUpdate,
+                        isEanbleLogin : isEanbleLogin,
+                        loginId : loginId,
+                        loginPass : pass,
+                        id : contactId,
+                        parentId : App.isNull(userinfo.parentid) ? "" : userinfo.parentid
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("保存成功!");
+                        var win = App.getCurrWin();
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : win.backName,
+                                js : "loadData()"
+                            });
+                        }
+                        App.evalJs({
+                            winName : "userContactDetail",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button('#headUri', '', function() {
+            type = 0;
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+        function uploadImg(pic) {
+            App.openLoading({
+                title : "",
+                msg : "正在更新头像...请稍后...",
+                canCancel : 1
+            });
+            App.uploadTMPFile(pic, 2, 480, function(status, obj) {
+                App.Logs("uploadImg:" + status + "," + App.toJsonStr(obj));
+                if (status == 1) {
+                    uexFileMgr.deleteFileByPath(pic);
+                    App.authApi({
+                        url : 'user/updateUserLogo',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                fileName : obj.serverPath,
+                                imageType : "1"
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                userinfo.headuri = data.items.logo;
+                                userinfo = App.updateUserInfo(userinfo);
+                                $('#headUri').css('background-image', 'url(' + App.headUri + userinfo.headuri + ')');
+                                $('#headUri').children().removeClass('userHeader');
+                            } else {
+                                App.alertEx(data.message);
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+
+        $('.checkbox').find('input').on('change', function(evt) {
+            var index = parseInt($(this).attr("data-index"));
+            var item = $(this)[0];
+            var checked = item.checked;
+            var contactName = $("#contactName").val();
+            if (index == 1) {
+                if (!checked) {
+                    appcan.window.confirm({
+                        title : '提醒',
+                        content : '确定要取消' + contactName + "的登陆权限吗？",
+                        buttons : ['暂不取消', '立即取消'],
+                        callback : function(err, data, dataType, optId) {
+                            if (err) {
+                                return;
+                            }
+                            if (parseInt(data) == 0) {
+                                item.checked = true;
+                            } else {
+                                $("#loginPass").parent().parent().parent().addClass("uhide");
+                                $("#loginId").parent().parent().parent().addClass("uhide");
+                            }
+                        }
+                    });
+                } else {
+                    $("#loginPass").parent().parent().parent().removeClass("uhide");
+                    $("#loginId").parent().parent().parent().removeClass("uhide");
+                }
+            }
+        });
+    </script>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.5em;
+                min-height: 1.8em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="ub ub-ac ub-pc c-wh-pLG" style="padding:0;background: rgba(0, 0, 0, 0.1);height: 100%">
+            <div id="listview"  class="ubt ubb bc-border sc-bg tx-c ulev-3 us" style="width:50%;">
+                <ul id="paixulist">
+                    <li id="seaman" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >
+                        <div class="line1 ulev-1">
+                            海员简历
+                        </div>
+                    </li>
+                    <li id="normal" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2">
+                        <div class="line1 ulev-1 umar-r">
+                            普通简历
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+
+        })
+        appcan.button('.btn2', '', function() {
+            App.setVal("resumeType", this.id);
+            closepop();
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                js : "createResume()"
+            })
+            return;
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userResumePublish',
+                url : '../user/userResumePublish.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+
+        })
+
+        appcan.button("#pop", "", function() {
+            closepop();
+        })
+        function closepop() {
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : "closeResumeMenu()"
+            })
+        }
+
+    </script>
+</html>

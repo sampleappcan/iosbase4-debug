@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userDynamic_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="umar-t c-wh ubr ubl ubt b-gra" id="sortList"></div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv1 = appcan.listview({
+            selector : "#sortList",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1,
+            hasCheckbox : false,
+            align : 'left'
+        });
+        var userinfo;
+        var qqData;
+        var qqInfo;
+
+        appcan.ready(function() {
+            uexSina.cbGetUserInfo = function(opCode, dataType, data) {
+                App.Logs("uexSina.cbGetUserInfo:" + data);
+                var weiboInfo = eval('(' + data + ')');
+                var params = {
+                    openid : weiboInfo.id,
+                    userName : weiboInfo.name,
+                    logoUri : weiboInfo.avatar_large,
+                    type : "SINA"
+                };
+                bindThird(params);
+            }
+            uexSina.cbLogin = function(opCode, dataType, data) {
+                var weiboData = eval('(' + data + ')');
+                App.Logs("uexSina.cbLogin:" + data);
+                if (!App.isNull(weiboData.uid)) {
+                    uexSina.getUserInfo();
+                } else {
+                    App.toast("取消绑定");
+                }
+            }
+            uexQQ.cbGetUserInfo = function(opId, dataType, data) {
+                qqInfo = data;
+                if ( typeof data == "string") {
+                    qqInfo = JSON.parse(data);
+                }
+                if (App.isNull(qqInfo.nickname)) {
+                    App.toast("拉取用户信息失败，请重试");
+                    return;
+                }
+                var params = {
+                    openid : qqData.data.openid,
+                    userName : qqInfo.nickname,
+                    logoUri : qqInfo.figureurl_qq_2,
+                    type : "QQ"
+                };
+                bindThird(params);
+            };
+            uexQQ.cbLogin = function(opId, dataType, data) {
+                App.Logs("uexQQ.cbLogin:" + data);
+                qqData = JSON.parse(data);
+                if (parseInt(qqData.ret) == 0) {
+                    if (App.getAppPlat()) {
+                        uexQQ.getUserInfo(App.qqAppId);
+                    } else {
+                        uexQQ.getUserInfo(App.iOSqqAppId);
+                    }
+                } else {
+                    App.toast("取消绑定");
+                }
+            };
+            sortList();
+        })
+        function sortList() {
+            userinfo = App.getUserInfo();
+            App.Logs(userinfo.qqopenid + "," + userinfo.sinaopenid + "," + userinfo.weixinopenid)
+            var qqopenid = App.isNull(userinfo.qqopenid) ? "未绑定" : "已绑定";
+            var sinaopenid = App.isNull(userinfo.sinaopenid) ? "未绑定" : "已绑定";
+            var weixinopenid = App.isNull(userinfo.weixinopenid) ? "未绑定" : "已绑定";
+            var arrData = [{
+                "sort" : "更改手机号",
+                "subTitle" : "<span class='sc-text-active'>" + userinfo.mobile + "</span>",
+                "id" : 0
+            }, {
+                "sort" : "修改密码",
+                "subTitle" : "",
+                "id" : 1
+            }, {
+                "sort" : "新浪微博",
+                "subTitle" : sinaopenid,
+                "id" : 2
+            }, {
+                "sort" : "腾讯QQ",
+                "subTitle" : qqopenid,
+                "id" : 3
+            }, {
+                "sort" : "微信",
+                "subTitle" : weixinopenid,
+                "id" : 4
+            }];
+            var listData = [];
+            for (var i = 0,
+                len = arrData.length; i < len; i++) {
+                var list = {
+                    id : arrData[i].id,
+                    title : arrData[i].sort,
+                    subTitle : arrData[i].subTitle
+                }
+                listData.push(list);
+            }
+            lv1.set(listData);
+        }
+
+
+        lv1.on('click', function(ele, data, subobj) {
+            var type = $(ele).find(".lv_subTitle").html();
+            switch(data.id) {
+            case 0:
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您已经绑定' + userinfo.mobile + ",可通过此手机号+密码的方式登陆海员港",
+                    buttons : ['我知道了', '更换手机号'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            App.openWin({
+                                backName : 'userSecurity',
+                                name : 'userChangePhone',
+                                url : 'userChangePhone.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        }
+                    }
+                });
+                break;
+            case 1:
+                App.openWin({
+                    backName : 'userRestPwd',
+                    name : 'userRestPwd',
+                    url : 'userRestPwd.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 2:
+                bindSina(type);
+                break;
+            case 3:
+                bindQQ(type);
+                break;
+            case 4:
+                bindWeixin(type);
+                break;
+            }
+        })
+        function bindWeixin(type) {
+            if (appcan.trim(type) == "未绑定") {
+                App.Logs('微信登陆-->' + App.weixinAppKey);
+                App.evalJs({
+                    winName : "userSecurity",
+                    type : "1",
+                    js : "wxLogin()"
+                });
+            } else {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '确定要取消微信绑定吗？取消后将无法使用微信进行登录!',
+                    buttons : ['暂不取消', '取消绑定'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            cancelBind("WEIXIN");
+                        }
+                    }
+                });
+            }
+        }
+
+        function bindQQ(type) {
+           // console.log(type)
+            if (type == "未绑定") {
+                if (App.getAppPlat()) {
+                    App.Logs("QQ登陆-->" + App.qqAppId);
+                    uexQQ.login(App.qqAppId);
+                } else {
+                    App.Logs("QQ登陆-->" + App.iOSqqAppId);
+                    uexQQ.login(App.iOSqqAppId);
+                }
+            } else {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '确定要取消QQ绑定吗？取消后将无法使用QQ进行登录!',
+                    buttons : ['暂不取消', '取消绑定'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            cancelBind("QQ");
+                        }
+                    }
+                });
+            }
+        }
+
+        function bindSina(type) {
+            if (type == "未绑定") {
+                App.Logs("新浪登陆-->" + App.sinaAppKey + "," + App.sinaRegisterUrl);
+                uexSina.login(App.sinaAppKey, App.sinaRegisterUrl);
+            } else {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '确定要取消新浪微博绑定吗？取消后将无法使用新浪微博进行登录!',
+                    buttons : ['暂不取消', '取消绑定'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            cancelBind("SINA");
+                            uexSina.logout();
+                        }
+                    }
+                });
+            }
+        }
+
+        function cancelBind(type) {
+            App.authApi({
+                url : 'user/cancleBindThird',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        type : type
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast("取消绑定成功");
+                        if (type == "QQ") {
+                            $("li").eq(3).find(".lv_subTitle").html("未绑定");
+                            userinfo.qqopenid = null;
+                        } else if (type == "SINA") {
+                            $("li").eq(2).find(".lv_subTitle").html("未绑定");
+                            userinfo.sinaopenid = null;
+                        } else {
+                            $("li").eq(4).find(".lv_subTitle").html("未绑定");
+                            userinfo.weixinopenid = null;
+                        }
+                        userinfo = App.updateUserInfo(userinfo);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+        function bindThird(params) {
+            if ( typeof params == "string") {
+                params = JSON.parse(params);
+            }
+            App.authApi({
+                url : 'user/bindThird',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        params : params
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (params.type == "QQ") {
+                            $("li").eq(3).find(".lv_subTitle").html("已绑定");
+                            userinfo.qqopenid = params.openid;
+                        } else if (params.type == "SINA") {
+                            $("li").eq(2).find(".lv_subTitle").html("已绑定");
+                            userinfo.sinaopenid = params.openid;
+                        } else {
+                            $("li").eq(4).find(".lv_subTitle").html("已绑定");
+                            userinfo.weixinopenid = params.openid;
+                        }
+                        userinfo = App.updateUserInfo(userinfo);
+                        App.toast("绑定成功!");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

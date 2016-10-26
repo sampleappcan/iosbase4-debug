@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="addFriend_content/css/main.css">
+        <style>
+            .lis-icon {
+                width: 2.5em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 2.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver">
+            <div class="umar-a1">
+                <div style="background-color: #EEEFF3">
+                    <div class="sc-bg uba uc-a1 ulev-1 uinn ub-ac ub-pc ub fa fa-search" style="color: #B4BEC6;border-color: #FFFFFF">
+                        搜索
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver c-wh ub-f1" id="listview">
+            <div class="ub ub-f1">
+                <div onclick="openJobSqaure()" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%;height: 7em">
+                    <div class="ub-img offer" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        职位广场
+                    </div>
+                </div>
+                <div onclick="openResumeSearch()" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img person" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        人才广场
+                    </div>
+                </div>
+                <div class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img party" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        敬请期待
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-f1 ubb bc-border">
+                <div class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%;height: 7em">
+                    <div class="ub-img supplies" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        敬请期待
+                    </div>
+                </div>
+                <div class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img demand" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        敬请期待
+                    </div>
+                </div>
+                <div class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+        })
+        function openJobSqaure() {
+            App.openWin({
+                backName : 'friendStation',
+                name : 'jobSearch',
+                url : '../search/jobSearch.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+        function openResumeSearch(){
+            App.openWin({
+                backName : 'friendStation',
+                name : 'resumeSearch',
+                url : '../search/resumeSearch.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+    </script>
+</html>

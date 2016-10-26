@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userContactList_content/css/main.css">
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="content" class="ub ub-f1">
+            <ul class="ub-f1">
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var isEdit = false;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var RselectType;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWindow.setMultilPopoverFlippingEnbaled(1);
+            }
+            loadData();
+        })
+        function showEditBtn(type) {
+            if (type == 1) {
+                $(".checkbox").removeClass('uhide');
+                isEdit = true;
+            } else {
+                $(".checkbox").addClass('uhide');
+                $("input").each(function() {
+                    $(this)[0].checked = false;
+                })
+                isEdit = false;
+            }
+        }
+
+        function selectAll(type) {
+            $("input").each(function() {
+                $(this)[0].checked = type;
+            })
+        }
+
+        function loadData(type) {
+            RselectType = App.getVal("RselectType");
+            userinfo = App.getUserInfo();
+            getUserContactList(1, 0);
+        }
+
+        function getUserContactList(pages, add, bounceType) {
+            page = pages;
+            App.authApi({
+                url : "user/getUserContactList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pages,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pages > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createContactHtml(objData.dataList[i]);
+                            }
+                            if (add) {
+                                $("#content ul").append(d);
+                            } else {
+                                $("#content ul").html(d);
+                            }
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createContactHtml(obj) {
+            var h = '';
+            var defalut = "uhide";
+            if (obj.isdefalut == 1) {
+                defalut = "";
+            }
+            h += '<li id="C' + obj.id + '" onclick="selectItem(' + obj.id + ',this,1)" class="uinn-a1 ub-f1 ub ub-ac" data-id="' + obj.id + '">';
+            h += '   <div class="checkbox umar-r uhide">';
+            h += '       <input onchange="selectItem(' + obj.id + ',this)" value="' + obj.id + '" type="checkbox" class="uabs ub-con" >';
+            h += '   </div>';
+            h += '   <div class="ub ub-f1 ub-ver c-wh uba bc-border uinn uc-a1 ub-pc" style="min-height:4em">';
+            h += '      <div class="ub-img defalut ' + defalut + '" style="position: absolute;top: -0.05em;left: 0;min-width: 2em;min-height: 2em"></div>';
+            h += '      <div class="ub" style="margin-left: 1em">';
+            h += '         <div class="ulev-5 ub-f1 contatName">' + obj.contactname + '</div>';
+            h += '         <div class="ulev-5 ub-pe ufm1 moblie">' + obj.mobile + '</div>';
+            h += '      </div>';
+            h += '      <div class="ulev-1 line-hei areaAddr" style="color: #BCBCBC;margin-top: 1em">' + obj.jobtitle + '</div>';
+            h += '      <div class="ulev-1 line-hei address umar-t" style="color: #BCBCBC;">' + obj.qq + '</div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function selectItem(id, item, index) {
+            if (isEdit) {
+                if (!$("#C" + id).find(".defalut").hasClass("uhide")) {
+                    $("#C"+id).find("input")[0].checked = false;
+                    App.toast("默认联系人不能删除");
+                    return;
+                }
+                $("#C"+id).find("input")[0].checked = true;
+            } else if (RselectType == 1) {
+                var contactId = $(item).attr("data-id");
+                var contatName = $(item).find(".contatName").html();
+                //console.log("dddddd")
+                App.evalJs({
+                    winName : "userRecruitment",
+                    js : 'addContactId(\'' + contactId + '\',\'' + contatName + '\')'
+                });
+                App.evalJs({
+                    winName : "userContactList",
+                    type : 1,
+                    js : "closeWin()"
+                });
+            } else {
+                App.setVal("contactId", id);
+                App.setVal("contactMode", "edit");
+                App.openWin({
+                    backName : "userContactList",
+                    name : 'userContactDetail',
+                    url : 'userContactDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            }
+        }
+
+        function deleteCont() {
+            var isSelect = false;
+            var idArray = [];
+            $("input").each(function() {
+                if ($(this)[0].checked) {
+                    idArray.push($(this).val());
+                    isSelect = true;
+                }
+            });
+            if (!isSelect) {
+                App.toast("请先选技要删除的联系人");
+                return;
+            }
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定要删除选中的联系人吗?',
+                buttons : ['立即删除', '暂不删除'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 0) {
+                        App.authApi({
+                            url : "user/deleteContact",
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    idArray : idArray.join()
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    for (var i = 0; i < idArray.length; i++) {
+                                        $("#C" + idArray[i]).remove();
+                                    };
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+</html>

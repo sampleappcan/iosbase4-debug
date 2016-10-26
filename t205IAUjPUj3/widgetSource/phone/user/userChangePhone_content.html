@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userReg_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver uinn-a3 ub-fv ub-f1">
+            <div class="ub ub-ver ub-f1 umar-a">
+                <div class="ulev-1 t-gra umar-a">
+                    已向手机号<span id="oriPhone"></span>发送验证码,请注意查收
+                </div>
+                <div class="ub ub-ac umar-t">
+                    <div class="ub ub-ac ub-f1 c-wh" style="height: 2.5em">
+                        <div class="uinput ub ub-f1 " style="padding-left: 0.4em">
+                            <input id="iCode" placeholder="请输入原手机验证码" type="tel" class="ub-f1">
+                        </div>
+                    </div>
+                    <div class="btn ub ub-ac ub-f1 t-wh ub-pc bc-btn uc-a1 umar-l" id="sendYzmBtn1" style="font-size: 0.8125em">
+                        获取验证码
+                    </div>
+                </div>
+                <div class="ulev-4 t-gra umar-a umar-t">
+                    请输入新手机号并验证
+                </div>
+                <div class="c-wh ub umar-t">
+                    <div class="ub ub-ac ubl bc-border ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1" style="padding-left: 0.4em">
+                            <input id="mobile" placeholder="请输入新手机号码" type="tel" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-ac umar-t">
+                    <div class="ub ub-ac ub-f1 c-wh" style="height: 2.5em">
+                        <div class="uinput ub ub-f1 " style="padding-left: 0.4em">
+                            <input id="vCode" placeholder="请输入验证码" type="tel" class="ub-f1">
+                        </div>
+                    </div>
+                    <div class="btn ub ub-ac ub-f1 t-wh ub-pc bc-btn uc-a1 umar-l" id="sendYzmBtn" style="font-size: 0.8125em">
+                        获取验证码
+                    </div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1 " id="submit" style="min-height: 2.2em">
+                        提交
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var count = 120;
+        var count1 = 120;
+        var timer;
+        var timer1;
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            userinfo = App.getUserInfo();
+            $("#oriPhone").html(userinfo.mobile);
+            getSmsCode(userinfo.mobile, countTime1(), "cpTimeStmap1", false);
+        })
+
+        appcan.button("#submit", 'btn-act', function() {
+            var iCode = $("#iCode").val();
+            var vCode = $("#vCode").val();
+            var mobile = $("#mobile").val();
+            if (App.isNull(iCode)) {
+                App.toast("原手机验证码不能为空");
+                return;
+            }
+            if (App.isNull(vCode)) {
+                App.toast("新手机验证码不能为空");
+                return;
+            }
+            if (!App.isMobile(mobile)) {
+                App.toast("请输入正确的手机号");
+                return;
+            }
+            App.authApi({
+                url : 'user/chagePhone',
+                data : {
+                    params : {
+                        iCode : iCode,
+                        vCode : vCode,
+                        mobile : mobile,
+                        oMobile : userinfo.mobile,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.alertEx("手机号修改成功,将退回登陆界面，请重新登陆", function() {
+                            App.reomveVal("userinfo");
+                            var opts = {
+                                userId : userinfo.userid,
+                                loginType : "APP"
+                            }
+                            App.userLogout(opts, function(data) {
+                                App.openWin({
+                                    backName : "root",
+                                    name : 'indexMain',
+                                    url : '../main.html',
+                                    type : 0,
+                                    aniId : 0,
+                                    animDuration : 200
+                                });
+                            });
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        })
+
+        appcan.button('#sendYzmBtn1', 'btn-act', function() {
+            var timeStmap = App.getVal('cpTimeStmap1');
+            if (count1 != 120) {
+                return;
+            }
+            if (!App.isNull(timeStmap) && ((new Date().getTime() - timeStmap) / 1000) < 120) {
+                App.toast("获取太频繁");
+                return;
+            }
+            getSmsCode(userinfo.mobile, countTime1(), "cpTimeStmap1", false);
+        })
+        function getSmsCode(mobile, fun, timeStmap, check) {
+            var timeStmap1 = App.getVal(timeStmap);
+            if (!App.isNull(timeStmap1) && ((new Date().getTime() - timeStmap1) / 1000) < 120) {
+                return;
+            }
+            App.authApi({
+                url : 'hyw/getSmsCode',
+                data : {
+                    params : {
+                        mobile : mobile,
+                        isCheck : check
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast(data.message);
+                        if (fun) {
+                            fun()
+                        }
+                        App.setVal(timeStmap, new Date().getTime());
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button('#sendYzmBtn', 'btn-act', function() {
+            var timeStmap = App.getVal('cpTimeStmap');
+            if (count != 120) {
+                return;
+            }
+            if (!App.isNull(timeStmap) && ((new Date().getTime() - timeStmap) / 1000) < 120) {
+                App.toast("获取太频繁");
+                return;
+            }
+            var mobile = $('#mobile').val();
+            if (!App.isMobile(mobile)) {
+                App.toast("请输入正确的手机号");
+                return;
+            }
+            getSmsCode(mobile, countTime(), "cpTimeStmap", true);
+            return;
+            App.authApi({
+                url : 'hyw/getSmsCode',
+                data : {
+                    params : {
+                        mobile : mobile
+                    }
+                },
+                callBack : function(data) {
+                    App.alertEx(data.message, function() {
+                        countTime();
+                        App.setVal('cpTimeStmap', new Date().getTime());
+                    });
+                }
+            });
+        })
+        function countTime() {
+            if (count > 0) {
+                count--;
+                $('#sendYzmBtn').html("重新获取(" + count + "s)");
+                timer = setTimeout('countTime()', 1000);
+            } else {
+                count = 120;
+                $('#sendYzmBtn').html("获取验证码");
+                clearTimeout(timer);
+            }
+        }
+
+        function countTime1() {
+            if (count1 > 0) {
+                count1--;
+                $('#sendYzmBtn1').html("重新获取(" + count1 + "s)");
+                timer1 = setTimeout('countTime1()', 1000);
+            } else {
+                count1 = 120;
+                $('#sendYzmBtn1').html("获取验证码");
+                clearTimeout(timer1);
+            }
+        }
+    </script>
+</html>

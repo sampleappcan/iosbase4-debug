@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub uinn ub-ac ub-f1">
+                <div class="ub-f1 ulev-5 t-gra">
+                    我的航海经历
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1 c-wh">
+            <div id="jobTitle" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5 ub-ac ub">
+                    担任职务
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择担任职务
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="jobTitle" selectedindex="0"></select>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    服务公司
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="serverComp" placeholder="请输入服务公司(必填)" type="text" class="ub-f1 tx-r txt-color" maxlength="100" style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div id="startTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    开始年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择年份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="startMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    开始月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择月份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startMonth" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    结束年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择年份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    结束月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择月份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endMonth" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="shipType" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    船舶类型
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择船舶类型
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div id="shipLine" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    船舶航线
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择船舶航线
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="shipLine" selectedindex="0"></select>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    船舶名称
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="shipName" placeholder="请输入船舶名称" type="text" class="ub-f1 tx-r txt-color" maxlength="100" style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    总吨/马力
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="shipPower" placeholder="请输入总吨/马力" type="text" class="ub-f1 tx-r txt-color" maxlength="100" style="padding-right: 1.5em">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/options.js"></script>
+    </body>
+    <script>
+        var type = 0;
+        var userinfo;
+        var shipLineType;
+        var shipLineId;
+        var startTime = "请选择年份";
+        var endTime = "请选择年份";
+        var startMonth = "请选择月份";
+        var endMonth = "";
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loaddata();
+        })
+        function loadDateAndMonth() {
+            var year = new Date().getFullYear();
+            var option = "<option value='请选择年份'>请选择年份</option>";
+            var option1 = "<option value='请选择月份'>请选择月份</option>";
+            for (var i = 1970; i <= year; i++) {
+                option += "<option value=" + i + ">" + i + "</option>";
+            };
+            for (var i = 1; i <= 12; i++) {
+                option1 += "<option value=" + i + ">" + i + "</option>";
+            };
+            $("#startTime select").html(option);
+            option += "<option value='至今'>至今</option>";
+            $("#endTime select").html(option);
+            $("#startMonth select").html(option1);
+            $("#endMonth select").html(option1);
+        }
+
+        function loadOptionData() {
+            var position = "<option value='请选择担任职务'>请选择担任职务</option>";
+            var line = "<option value='请选择船舶航线'>请选择船舶航线</option>";
+            for (var i = 1; i < positionArray.length; i++) {
+                position += "<option value=" + positionArray[i] + ">" + positionArray[i] + "</option>";
+            };
+            for (var i = 0; i < lineAreaArray.length; i++) {
+                line += "<option value=" + lineAreaArray[i] + ">" + lineAreaArray[i] + "</option>";
+            };
+            $("#jobTitle select").html(position);
+            $("#shipLine select").html(line);
+        }
+
+        function loaddata() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadDateAndMonth();
+            loadOptionData();
+            shipLineType = App.getVal('shipLineType');
+            shipLineId = App.getVal('shipLineId');
+            if (shipLineType == 0) {
+                App.authApi({
+                    url : "user/getUserShipLineExp",
+                    data : {
+                        params : {
+                            shipLineId : shipLineId
+                        }
+                    },
+                    callBack : function(data) {
+                        //console.log(data)
+                        if (data.code == 0) {
+                            $('#jobTitle .txt-color').html(data.items.jobtitle);
+                            $('#serverComp').val(data.items.servercomp);
+                            $('#shipType .txt-color').html(data.items.shiptype);
+                            $('#shipLine .txt-color').html(data.items.shipline);
+                            $("#shipName").val(data.items.shipname);
+                            $("#shipPower").val(data.items.shippower);
+                            var tempStr = data.items.starttime;
+                            var tempStr1 = data.items.endtime;
+                            tempStr = tempStr.split("-");
+                            tempStr1 = tempStr1.split("-");
+                            if (tempStr.length > 1) {
+                                startTime = tempStr[0];
+                                startMonth = tempStr[1];
+                                $('#startTime .text').html(startTime);
+                                $('#startMonth .text').html(startMonth);
+                            }
+                            if (tempStr1[0] == "至今") {
+                                $('#endTime .text').html("至今");
+                                endTime = "至今";
+                                $('#endMonth').addClass("uhide");
+                            } else {
+                                endTime = tempStr1[0];
+                                endMonth = tempStr1[1];
+                                $('#endTime .text').html(endTime);
+                                $('#endMonth .text').html(endMonth);
+                            }
+                        }
+                        App.ajaxLoading(0);
+                    }
+                })
+            } else {
+                App.ajaxLoading(0);
+            }
+        }
+
+        function deleteEduExp() {
+            if (App.isNull(shipLineId)) {
+                return;
+            }
+            appcan.window.confirm({
+                title : '提醒',
+                content : '您确定要删除当前的学历信息吗？',
+                buttons : ['不了！我在想想', '是的！我要删除'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        App.openLoading({
+                            title : '提交数据',
+                            msg : "正在提交数据",
+                            canCancel : 1
+                        });
+                        App.authApi({
+                            url : "user/deleteUserEdu",
+                            data : {
+                                params : {
+                                    shipLineId : shipLineId
+                                }
+                            },
+                            callBack : function(data) {
+                                App.closeLoading();
+                                if (data.code == 0) {
+                                    App.alertEx("学历删除成功", function() {
+                                        App.evalJs({
+                                            type : 0,
+                                            winName : "userEduExp",
+                                            js : 'loaddata()'
+                                        });
+                                        App.evalJs({
+                                            type : 1,
+                                            winName : 'userEduDetail',
+                                            js : 'closeWin()'
+                                        });
+                                    })
+                                } else {
+                                    App.alertEx(data.message);
+                                }
+
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function addOrUpdateShipExp() {
+            var jobTitle = appcan.trim($('#jobTitle .txt-color').html());
+            var serverComp = appcan.trim($('#serverComp').val());
+            var shipType = appcan.trim($('#shipType .txt-color').html());
+            var shipLine = appcan.trim($('#shipLine .txt-color').html());
+            var shipName = appcan.trim($('#shipName').val());
+            var shipPower = appcan.trim($('#shipPower').val());
+            var startDate = new Date();
+            var endDate = new Date();
+            if (App.isNull(jobTitle) || jobTitle == "请选择担任职务") {
+                App.toast("请选择担任职务");
+                return;
+            }
+            var startTimeStr = "";
+            var endTimeStr = "";
+            if (!App.isNull(jobTitle)) {
+                if (startTime == "请选择年份" || App.isNull(startTime)) {
+                    App.toast("请选择开始时间");
+                    return;
+                }
+                if (endTime == "请选择年份" || App.isNull(endTime)) {
+                    App.toast("请选择结束时间");
+                    return;
+                }
+                if (startTime != "请选择年份" && App.isNull(startMonth)) {
+                    App.toast("请选择开始月份");
+                    return;
+                }
+                startDate.setFullYear(startTime);
+                startDate.setMonth(startMonth - 1);
+                startDate.setDate(1);
+                endTimeStr = "至今";
+                if (endTime != "至今") {
+                    if (App.isNull(endMonth) || endMonth == "请选择月份") {
+                        App.toast("请选择结束月份");
+                        return;
+                    }
+                    endDate.setFullYear(endTime);
+                    endDate.setMonth(endMonth - 1);
+                    endDate.setDate(1);
+                    if (startDate - endDate > 0) {
+                        App.toast("开始时间不能大于结束时间!");
+                        return;
+                    }
+                    endTimeStr = endTime + "-" + (endMonth < 10 ? "0" + endMonth : endMonth);
+                }
+                startTimeStr = startTime + "-" + (startMonth < 10 ? "0" + startMonth : startMonth);
+            }
+            App.openLoading({
+                title : '提交数据',
+                msg : "正在提交数据...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : "user/addOrUpdateShipLineExp",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        jobTitle : jobTitle,
+                        serverComp : serverComp,
+                        shipType : shipType,
+                        startTime : startTimeStr,
+                        endTime : endTimeStr,
+                        shipLine : shipLine,
+                        shipName : shipName,
+                        shipPower : shipPower,
+                        shipLineType : shipLineType,
+                        shipLineId : shipLineId
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("保存成功");
+                        setTimeout(function() {
+                            if (shipLineType == 2) {
+                                App.evalJs({
+                                    type : 0,
+                                    winName : "userResumePublish",
+                                    js : 'loadShipLineExp()'
+                                });
+                            } else {
+                                App.evalJs({
+                                    type : 0,
+                                    winName : "userShipLineExpList",
+                                    js : 'loadData()'
+                                });
+                            }
+                            App.evalJs({
+                                type : 1,
+                                winName : 'userShipLineExpDetail',
+                                js : 'closeWin()'
+                            });
+                        }, 1000);
+                    } else {
+                        App.alertEx(data.message);
+                    }
+
+                }
+            });
+        }
+
+
+        appcan.select(".select", function(ele, value) {
+            var id = ele.attr("data-id");
+            switch(id) {
+            case "startTime":
+                startTime = value;
+                break;
+            case "startMonth":
+                startMonth = value;
+                break;
+            case "endTime":
+                endTime = value;
+                if (endTime == "至今") {
+                    $("#endMonth").addClass("uhide");
+                    endMonth = "";
+                } else {
+                    $("#endMonth").removeClass("uhide");
+                }
+                break;
+            case "endMonth":
+                endMonth = value;
+                break;
+            }
+        });
+        appcan.button("#shipType", '', function() {
+            var shipTypeStr = appcan.trim($(this).find(".txt-color").html());
+            var select = [0, 0];
+            if (shipTypeStr != "请选择船舶类型") {
+                shipTypeStr = shipTypeStr.split(" ");
+                select = getSelect(shipTypeStr[0], shipTypeStr[1]);
+                App.Logs("select:" + App.toJsonStr(select));
+            }
+            var params = {};
+            if (App.getAppPlat()) {
+                params = {
+                    src : "res://shipTypes.json",
+                    select : select
+                };
+            } else {
+                var y = screen.availHeight - 280;
+                params = {
+                    x : 0,
+                    y : y,
+                    width : window.innerWidth,
+                    height : 300,
+                    src : "res://shipTypes.json",
+                    select : select
+                };
+            }
+            uexWheelPickView.onConfirmClick = function(data) {
+                App.Logs("uexWheelPickView.onConfirmClick:" + data)
+                var obj = App.toJson(data);
+                $('#shipType .txt-color').html(obj.data.join(" "));
+            }
+            uexWheelPickView.open(JSON.stringify(params));
+        })
+        function getSelect(prov, city) {
+            var select = [];
+            for (var i = 0; i < shipTypeArray.length; i++) {
+                if (shipTypeArray[i].name == prov) {
+                    select.push(i);
+                    if (!App.isNull(shipTypeArray[i].sub)) {
+                        for (var j = 0; j < shipTypeArray[i].sub.length; j++) {
+                            if (shipTypeArray[i].sub[j].name == city) {
+                                select.push(j);
+                                break;
+                            };
+                        };
+                    }
+                    break;
+                };
+            };
+            return select;
+        }
+    </script>
+</html>

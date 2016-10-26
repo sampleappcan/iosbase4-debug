@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="contacts_content/css/main.css">
+        <style>
+            .tab_badge2 {
+                position: absolute;
+                width: 1.8em;
+                height: 1.8em;
+                left: 3em;
+                top: 0.5em;
+                -webkit-border-radius: 1.8em;
+                border-radius: 1.8em;
+                text-align: center;
+            }
+            .uw-app3 {
+                width: 3em;
+            }
+            .uh-app3 {
+                height: 3em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver uinn sc-bg umar-t" id="comment">
+            <ul>
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadNearContList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadNearContList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            if ($("#comment ul li").length > 0) {
+                return;
+            }
+            App.ajaxLoading(1, true);
+            if (!isdebug) {
+                getCurrLocation(function() {
+                    loadNearContList(page, 0);
+                });
+            } else {
+                loadNearContList(page, 0);
+            }
+        }
+
+        function changeTypeFilter() {
+            loadNearContList(1, 0);
+        }
+
+        function loadNearContList(pages, add, bounceType) {
+            page = pages;
+            var lat = App.getVal('curLat');
+            var lng = App.getVal('curLng');
+            if (App.isNull(lat) || App.isNull(lng)) {
+                App.ajaxLoading(0);
+                App.alertEx("无法获取当前位置，请检查系统设置是否对APP开启了定位权限.");
+                return;
+            }
+            App.authApi({
+                url : "user/getNearUserList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pages,
+                        pageSize : pageSize,
+                        lat : lat,
+                        lng : lng
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        var d = '';
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            //uexWindow.resetBounceView(1);
+                            return;
+                        }
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createContactHtml(objData.dataList[i], i);
+                            };
+                            if (add) {
+                                $('#comment ul').append(d);
+                            } else {
+                                $('#comment ul').html(d);
+                            }
+                            $('#comment').addClass('sc-bg');
+                        } else {
+                            d = '<div class="ub ub-ac ub-pc" style="height:' + window.innerHeight + 'px;color:#7C807F">没有找到合适的人脉</div>';
+                            $('#comment').removeClass('sc-bg');
+                            $('#comment ul').html(d);
+                        }
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != null && bounceType != undefined) {
+                        uexWindow.resetBounceView(bounceType);
+                        //uexWindow.resetBounceView(1);
+                    }
+                }
+            })
+        }
+
+        function createContactHtml(obj, index) {
+            var headuri = App.isNull(obj.headuri) ? "../indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            var cnname = obj.cnname;
+            var jobtitle = App.isNull(obj.jobtitle) ? "未填写职位" : obj.jobtitle;
+            var usertype = obj.userrole + "/(" + obj.usertype + ")";
+            //App.getUserType(obj.usertype);
+            var compname = App.isNull(obj.compname) ? "未填写公司" : obj.compname;
+            var disance = "";
+            if (parseFloat(obj.dis) <= 100) {
+                disance = '100米以内';
+            } else if (parseFloat(obj.dis) <= 200) {
+                disance = '200米以内';
+            } else if (parseFloat(obj.dis) <= 400) {
+                disance = '400米以内';
+            } else if (parseFloat(obj.dis) <= 600) {
+                disance = '600米以内';
+            } else if (parseFloat(obj.dis) <= 800) {
+                disance = '800米以内';
+            } else if (parseFloat(obj.dis) <= 1000) {
+                disance = '1000米以内';
+            } else if (parseFloat(obj.dis) <= 2000) {
+                disance = '&lt;2公里以内';
+            } else {
+                disance = '&gt;2公里以外';
+            }
+            var h = '';
+            h += '<li id="u' + obj.userid + '" class="ub ub-f1 ubb bc-border" style="padding-top:0.4em;padding-bottom:0.4em ">';
+            h += ' <div class="ub ub-f1">';
+            h += '     <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '     <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ub-f1 ub ub-ver">';
+            h += '        <div class="ub ub-f1 ub-ac">';
+            h += '           <div class="ut-s sc-text-active userName" >' + cnname + '</div>';
+            h += '        </div>';
+            h += '        <div class="ub-f1 ub t-gra-comm ub-ac umar-b ">';
+            h += '           <div class="ulev-1 sc-text-active tx-c ut-s" style="margin-top: 0.5em">' + disance + '</div>';
+            h += '        </div>';
+            h += '         <div class="status ub ub-f1 status umar-b sc-text-active ub-ac umar-r ulev-1 uhide">已发送请求</div>';
+            h += '         </div>';
+            h += '     </div>';
+            h += '     <div class="ub ub-pc ub-ver">';
+            h += '        <div class="ub ub-pc ub-f1 ub-ac" >'
+            h += '           <div onclick="addToFriend(\'' + obj.userid + '\',\'' + cnname + '\')" class="addBtn uc-a1 ub ub-pc ub-ac uinn ulev-5 us " style="background-color: #008CE4;color: #FFFFFF;min-width: 5em;height:1.2em">加为好友</div>';
+            h += '       </div>'
+            h += '    </div>';
+            h += ' </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function addToFriend(userId, cnName) {
+            if (App.isNull(userId)) {
+                return;
+            }
+            if (!isdebug) {
+                if (userId == userinfo.userid) {
+                    App.toast("不能添加自己");
+                    return;
+                }
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : userinfo.cnname + "请求添加你为好友",
+                            remark1 : "你请求添加" + cnName + "为好友"
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            $('#u' + userId + " .status").removeClass('uhide');
+                            $('#u' + userId + " .addBtn").addClass('uhide');
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         *获取当前用户位置
+         * @param {Object} callBack
+         */
+        function getCurrLocation(callBack) {
+            uexLocation.onChange = function(lat, lng) {
+                var lat1 = App.getVal("curLat");
+                var lng1 = App.getVal("curLng");
+                var change = false;
+                //App.Logs(lat1 + "," + lng1)
+                if (lat > 0 && lng > 0) {
+                    uexLocation.closeLocation();
+                    if (!App.getAppPlat()) {
+                        var point = App.google2baidu(lat, lng);
+                        lat = point.lat;
+                        lng = point.lng;
+                    }
+                    var disance = App.getDisance(lng, lat, lng1, lat1);
+                    App.Logs(disance)
+                    if (disance >= 100) {
+                        App.setVal("curLat", lat);
+                        App.setVal("curLng", lng);
+                        change = true;
+                    }
+                    if (change) {
+                        App.updateUserLocation(lat, lng);
+                    }
+                    if (callBack) {
+                        callBack();
+                    }
+                    App.Logs("getCurrLocation:" + App.getVal("curLat") + "," + App.getVal("curLng") + "," + disance);
+                }
+            }
+            uexLocation.cbOpenLocation = function(opCode, dataType, data) {
+                App.Logs("uexLocation.cbOpenLocation:" + data)
+                if (parseInt(data) != 0) {
+                    uexLocation.closeLocation();
+                }
+            }
+            uexLocation.openLocation();
+        }
+    </script>
+</html>

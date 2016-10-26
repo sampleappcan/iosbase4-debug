@@ -1,0 +1,76 @@
+.umar-a1 {
+    margin: 0.625em;
+}
+.uinn-search {
+    padding: 0 .66em;
+}
+.umwh-voicebtn {
+    width: 3.125em;
+    height: 3.125em;
+}
+.list {
+    min-height: 2.5em;
+}
+.b-dfd {
+    border-color: #dfdfdf;
+}
+.umar-lrlist {
+    margin: 0 .625em;
+}
+.uinn-lrlist {
+    padding: 0 .625em;
+}
+.umar-lrtxt {
+    margin: 0 0.5em;
+}
+.t-c2c {
+    color: #c2c2c2;
+}
+.res-searchtop {
+    background-image: url(images/search-top.png);
+}
+.res-voicebtn {
+    background-image: url(images/voicebtn.png);
+}
+.umar-tvbtn {
+    margin-top: 1em;
+}
+.umar-tbvbtn {
+    margin: 1.75em 0;
+}
+.c-wh {
+    background-color: white;
+}
+.uinn-a7 {
+    padding: 0 0.625em;
+}
+.demand {
+    background-image: url(images/demand.png);
+}
+.party {
+    background-image: url(images/party.png);
+}
+.person {
+    background-image: url(images/person.png);
+}
+.offer {
+    background-image: url(images/offer.png);
+}
+.supplies {
+    background-image: url(images/supplies.png);
+}
+.cert {
+    background-image: url(images/cert.png);
+}
+.weather {
+    background-image: url(images/weather.png);
+}
+.ship_position {
+    background-image: url(images/ship_position.png);
+}
+.score {
+    background-image: url(images/score.png);
+}
+.company {
+    background-image: url(images/company.png);
+}

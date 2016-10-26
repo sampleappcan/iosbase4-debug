@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userQrCode_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div style="margin: 0.625em">
+                <div id="listview1"  class="uba bc-border c-wh">
+                    <ul>
+                        <li class="ub t-bla ub-ac lis" data-index="0">
+                            <ul class="ub ub ub-ver umar-r">
+                                <li class="">
+                                    <div id="userHead" class="ub-img1" style="background-image:url(../wgtRes/comImg.png);width: 3.5em;height: 3.5em"></div>
+                                </li>
+                            </ul>
+                            <ul class="ub-f1 ub ub-pj ub-ac">
+                                <ul class="ub-f1 ub ub-ver marg-l">
+                                    <li id="userId" class="bc-text ub ub-ver ulev1 uhide">
+
+                                    </li>
+                                    <li id="cnName" class="bc-text ub ub-ver ulev1">
+
+                                    </li>
+                                    <li id="compName" class="ulev-1 uinn3 t-gra">
+
+                                    </li>
+                                    <li id="jobTitle" class="ulev-1  uinn3 t-gra">
+
+                                    </li>
+                                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="ub ub-pc ub-ac" style="margin-top: 0.625em;">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1"  id="btn" style="width: 10em">
+                        添加人脉
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            App.ajaxLoading(1, true);
+            loadData();
+        })
+        appcan.button('#btn', 'btn-act', function() {
+            addToFriend();
+        })
+        function addToFriend() {
+            userId = $('#userId').html();
+            if (userId == userinfo.userid) {
+                App.toast("不能添加自己");
+                return;
+            }
+            var cnName = appcan.trim($('#cnName').html());
+            if (!isdebug) {
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : userinfo.cnname + "请求添加你为好友",
+                            remark1 : "你请求添加" + cnName + "为好友"
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            App.toast("请求发送成功,等待对方通过验证");
+                        } else {
+                            App.toast(data.message);
+                        }
+                        if (data.code == 0 || data.code == 405) {
+                            App.evalJs({
+                                winName : 'userQrCodeDetail',
+                                type : 1,
+                                js : 'closeWin()'
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        function loadData() {
+            userinfo = App.getUserInfo();
+            var qrCode = App.getVal('qrCode');
+            App.authApi({
+                url : 'hyw/getQrCodeInfo',
+                data : {
+                    params : {
+                        qrCode : qrCode
+                    }
+                },
+                callBack : function(data) {
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        var headuri = App.isNull(data.items.headuri) ? "../wgtRes/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + "t/100x100/" + data.items.headuri;
+                        }
+                        $('#userId').html(data.items.userid);
+                        $('#userHead').css('background-image', 'url(' + headuri + ')');
+                        $('#cnName').html(data.items.cnname);
+                        $('#compName').html(data.items.compname);
+                        $('#jobTitle').html(data.items.jobtitle);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

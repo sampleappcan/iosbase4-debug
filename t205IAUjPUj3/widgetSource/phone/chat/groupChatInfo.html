@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div id="title" class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0" >
+                    群聊信息<span>(</span><span class="membCont"></span><span>人)</span>
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div id="nav-right1" class="ub-img umw4 umh4 icon-more"></div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var shareMuen;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "groupChatInfo_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (shareMuen) {
+                            closeShareMenu();
+                            return;
+                        }
+                        closeWin()
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+            if (!isdebug) {
+                uexWeiXin.cbShareLinkContent = function(data) {
+                    App.Logs("uexWeiXin.cbShareLinkContent:indexnew:"+data);
+                    if (parseInt(data) == 0) {
+                        App.toast('分享成功');
+                    } else {
+                        App.toast('取消分享');
+                    }
+                }
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch(parseInt(data)) {
+                case 0:
+                    App.setVal('reportType', 1);
+                    App.openWin({
+                        backName : "groupChatInfo",
+                        name : 'report',
+                        url : '../common/report.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    })
+                    break;
+                case 1:
+                    appcan.window.confirm({
+                        title : '提醒',
+                        content : '退出群聊后不能在接收该群消息,同时会清除该群的聊天记录,如果您是群主,那么该群将被解散!确定要退出？',
+                        buttons : ['继续退出', '不要退出'],
+                        callback : function(err, data, dataType, optId) {
+                            if (err) {
+                                return;
+                            }
+                            if (parseInt(data) == 0) {
+                                App.evalJs({
+                                    js : "exitGroupChat()"
+                                })
+                            }
+                        }
+                    });
+                    break;
+                }
+            }
+        });
+        appcan.button("#nav-right1", '', function() {
+            uexWindow.actionSheet("", "取消", "举报,退出群聊");
+        })
+        appcan.button("#nav-left", "btn-act", function() {
+            if (shareMuen) {
+                closeShareMenu();
+                return;
+            }
+            closeWin(-1);
+        })
+        function closeWin(type) {
+            App.evalJs({
+                winName : "groupChatRoom",
+                type : 1,
+                js : "setTitle()"
+            });
+            App.removeVal("shareData");
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+        function setMemCount(num) {
+            $('.membCont').html(num);
+        }
+
+        function closeShareMenu() {
+            shareMuen = false;
+            appcan.window.closePopover('sharepop');
+        }
+
+        function openShareMunu() {
+            shareMuen = true;
+            App.openPopover({
+                name : 'sharepop',
+                url : '../share/sharepop.html',
+                left : 0,
+                top : 0,
+                width : window.innerWidth,
+                height : 0
+            })
+        }
+    </script>
+</html>

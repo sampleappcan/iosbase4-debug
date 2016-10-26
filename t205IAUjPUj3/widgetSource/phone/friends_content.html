@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="message_content/css/main.css">
+        <link rel="stylesheet" href="contact/contacts_content/css/main.css">
+        <style>
+            .tab_badge2 {
+                width: 1.8em;
+                height: 1.8em;
+                -webkit-border-radius: 1.8em;
+                border-radius: 1.8em;
+                text-align: center;
+            }
+            .uinn5 {
+                padding: 0.5em 0.5em;
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div id="newFriend" class="ub uinn5 ubb bc-border ub-ac ub-f1">
+            <div class="ub-img1 tianjiapy" style="min-width:2.5em;min-height:2.5em;"></div>
+            <div class="ub ub-ac ub-f1 tip-right ulev1">
+                新的朋友
+            </div>
+            <div id="logicmsgBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                99+
+            </div>
+        </div>
+        <div id="groupChat" class="ub uinn5 ubb bc-border ub-ac ub-f1 uhide">
+            <div class="ub-img1 groupIco" style="min-width:2.5em;min-height:2.5em;"></div>
+            <div class="ub ub-ac ub-f1 tip-right ulev1">
+                我的群
+            </div>
+            <div id="groupChatBage" class="ub ub-ac ub-pc ulev-4 t-wh sc-bg-alert tab_badge2 uhide">
+                99+
+            </div>
+        </div>
+        <div id="hsSquare" class="ub uinn5 ubb bc-border ub-f1 ub-ver">
+            <div class="ub ub-f1">
+                <div class="ub-img1 hsSqaure" style="min-width:2.5em;min-height:2.5em;"></div>
+                <div class="ub ub-ac tip-right ulev1" >
+                    海员驿站
+                </div>
+                <div class="ulev-5 t-gra ub ub-ac ub-f1" >
+                    (发简历,发招聘,发培训)
+                </div>
+            </div>
+        </div>
+        <div id="comment">
+
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.optionList.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var lv1;       
+        appcan.ready(function() {           
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWindow.setMultilPopoverFlippingEnbaled(1);
+            }
+            App.setPageBounce(function(bounceType) {
+                getReqFriendNum();
+                loadFriendList(1, 0, bounceType);
+            }, function(bounceType) {
+                getReqFriendNum();
+                page = page + 1;
+                loadFriendList(page, 1, bounceType);
+            });
+            lv1 = appcan.optionList({
+                selector : "#comment",
+                type : "hiddenLine",
+                id : 1,
+                duration : "500ms",
+                multiShow : false,
+                align : 'left'
+            });
+            if (isdebug) {
+                loadData();
+            }
+
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            if ($('#comment ul li').length > 0) {
+                return;
+            }
+            App.ajaxLoading(1, true);
+            loadFriendList(page, 0);
+            getReqFriendNum();
+        }
+
+        function loadFriendList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "friend/getFriendList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    // console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            //uexWindow.resetBounceView(1);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            var updateData = [];
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d = createFriendHtml(objData.dataList[i], i);
+                                var obj = {
+                                    content : d,
+                                    height : "",
+                                    hideOption : {
+                                        content : ["删除"],
+                                        style : {
+                                            fontSize : "0.9125em",
+                                            background : "red"
+                                        },
+                                        onClick : function(obj, index, length) {
+                                            var item = $(obj).find('.scroll-bar').children();
+                                            var userId = item.attr("data-id");
+                                            appcan.window.confirm({
+                                                title : '提醒',
+                                                content : '确定要删除人脉关系吗？',
+                                                buttons : ['残忍删除', '手下留人'],
+                                                callback : function(err, data, dataType, optId) {
+                                                    if (err) {
+                                                        return;
+                                                    }
+                                                    if (parseInt(data) == 0) {
+                                                        deleteFriend(userId);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    },
+                                    onLongTap : function(obj, index) {
+
+                                    }
+                                };
+                                updateData.push(obj);
+                            };
+                            lv1.set(updateData);
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra"> 您暂时还没有好友,请添加人脉 </div>';
+                            d += '    <div onclick="openContacts()" class="bc-btn ub-pc ub-ac ub t-wh btn uc-a1 us" style="width:10em;margin-top:1em">添加人脉</div>'
+                            d += '</div>'
+                            $('#comment').html(d);
+                        }
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function deleteFriend(toUserId) {
+            App.authApi({
+                url : "friend/deleteFriend",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toId : toUserId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'message_content',
+                            type : 2,
+                            js : 'removeFriendHtml(' + toUserId + ',0)'
+                        });
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'friends_content',
+                            type : 2,
+                            js : 'removeFriendHtml(' + toUserId + ',0)'
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function createFriendHtml(obj, index) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "./indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 2) != "./") {
+                headuri = App.headUri + obj.headuri;
+            }
+            var cnname = obj.cnname;
+            var comparea = obj.city;
+            var compname = "";
+            var qq = App.isNull(obj.qq) ? "uhide" : "";
+            var weixin = App.isNull(obj.wechat) ? "uhide" : "";
+            if (!App.isNull(comparea)) {
+                comparea = comparea.split(" ")[0] + "-";
+            } else {
+                comparea = "";
+            }
+            var usertype = obj.usertype;
+            if (obj.usertype == "企业") {
+                usertype = obj.comptype;
+            }
+            var jobtitle = obj.jobtitle;
+            var msg = "";
+            var verify = "uhide";
+            if (qq == "uhide" && weixin == "uhide") {
+                msg = "uhide";
+            }
+            if (!App.isNull(obj.parentid)) {
+                compname = "|" + obj.compname;
+            }
+            if (obj.auditstatus == 2) {
+                verify = "";
+            }
+            h += '<div id="u' + obj.userid + '" data-id="' + obj.userid + '" class="ub ub-f1" style="padding:0.5em">';
+            h += '   <div class="ub ub-f1">';
+            h += '      <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ub-f1 ub">';
+            h += '      <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '        <div  class="ub ub-f1 ub-ver">'
+            h += '          <div class="ub ub-f1">';
+            h += '             <div class="ub ub-ver ub-f1">';
+            h += '                 <div class="ub ub-f1 ub-ac umar-b">';
+            h += '                    <div class="userName ulev-3" >' + cnname + '</div>';
+            h += '                    <div class="ut-s ulev-4 compName ub-f1" >' + compname + '</div>';            
+            h += '                 </div>';
+            h += '             </div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-f1 umar-b">';
+            h += '             <div class="ub-f1 ub sc-text-active ub-ac">';
+            h += '                 <div class="ut-s ulev-1 ">【' + comparea + usertype + '】</div>';
+            h += '                 <div class="ub-img verify umw1 umh1 ' + verify + '"></div>';
+            h += '             </div>';
+            h += '          </div>';
+            h += '        </div>'
+            h += '      </div>';
+            h += '      <div style="min-width: 3em">';
+            h += '          <div onclick="openChat(\'' + obj.userid + '\',\'' + cnname + '\',\'' + headuri + '\')" class="ub-img" style="min-width:2em;min-height:2em;background-image: url(./wgtRes/images/msg_icon.png)"></div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</div>';
+            return h;
+        }
+
+        function openContacts() {
+            App.openWin({
+                backName : "indexNew",
+                name : 'contacts',
+                url : 'contact/contacts.html',
+                type : 0,
+                aniId : 0,
+                animDuration : 200
+            })
+        }
+
+
+        appcan.button('#newFriend', 'btn-act', function() {
+            App.openWin({
+                backName : "indexNew",
+                name : 'newFriend',
+                url : 'contact/newFriend.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function showlogicmsgBage(num) {
+            if (num == 0) {
+                $('#logicmsgBage').addClass('uhide');
+            } else {
+                $('#logicmsgBage').removeClass('uhide');
+                if (num > 99) {
+                    num = "99+";
+                }
+                $('#logicmsgBage').html(num);
+                var pWin = App.getJson('pWin');
+                var win = pWin["newFriend"];
+                if (!App.isNull(win)) {
+                    App.evalJs({
+                        winName : 'newFriend',
+                        js : 'loadNewFirendList(1,0)'
+                    });
+                }
+            }
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : 'user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openChat(userId, cnName, headUri) {
+            App.setVal('chatId', userId);
+            App.setVal('chatname', cnName);
+            App.setVal('chatpic', headUri);
+            App.Logs(userId + "," + cnName + ',' + headUri);
+            if (!isdebug) {
+                var data = {
+                    username : userId,
+                    chatType : "0"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                App.evalJs({
+                    winName : "indexNew",
+                    type : 1,
+                    js : 'shwoTabBage("xiaoxi",0)'
+                });
+            }
+            App.openWin({
+                backName : "indexNew",
+                name : 'chatRoom',
+                url : 'chat/chatRoom.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function getReqFriendNum() {
+            if (App.isNull(userinfo) || App.isNull(userinfo.userid)) {
+                return;
+            }
+            App.authApi({
+                url : "friend/getReqFriendNum",
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    //App.Logs("getReqFriendNum:" + data.items.total)
+                    if (data.code == 0 && data.items.total > 0) {
+                        showlogicmsgBage(data.items.total);
+                        App.evalJs({
+                            winName : "indexNew",
+                            type : 1,
+                            js : 'shwoTabBage("renmai",1)'
+                        });
+                    } else {
+                        showlogicmsgBage(0);
+                        App.evalJs({
+                            winName : "indexNew",
+                            type : 1,
+                            js : 'shwoTabBage("renmai",0)'
+                        });
+                    }
+                }
+            })
+        }
+
+        function removeFriendHtml(userId) {
+            $('#u' + userId).remove();
+            if (App.isNull($('#comment ul li').length) || $('#comment ul li').length == 0) {
+                var d = '';
+                d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver">';
+                d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>';
+                d += '    <div class="t-gra"> 您暂时还没有好友,请添加人脉 </div>';
+                d += '    <div onclick="openContacts()" class="bc-btn ub-pc ub-ac ub t-wh btn uc-a1 us" style="width:10em;margin-top:1em">添加人脉</div>';
+                d += '</div>';
+                $('#comment ul').html(d);
+            }
+        }
+
+
+        appcan.button('#groupChat', 'btn-act', function() {
+            App.openWin({
+                backName : "indexNew",
+                name : 'myGroupList',
+                url : 'chat/myGroupList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        appcan.button("#hsSquare", "btn-act", function() {
+            App.openWin({
+                backName : "indexNew",
+                name : 'friendStation',
+                url : 'contact/friendStation.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+    </script>
+</html>

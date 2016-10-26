@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexUploaderMgr">
+        <method name="setHeaders"></method>
+        <method name="createUploader"></method>
+        <method name="closeUploader"></method>
+        <method name="uploadFile"></method>
+        <method name="appendFileData"></method>
+        <method name="startUploader"></method>
+        <method name="getInfo"></method>
+        <method name="observeUploader"></method>
+        <method name="setDebugMode"></method>
+        <method name="create"></method>
+    </plugin>
+    
+</uexplugins>

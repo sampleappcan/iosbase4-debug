@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userAnnexAudit_content/css/main.css">
+        <style>
+            .uwh-bg {
+                width: 10em;
+                height: 7.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div id="userId" class="ub ub-f1 ubb bc-border ub-ac uinn ulev-3">
+            <div>
+                姓名:
+            </div>
+            <div id="cnName">
+
+            </div>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                身份证(正面)
+            </div>
+            <div id ="busiPicList">
+                <div data-index="0" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem ">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                身份证(背面)
+            </div>
+            <div id ="otherPicList">
+                <div data-index="1" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                审核状态:
+            </div>
+            <div class="ub ub-ac ubb bc-border uinn ulev-3 status" style="color: red">
+                未审核
+            </div>
+        </div>
+        <div class="ub ub-f1 ub-ver ">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                备注信息:
+            </div>
+            <div class="uba bc-border uinput ub ub-f1">
+                <textarea id="remark" placeholder="请输入理由;如：照片不清晰" type="text" class="ub-f1" style="padding-left: 0.5em"></textarea>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var auditId;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            auditId = App.getVal("auditId");
+            loadAuditData();
+        }
+
+        function loadAuditData() {
+            App.authApi({
+                url : 'audit/getAuditDataById',
+                data : {
+                    params : {
+                        auditId : auditId
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data, auditId)
+                    if (data.code == 0) {
+                        if (App.isNull(data.items.prosonlicense)) {
+                            App.ajaxLoading(0);
+                            return;
+                        }
+                        var prosonLicense = data.items.prosonlicense;
+                        $("#cnName").html(data.items.cnname);
+                        $("#userId").attr("data-id", data.items.userid);
+                        prosonLicense = prosonLicense.split(",");
+                        var src = App.downIp + "user_Image/annexImage/t/320x320/" + prosonLicense[0];
+                        var oriSrc = App.downIp + "user_Image/annexImage/" + prosonLicense[0];
+                        $('#busiPicList .picItem').removeClass('imgBg');
+                        $('#busiPicList .picItem').css("background-image", 'url(' + src + ')');
+                        $('#busiPicList .picItem').attr("data-src", oriSrc);
+                        $('#busiPicList .picItem').attr("data-change", false);
+                        var oriSrc = App.downIp + "user_Image/annexImage/" + prosonLicense[1];
+                        var src = App.downIp + "user_Image/annexImage/t/320x320/" + prosonLicense[1];
+                        $('#otherPicList .picItem').removeClass('imgBg');
+                        $('#otherPicList .picItem').css("background-image", 'url(' + src + ')');
+                        $('#otherPicList .picItem').attr("data-src", oriSrc);
+                        $('#otherPicList .picItem').attr("data-change", false);
+                        var status = "待审核";
+                        if (data.items.status == 2) {
+                            status = "已审核";
+                        } else if (data.items.status == 3) {
+                            status = "不通过";
+                        }
+                        $(".status").html(status);
+                        $("#remark").val(data.items.remark);
+                    } else {
+                        App.toast(data.message)
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+
+        appcan.button(".picItem", '', function() {
+            var index = $(this).attr("data-index");
+            var auditInfoList = [];
+            $(".picItem").each(function() {
+                var obj = {
+                    src : $(this).attr("data-src")
+                }
+                auditInfoList.push(obj);
+            });
+            var param = {
+                displayActionButton : false,
+                displayNavArrows : true,
+                enableGrid : false,
+                startOnGrid : false,
+                startIndex : index,
+                data : auditInfoList
+            }
+            uexImage.openBrowser(App.toJsonStr(param));
+        })
+
+        appcan.button("#userId", '', function() {
+            App.setVal('userId', $(this).attr("data-id"));
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+        function approved() {
+            var remark = appcan.trim($("#remark").val());
+            if (App.isNull(remark)) {
+                remark = "资质审核通过";
+            }
+            App.authApi({
+                url : 'audit/approved',
+                data : {
+                    params : {
+                        auditId : auditId,
+                        userId : userinfo.userid,
+                        remark : remark,
+                        type : 1
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast("数据提交成功");
+                        App.evalJs({
+                            winName : "adminAuditList",
+                            js : "loadData()"
+                        });
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "adminAuditDetail",
+                                type : 1,
+                                js : "closeWin()"
+                            })
+                        }, 1000);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+        function refuse() {
+            var remark = appcan.trim($("#remark").val());
+            if (App.isNull(remark)) {
+                App.toast("请输入不通过理由");
+                return;
+            }
+            App.authApi({
+                url : 'audit/refuse',
+                data : {
+                    params : {
+                        auditId : auditId,
+                        userId : userinfo.userid,
+                        remark : remark,
+                        type : 1
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast("数据提交成功");
+                        App.evalJs({
+                            winName : "adminAuditList",
+                            js : "loadData()"
+                        });
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "adminAuditPDetail",
+                                type : 1,
+                                js : "closeWin()"
+                            })
+                        }, 1000);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

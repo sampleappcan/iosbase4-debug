@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="addFriend_content/css/main.css">
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header">
+                <div id="header1" class="uh bc-text-head ub bc-head">
+                    <div class="nav-btn" id="nav-left">
+                        <div class="fa fa-angle-left fa-2x"></div>
+                    </div>
+                    <div id="title" class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                        发起群聊
+                    </div>
+                    <div class="nav-btn nav-bt" id="nav-right"></div>
+                </div>
+                <div class="ub ub-ver">
+                    <div class="umar-a1">
+                        <div class="uinput ub ub-f1 uc-a1 sc-bg">
+                            <div class="uinn fa fa-search sc-text"></div>
+                            <input placeholder="人名/手机号" type="text" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+            <div id="footer" class="uf t-bla ub ubt bc-border ub-pc ub-ac sc-bg " >
+                <div id="userList" class="ub ub-ac ub-f1" style="margin-right: 0.5em;min-height: 3em;overflow-x:scroll;margin-left: 0.5em"></div>
+                <div id="groupChat" class="ub ub-ac t-wh ub-pc bc-head ulev-1 uc-a1" style="padding:0.2em;min-width: 5.5em;min-height: 2.2em;margin-right: 0.5em">
+                    确定<span class="uhide">(<span id="selectNum"></span>)</span>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var groupChat;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            groupChat = App.getVal('groupChat');
+            App.setVal('titHeight', titHeight);
+            if (groupChat == 0) {
+                $('#title').html("发起聊天");
+                $('#footer').addClass('uhide');
+            } else if (groupChat == 1) {
+                $('#title').html("发起群聊");
+                $('#footer').removeClass('uhide');
+            } else if (groupChat == 3) {
+                $('#title').html("提醒谁看");
+                $('#footer').removeClass('uhide');
+                var objArray = App.getJson("atList");
+                if (!App.isNull(objArray)) {
+                    var h = '';
+                    for (var i = 0; i < objArray.length; i++) {
+                        h += '<div onclick="removeThis(this,\'' + objArray[i].userId + '\')" id="U' + objArray[i].userId + '" class="ub-img1 umar-a" style="background-image: url(' + objArray[i].headUri + ');min-width: 2.2em;min-height: 2.2em"></div>';
+                    };
+                    $("#userList").html(h);
+                    $("#selectNum").html(objArray.length);
+                    $('#selectNum').parent().removeClass('uhide');
+                    changeBtnColor(true);
+                }
+            } else {
+                $('#title').html("邀请成员");
+                $('#footer').removeClass('uhide');
+            }
+            App.openFrame("content", "contactList_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            closeWin();
+        })
+        function closeWin(type) {
+            App.removeVal('groupChat');
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+        function addUserList(userId, userHead, type, num) {
+            if (type) {
+                var html = '<div onclick="removeThis(this,\'' + userId + '\')" id="U' + userId + '" class="ub-img1 umar-a" style="background-image: url(' + userHead + ');min-width: 2.2em;min-height: 2.2em"></div>';
+                $('#userList').append(html);
+            } else {
+                $('#U' + userId).remove();
+            }
+            if (num == 0) {
+                changeBtnColor(false);
+                $('#selectNum').parent().addClass('uhide');
+                if (groupChat == 3) {
+                    App.evalJs({
+                        winName : "publishDynamic",
+                        js : "removeAtList()"
+                    });
+                }
+            } else {
+                changeBtnColor(true);
+                $('#selectNum').parent().removeClass('uhide');
+            }
+            if (num > 99) {
+                num == "99+"
+            }
+            $('#selectNum').html(num);
+        }
+
+        function removeThis(item, userId) {
+            var num = $('#selectNum').html();
+            if (num != "99+") {
+                num = parseInt(num) - 1;
+                $('#selectNum').html(num);
+                if (num <= 0) {
+                    $('#selectNum').parent().addClass('uhide');
+                    changeBtnColor(false);
+                    if (groupChat == 3) {
+                        App.evalJs({
+                            winName : "publishDynamic",
+                            js : "removeAtList()"
+                        });
+                    }
+                }
+            }
+            $(item).remove();
+            App.evalJs({
+                js : 'reomveCheck(\'' + userId + '\')'
+            });
+        }
+
+        function changeBtnColor(type) {
+            if (type) {
+                $("#groupChat").css("background-color", "#008CE4");
+            } else {
+                $("#groupChat").css("background-color", "#BABABA");
+            }
+        }
+
+
+        appcan.button('#groupChat', 'btn-act', function() {
+            App.evalJs({
+                js : 'openGroupChat()'
+            })
+        })
+    </script>
+</html>

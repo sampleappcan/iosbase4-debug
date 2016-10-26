@@ -1,0 +1,118 @@
+.uw-comm2 {
+    width: 0.625em;
+}
+.uh-comm2 {
+    height: 0.625em;
+}
+
+.t-gra-comm {
+    color: #989898;
+}
+.t-gra2-comm {
+    color: #707070;
+}
+.umar-r-comm {
+    margin-right: 2em;
+}
+.c-gra-comm {
+    background-color: #ebebeb;
+}
+.uinn-comm {
+    padding: 0.4em;
+}
+.line-hei-com {
+    line-height: 1.6em;
+}
+.uh-app3 {
+    height: 3em;
+}
+.uw-app3 {
+    width: 3em;
+}
+.uc-a-app2 {
+    -webkit-border-radius: 2.8125em;
+    border-radius: 2.8125em;
+}
+.umar-at1 {
+    margin-top: .2em;
+}
+.mar-ar1 {
+    margin-right: .5em;
+}
+.pingTriangle {
+    position: absolute;
+    top: -0.45em;
+    right: 5.5em;
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-bottom: 0.5em solid #F3F4F6;
+}
+.spec-title {
+    line-height: 1.5em;
+    max-height: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    word-break: break-all;
+}
+.lis {
+    padding: 0.4em;
+    min-height: 2em;
+}
+.huodong {
+    background-image: url(myImg/huodong.png);
+}
+.message {
+    background-image: url(myImg/message.png);
+}
+.standby {
+    background-image: url(myImg/standby.png);
+}
+.zhaopin {
+    background-image: url(myImg/zhaopin.png);
+}
+.tianjiapy {
+    background-image: url(myImg/tianjiapy.png);
+}
+.groupIco {
+    background-image: url(myImg/group.png);
+}
+.hsSqaure {
+    background-image: url(myImg/hsSqaure.png);
+}
+.nofriend {
+    background-image: url(myImg/nofriend.png);
+}
+.tip-right {
+    padding: 0 0.5em;
+    line-height: 1.5em;
+}
+.tip-time {
+    color: #828687;
+}
+.tip-cont {
+    color: #828687;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.ulev-1 {
+    font-size: 0.8125em !important;
+}
+.ulev-2 {
+    font-size: 0.9125em !important;
+}
+.tab_badge2 {
+    width: 1.8em;
+    height: 1.8em;
+    -webkit-border-radius: 1.8em;
+    border-radius: 1.8em;
+    text-align: center;
+}
+.uinn5 {
+    padding: 0.6em 0.5em;
+}

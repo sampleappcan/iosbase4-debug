@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexDataAnalysis">
+        <method name="setEvent"></method>
+        <method name="beginEvent"></method>
+        <method name="endEvent"></method>
+        <method name="setErrorReport"></method>
+    </plugin>
+</uexplugins>
+    
+    

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../indexNew_content/css/main.css">
+        <style>
+            .uinn {
+                padding: 0.45em;
+                margin: 0;
+            }
+        </style>
+    </head>
+
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="ub ub-ac ub-pc c-wh-pLG" style="padding:0;background: rgba(0, 0, 0, 0.3);height: 100%">
+            <div class="ub ub-ver sc-bg ub-f1" style="margin: 1em;background-color: #F3F3F3">
+                <div id="title" class="ub uinn bc-text ulev-3">
+                    扩散商友圈动态
+                </div>
+                <div class="ub ub-ver ub-ac ub-pc uinn umar-t">
+                    <div class="ub ub-f1 ">
+                        <div id="userImage" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url();"></div>
+                        <div id="content" class="ub-f1 spec-title spec-content2 ulev-5" style="color: #6e6e6e"></div>
+                    </div>
+                </div>
+                <div class="uba bc-border uinput ub ub-f1 ulev-1 uc-a1 sc-bg" style="margin: 0.8em;padding-left: 0.4em;">
+                    <textarea id="remark" placeholder="说两句吧" type="text" class="ub-f1 " style="min-height: 3em"></textarea>
+                </div>
+                <div class="ub ub-ac ub-pc ubt bc-border ub-f1" style="margin-top: 0.8em;">
+                    <div id="cancel" class="ub ub-ac ub-pc ulev-5 ub-f1 ubr bc-border" style="height: 3em;color: #6e6e6e">
+                        取消
+                    </div>
+                    <div id="queren" class="ub ub-ac ub-pc ulev-5 ub-f1 sc-text-active" style="height: 3em">
+                        确认
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        var shareData;
+        var userinfo;
+        appcan.ready(function() {
+            shareData = App.getJson('shareData');
+            userinfo = App.getUserInfo();
+            var image = shareData.thumbImg;
+            if (image.substr(0, 3) == "res") {
+                image = "../wgtRes/comImg.png";
+            }
+            $('#content').html(shareData.inContent);
+            $('#userImage').css('background-image', 'url(' + image + ')');
+            //console.log(App.toJson('[{"chatType":"0","chatter":"1000003","isGroup":"0","lastMsg":{"chatType":"0","ext":"&lt;div class='ub ub-ver ub-f1'&gt;   &lt;div class='ub-f1 spec-content'&gt;doge杉杉|上海海商信息科技有限公司App�?��工程师说:就一个图片试�?lt;/div&gt;   &lt;div class='ub ub-f1 ub-ac umar-t'&gt;       &lt;img src='http://tp3.sinaimg.cn/2557010530/180/5750433725/1' style='width:3em;height:3em'&gt;       &lt;div class='umar-l'&gt;商友圈实名动�?lt;/div&gt;   &lt;/div&gt;&lt;/div&gt;","from":"1000010","isAcked":"0","isGroup":"0","isRead":"0","messageBody":{"text":"[实名动�?]"},"messageId":"183046240240403360","messageTime":"1460183573689","messageType":"text","to":"1000003"},"unreadMsgCount":"0"}]'))
+            $('body').append(createDynamicHtml())
+        })
+        function createDynamicHtml() {
+            var h = '';
+            var img = shareData.thumbImg;
+            if (img.substr(0, 3) == "res") {
+                img = '../wgtRes/comImg.png';
+            }
+            h += "&lt;div class=\'ub ub-ver ub-f1\'&gt;";
+            h += "   &lt;div class=\'ub-f1 spec-content\'&gt;" + shareData.inContent + "&lt;/div&gt;";
+            h += "   &lt;div class=\'ub ub-f1 ub-ac umar-t\'&gt;";
+            h += "       &lt;img src=\'" + img + "\' style=\'width:3em;height:3em\'&gt;";
+            h += "       &lt;div class=\'umar-l\'&gt;商友圈实名动态&lt;/div&gt;";
+            h += "   &lt;/div&gt;";
+            h += "&lt;/div&gt;";
+            return h;
+        }
+
+
+        appcan.button('#queren', 'btn-act', function() {
+            var scene = shareData.scene;
+            var dynamicId = shareData.dynamicId;
+            var content = $('#remark').val();
+            content = App.isNull(content) ? "扩散" : content;
+            if (scene == 1) {
+                if (!isdebug) {
+                    var img = shareData.thumbImg;
+                    if (img.substr(0, 3) == "res") {
+                        img = '../wgtRes/comImg.png';
+                    }
+                    var sendData = {
+                        username : shareData.sendId,
+                        chatType : "0",
+                        content : "[实名动态]",
+                        ext : "sm$$" + shareData.inContent + "$$" + img + "$$" + dynamicId
+                    };
+                    App.Logs("createDynamicHtml:" + JSON.stringify(sendData))
+                    uexEasemob.sendText(JSON.stringify(sendData));
+                    if (!App.isNull(content) && content != "扩散") {
+                        var sendData = {
+                            username : shareData.sendId,
+                            chatType : "0",
+                            content : content,
+                            ext : ''
+                        };
+                        uexEasemob.sendText(JSON.stringify(sendData));
+                    }
+                    App.toast('已扩散至消息');
+                    App.evalJs({
+                        winName : 'shareFriendList',
+                        type : 1,
+                        js : 'closeWin()'
+                    });
+                }
+            } else {
+                App.authApi({
+                    url : 'dynamic/publishKuosan',
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            id : dynamicId
+                        }
+                    },
+                    callBack : function(data) {
+                        App.Logs("publishKuosan:" + App.toJsonStr(data));
+                        if (data.code == 0) {
+                            var win = App.getWin(App.getCurrWinName());
+                            if (!App.isNull(win) && win.winName != "indexNew") {
+                                App.evalJs({
+                                    winName : App.getCurrWinName(),
+                                    js : 'addLocalKuosan(\'' + dynamicId + '\',' + data.items.num + ',\'' + content + '\',\'' + data.items.kuosanid + '\')'
+                                });
+                            } else {
+                                App.evalJs({
+                                    winName : 'indexNew',
+                                    type : 2,
+                                    popName : 'indexNew_content',
+                                    js : 'addKuosanHtml(\'' + dynamicId + '\',' + data.items.num + ',\'' + content + '\',\'' + data.items.kuosanid + '\')'
+                                });
+                            }
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        })
+
+        appcan.button("#cancel", "btn-act", function() {
+            var win = App.getWin(App.getCurrWinName());
+            var shareData = App.getJson('shareData');
+            if (shareData.shareType == 1) {
+                App.evalJs({
+                    winName : 'shareFriendList',
+                    type : 1,
+                    js : 'closeShareInfo()'
+                });
+            } else {
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    type : 1,
+                    js : 'closeShareInfo()'
+                });
+            }
+        })
+    </script>
+</html>

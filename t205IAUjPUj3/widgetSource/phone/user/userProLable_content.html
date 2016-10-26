@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userLable_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ulev-5 uinn t-gra">
+            个人标签(<span class="ulev-1">最多可以添加50个</span>)
+        </div>
+        <div class="ub ub-f1 ub-ver ubt bc-border">
+            <div id="listview">
+
+            </div>
+            <div class="uinn">
+                <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1 " id="submit" style="margin-top: 1em;min-height: 2.2em">
+                    确定
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var labCount = 0;
+        var labArray = [];
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        });
+
+        function loadData() {
+            userinfo = App.getUserInfo();
+            loadUsrLab();
+        }
+
+        function loadUsrLab() {
+            var userlab = typeof userinfo.userlable == "string" ? App.toJson(userinfo.userlable) : userinfo.userlable;
+            var d = '';
+            var labClass = "";
+            if (!App.isNull(userlab)) {
+                labArray = userlab;
+                for (var i = 0; i < userlab.length; i++) {
+                    labClass = " bc-btn t-wh";
+                    d = d + '<div onclick="selectItem(this,\'' + userlab[i].name + '\')" class="umar-a uba bc-border umar-r ufl" data-index="' + i + '">';
+                    d = d + '  <div class="ub ub-ver item ub-ac ' + labClass + '">';
+                    d = d + '     <div class="ulev-1 tx-c ub-ac ub ub-pc" style="padding:0.2em 0.9em;height:2.2em;min-width:4em">' + userlab[i].name + '</div>';
+                    d = d + '  </div>';
+                    d = d + '</div>';
+                };
+            }
+            d = d + '<div id="NewLab" onclick="addNewLab()" data-labelid="newlabe" class="ub umar-a uba bc-border umar-r ufl" data-index="999">';
+            d = d + '  <div class="ub ub-ac t-gra ub-pc" style="padding:0.2em 0.8em;height:1.8em;background-color:#ECECEC">';
+            d = d + '     <div class="fa fa-plus"></div>';
+            d = d + '     <div class="ulev-1 tx-c ub-ac ub">添加</div>';
+            d = d + '  </div>';
+            d = d + '</div>';
+
+            $('#listview').html(d);
+        }
+
+        function isHasLable(labName) {
+            for (var i = 0; i < labArray.length; i++) {
+                if (labArray[i].name == labName) {
+                    return true;
+                }
+            };
+            return false;
+        }
+
+        function deleteLab(labName) {
+            for (var i = 0; i < labArray.length; i++) {
+                if (labArray[i].name == labName) {
+                    labArray.splice(i, 1);
+                }
+            };
+        }
+
+        function selectItem(item, labName) {
+            var sItem = $(item).find('.item');
+            if (sItem.hasClass('bc-btn')) {
+                //labCount--;
+                if (labArray.length <= 0) {
+                    return;
+                }
+                deleteLab(labName);
+                sItem.removeClass('bc-btn');
+                sItem.removeClass('t-wh');
+                sItem.addClass('sc-text-tab');
+            } else {
+
+                if (labArray.length > 50) {
+                    App.toast("最多只能50个标签");
+                    return;
+                }
+                if (!isHasLable(labName)) {
+                    labArray.push(labName);
+                }
+                sItem.addClass('bc-btn');
+                sItem.addClass('t-wh');
+                sItem.removeClass('sc-text-tab');
+            }
+        }
+
+        function createLabHtml(labName) {
+            var labClass = " bc-btn t-wh";
+            var d = '';
+            d = d + '<div onclick="selectItem(this,\'' + labName + '\')" class="umar-a uba bc-border umar-r ufl">';
+            d = d + '  <div class="ub ub-ver item ub-ac ' + labClass + '">';
+            d = d + '     <div class="ulev-1 tx-c ub-ac ub ub-pc" style="padding:0.2em 0.9em;height:2.2em;min-width:4em">' + labName + '</div>';
+            d = d + '  </div>';
+            d = d + '</div>';
+            return d;
+        }
+
+        function addLabel() {
+            var prompData = App.getJson('prompData');
+            if (!App.isNull(prompData)) {
+                var txt = prompData.content;
+                if (App.isNull(txt)) {
+                    return;
+                }
+                if (txt.length > 10) {
+                    App.toast("标签长度不能超过10个字");
+                    return;
+                }
+                if (labArray.length > 50) {
+                    App.toast("最多只能50个标签");
+                    return;
+                }
+                var obj = {
+                    foucsId : new Date().getTime(),
+                    name : txt
+                }
+                if (!isHasLable(txt)) {
+                    labArray.push(obj);
+                    var html = createLabHtml(txt);
+                    $('#NewLab').before(html)
+                }
+            }
+        }
+
+        function addNewLab() {
+            if (labArray.length == 50) {
+                App.toast("您已经选了50个标签，不能在添加了！");
+                return;
+            }
+            var prompData = {
+                title : "请输入标签名",
+                content : "",
+                maxLength : 10,
+                callback : "appcan.frame.evaluateScript('userProLable','content','addLabel()')"
+            }
+            App.setVal('prompData', prompData);
+            App.evalJs({
+                type : 1,
+                winName : 'userProLable',
+                js : 'openPromptPop()'
+            })
+
+        }
+
+        function addUserLabel() {
+            var count = 0;
+            $('.item').each(function() {
+                if (!$(this).hasClass('bc-btn')) {
+                    count++;
+                }
+            })
+            if (labArray.length > 0) {
+                App.setVal('userLabel', labArray);
+            }
+           // console.log(labArray, count)
+            if (count > 0) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您有' + count + '个标签未选，确定要保存吗?',
+                    buttons : ['先不保存', '立即保存'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            App.authApi({
+                                url : 'user/updateUserLab',
+                                data : {
+                                    params : {
+                                        userId : userinfo.userid,
+                                        label : labArray
+                                    }
+                                },
+                                callBack : function(data) {
+                                    if (data.code == 0) {
+                                        userinfo.userlable = labArray;
+                                        userinfo = App.updateUserInfo(userinfo);
+                                        App.evalJs({
+                                            type : 0,
+                                            winName : "userAccount",
+                                            js : "loadData()"
+                                        });
+                                        App.evalJs({
+                                            type : 1,
+                                            winName : "userProLable",
+                                            js : "closeWin()"
+                                        });
+                                    } else {
+                                        App.alertEx(data.message);
+                                    }
+                                }
+                            })
+                        }
+                    }
+                });
+            } else {
+                App.authApi({
+                    url : 'user/updateUserLab',
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            label : labArray
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            userinfo.userlable = labArray;
+                            userinfo = App.updateUserInfo(userinfo);
+                            App.evalJs({
+                                type : 0,
+                                winName : "userAccount",
+                                js : "loadData()"
+                            });
+                            App.evalJs({
+                                type : 1,
+                                winName : "userProLable",
+                                js : "closeWin()"
+                            });
+                        } else {
+                            App.alertEx(data.message);
+                        }
+                    }
+                })
+            }
+        }
+
+
+        appcan.button('#submit', 'btn-act', function() {
+            addUserLabel();
+        })
+    </script>
+</html>

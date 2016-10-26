@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../contact/contacts_content/css/main.css">
+        <link rel="stylesheet" href="../message_content/css/main.css">
+        <link rel="stylesheet" href="adminAuditList_content/css/main.css">
+        <style>
+            .lis-icon1 {
+                width: 4em;
+                margin: 0em 0.4em 0em 0px;
+                height: 4em;
+            }
+            .marg-l {
+                margin-right: 0.4em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="umar-t sc-bg" id="auditList">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var auditId;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            auditId = App.getVal("auditId");
+            loadServiceUriDetail();
+        }
+
+        function loadServiceUriDetail() {
+            App.authApi({
+                url : 'audit/getServiceAuditDetail',
+                data : {
+                    params : {
+                        userId : auditId
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        var d = '';
+                        for (var i = 0; i < data.items.length; i++) {
+                            d += createDetailHtml(data.items[i], i);
+                        };
+                        $("#auditList ul").html(d);
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function createDetailHtml(obj, index) {
+            var h = '';
+            var oriSrc = App.downIp + "user_Image/serviceImage/" + obj.serveruri;
+            var src = App.downIp + "user_Image/serviceImage/t/320x320/" + obj.serveruri;
+            h += '<li id="d' + obj.id + '" data-ori="' + obj.serveruri + '" data-status="' + obj.status + '" data-id="' + obj.id + '" class="ubb ub bc-border t-bla lis">';
+            h += '   <div onclick="prevImage(' + index + ')" data-src="' + oriSrc + '" class="lis-icon1 ub-img1" style="background-image:url(' + src + ')"></div>';
+            h += '   <div class="ub-f1 ub ub-pj">';
+            h += '      <ul class="ub-f1 ub ub-ver marg-l">';
+            h += '         <li class="bc-text ub ub-ver ut-m line1">备注</li>';
+            h += '         <li class="ulev-1 sc-text1 uinn3">';
+            h += '            <div class="uba bc-border uinput ub ub-f1">';
+            h += '               <textarea placeholder="审核备注" type="text" class="ub-f1" style="min-height: 0"></textarea>';
+            h += '            </div>';
+            h += '         </li>';
+            h += '      </ul>';
+            h += '      <ul class="ub ub-f1 ub-ac ub-pc">';
+            h += '          <div class="ub ub-pc statusBtn" style="min-width: 2em">';
+            h += '              <div onclick="refuse(this,\'' + obj.id + '\')" class="ub-img jujue " style=" min-width:2em;min-height:2em;margin-right: 1em"></div>';
+            h += '              <div onclick="approved(this,\'' + obj.id + '\')" class="ub-img jieshou " style="min-width:2em;min-height:2em;"></div>';
+            h += '          </div>';
+            h += '          <div class="uhide statusTxt" style="min-width: 2em;color:red">已通过</div>'
+            h += '      </ul>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function refuse(item, id) {
+            $("#d" + id).attr("data-status", 3);
+            $(item).parent().addClass("uhide");
+            $(item).parent().next().removeClass("uhide");
+            $(item).parent().next().html("已拒绝");
+        }
+
+        function approved(item, id) {
+            $("#d" + id).attr("data-status", 2);
+            $(item).parent().addClass("uhide");
+            $(item).parent().next().removeClass("uhide");
+            $(item).parent().next().html("已审核");
+        }
+
+        function saveData() {
+            var dataList = [];
+            var unSelect = false;
+            $("#auditList .lis").each(function() {
+                var id = $(this).attr('data-id');
+                var status = $(this).attr('data-status');
+                var remark = appcan.trim($(this).find("textarea").val());
+                var oriImg = $(this).attr("data-ori");
+                if ($(this).find(".statusTxt").hasClass("uhide")) {
+                    unSelect = true;
+                } else {
+                    var obj = {
+                        id : id,
+                        status : status,
+                        remark : remark,
+                        oriImg : oriImg
+                    }
+                    dataList.push(obj);
+                }
+            })
+            if (unSelect) {
+                App.toast("您还有未审核的图片，请先审核后在提交");
+                return;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在保存审核信息...请稍候...',
+                canCancel : 1
+            });
+            App.authApi({
+                url : 'audit/saveAuditServiceUri',
+                data : {
+                    params : {
+                        userId : auditId,
+                        dataList : dataList,
+                        auditUser : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("数据保存成功!");
+                        App.evalJs({
+                            winName : "adminServiceUriList",
+                            js : "loadData()"
+                        });
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "adminServiceUriDetail",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }, 1000);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function prevImage(index) {
+            var imgList = [];
+            $(".lis-icon1").each(function() {
+                var obj = {
+                    src : $(this).attr("data-src")
+                }
+                imgList.push(obj);
+            })
+            if (imgList.length > 0) {
+                var param = {
+                    displayActionButton : false,
+                    displayNavArrows : true,
+                    enableGrid : false,
+                    startOnGrid : false,
+                    startIndex : index,
+                    data : imgList
+                }
+                uexImage.openBrowser(App.toJsonStr(param));
+            }
+        }
+    </script>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .btn2 {
+                height: 3em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                    职位详情
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div class="ulev0">
+                        分享
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+            <div id="footer" class="uf t-bla ub ubt bc-border ub-pc ub-ac sc-bg footerhh uhide" >
+                <div id="addFriend" class="btn2 ub ub-ac t-wh ub-pc bc-head ub-f1" style="margin-right: 0.1em">
+                    发消息
+                </div>
+                <div id="sendMsg" class="btn2 ub ub-ac t-wh ub-pc bc-head ub-f1">
+                    发送简历
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var shareMuen = false;
+        var userinfo;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            userinfo = App.getUserInfo();
+            App.openFrame("content", "userRecruitPreview_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (shareMuen) {
+                            closeShareMenu();
+                            return;
+                        }
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            if (shareMuen) {
+                closeShareMenu();
+                return;
+            }
+            closeWin(-1);
+        })
+        function closeShareMenu() {
+            shareMuen = false;
+            appcan.frame.close("sharepop");
+        }
+
+
+        appcan.button("#nav-right", "btn-act", function() {
+            if (shareMuen) {
+                closeShareMenu();
+                return;
+            }
+            shareMuen = true;
+            App.openPopover({
+                name : 'sharepop',
+                url : '../share/sharepop.html',
+                left : 0,
+                top : 0,
+                width : window.innerWidth,
+                height : 0
+            })
+        })
+
+        appcan.button("#addFriend", "btn-act", function() {
+            var type = $("#footer").attr("data-type");
+            if (type == -2) {
+                App.evalJs({
+                    js : 'openChat()'
+                });
+            } else if (type == 2) {
+                App.evalJs({
+                    js : "acceptInvitid()"
+                });
+            } else if (type == 1) {
+                App.evalJs({
+                    js : 'openChat()'
+                });
+            }
+        })
+        appcan.button("#sendMsg", "btn-act", function() {
+            if(userinfo.usertype=="企业"){
+                App.toast("")
+            }
+            App.evalJs({
+                js : 'sendResume()'
+            });
+        })
+        function shwoBtn(type, data) {
+            var titHeight = $('#header').offset().height;
+            $("#footer").attr("data-type", data);
+            if (type) {
+                $("#footer").removeClass("uhide");
+                if (data == 1) {
+                    $("#addFriend").html("发消息");
+                } else if (data == 0) {
+                    $("#addFriend").html("已发送请求");
+                } else if (data == 2) {
+                    $("#addFriend").html("接受请求");
+                }
+            } else {
+                $("#footer").addClass("uhide");
+            }
+            appcan.frame.resize("content", 0, titHeight);
+        }
+
+        function closeWin(type) {
+            App.removeVal("shareData");
+            App.removeVal("chatId");
+            App.removeVal("chatpic");
+            App.removeVal("chatname");
+            App.removeVal("shareData");
+            App.removeVal("resumeType");
+            App.removeVal("resumeId");
+            App.closeWin("userRecruitPreview", type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+    </script>
+</html>

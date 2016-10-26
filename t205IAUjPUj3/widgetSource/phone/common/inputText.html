@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .lis {
+                padding: 0.25em;
+                min-height: 2em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div id="title" class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">
+
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    确定
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l" style="overflow: hidden">
+                <div class="ub ub-ver">
+                    <!--列表-->
+                    <div class="ub ub-ver ub-f1">
+                        <ul  class="ubb ub bc-border t-bla ub-ac ub-f1">
+                            <li class="ub tx-r ub-f1 ub-ac" style="height:2.5em;padding-left: 0.825em;padding-right: 0.825em">
+                                <div class="uinput ub ub-f1">
+                                    <input oninput="searchItem(this)" id="inputTxt" placeholder="" type="text" class="ub-f1">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="listview" class="ubt bc-border sc-bg "></div>
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var inputOpts;
+        var userinfo;
+        var lv = appcan.listview({
+            selector : "#listview",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasSubTitle : false,
+            multiLine : 1,
+        });
+        appcan.ready(function() {
+            inputOpts = App.getJson('inputOpts');
+            userinfo = App.getUserInfo();
+            $('#inputTxt').focus();
+            if (!App.isNull(inputOpts.title)) {
+                $('#title').html(inputOpts.title);
+            }
+            if (!App.isNull(inputOpts.txtLength)) {
+                $('#inputTxt').attr("maxlength", inputOpts.txtLength);
+            }
+            if (!App.isNull(inputOpts.text)) {
+                $('#inputTxt').val(inputOpts.text);
+            }
+            if (!App.isNull(inputOpts.placeholder)) {
+                $('#inputTxt').attr("placeholder", inputOpts.placeholder);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.showSoftKeyboard();
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+
+        appcan.button("#nav-left", "btn-act", function() {
+            App.removeVal('inputOpts');
+            closeWin();
+        })
+        function searchItem(item) {
+            var txt = App.isNull(appcan.trim(item.value)) ? "" : appcan.trim(item.value);
+            if (inputOpts.type == "search" && txt.length > 0) {
+                //搜索存在的公司
+                var dataList = [];
+                if (inputOpts.method == "compName") {
+                    App.authApi({
+                        url : 'comp/searchComp',
+                        data : {
+                            params : {
+                                keyWord : txt
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0 && data.items.length > 0) {
+                                $('#listview').removeClass('uhide');
+                                for (var i = 0; i < data.items.length; i++) {
+                                    var compName = data.items[i].compname;
+                                    var obj = {
+                                        title : compName,
+                                        id : i
+                                    }
+                                    dataList.push(obj);
+                                };
+                                lv.set(dataList);
+                            }
+                        }
+                    });
+                } else if (inputOpts.method == "jobTitle") {
+                    //搜索存在的职位信息
+                    App.authApi({
+                        url : 'comp/searchJobTitle',
+                        data : {
+                            params : {
+                                keyWord : txt
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0 && data.items.length > 0) {
+                                $('#listview').removeClass('uhide');
+                                for (var i = 0; i < data.items.length; i++) {
+                                    var jobtitle = data.items[i].jobtitle;
+                                    var obj = {
+                                        title : jobtitle,
+                                        id : i
+                                    }
+                                    dataList.push(obj);
+                                };
+                                lv.set(dataList);
+                            }
+                        }
+                    });
+                }
+            } else {
+                $('#listview').addClass('uhide');
+            }
+        }
+
+
+        lv.on("click", function(ele, obj, curEle) {
+            if (!App.isNull(obj.title)) {
+                $('#inputTxt').val(obj.title);
+                $('#listview').addClass('uhide');
+            }
+        })
+
+        appcan.button('#nav-right', 'btn-act', function() {
+            var text = appcan.trim($('#inputTxt').val());
+            if (inputOpts.method == "idCode" && !App.isCardNo(text)) {
+                App.toast("请输入正确的身份证号");
+                return;
+            }
+            if (!App.isNull(text) && !App.isNull(inputOpts)) {
+                if (!App.isNull(inputOpts.method) && inputOpts.update == true) {
+                    App.authApi({
+                        url : 'user/updateUserInfo',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                updateKey : inputOpts.method,
+                                updateVal : text
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0) {
+                                inputOpts.text = text;
+                                App.setVal('inputOpts', inputOpts);
+                                App.evalJs({
+                                    type : 0,
+                                    winName : inputOpts.winName,
+                                    js : inputOpts.callBack
+                                })
+                                closeWin()
+                            } else if (data.code == 406) {
+                                appcan.window.confirm({
+                                    title : '提醒',
+                                    content : data.message,
+                                    buttons : ['重新输入', '联系客服'],
+                                    callback : function(err, data, dataType, optId) {
+                                        if (err) {
+                                            return;
+                                        }
+                                        if (parseInt(data) == 1) {
+                                            uexCall.dial(4006865980);
+                                        }
+                                    }
+                                });
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    });
+                } else {
+                    inputOpts.text = text;
+                    App.setVal('inputOpts', inputOpts);
+                    App.evalJs({
+                        type : 0,
+                        winName : inputOpts.winName,
+                        js : inputOpts.callBack
+                    })
+                    closeWin()
+                }
+            } else {
+                closeWin()
+            }
+        })
+        function closeWin(type) {
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+    </script>
+</html>

@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <div class="ub ub-ver">
+                <div id="slider" class="slider" style="-webkit-transform: translateZ(0px); transform: translateZ(0px);width: 100%;height: 100%">
+                    <div class="slider-group ub-fh ub-fv" style="-webkit-transform: translateX(-0px);">
+                        <div class="slider-item ub-fh ub-fv ub-img1 " data-index="0" style="background-image:url(wgtRes/guideImage/1.png)">
+                            <span class="uabs"></span>
+                        </div>
+                        <div class="slider-item ub-fh ub-fv ub-img1 " data-index="1" style="background-image:url(wgtRes/guideImage/2.png)">
+                            <span class="uabs"></span>
+                        </div>
+                        <div class="slider-item ub-fh ub-fv ub-img1 " data-index="2" style="background-image:url(wgtRes/guideImage/3.png)">
+                            <span class="uabs"></span>
+                        </div>
+                        <div class="slider-item ub-fh ub-fv ub-img1 " data-index="3" style="background-image:url(wgtRes/guideImage/4.png)">
+                            <span class="uabs"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.slider.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/project.js"></script>
+        <script src="js/Base64-80.js"></script>
+    </body>
+    <script>
+        var hasGuide;
+        var isBackGround = false;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            App.Logs($("html").css("font-size") + "," + window.devicePixelRatio + "," + screen.width);
+            App.clearCache();
+            hasGuide = App.getVal("hasGuide");
+            var sessionid = App.getVal("sessionid");
+            if (App.isNull(sessionid)) {
+                var dt = new Date();
+                var sessionid = appcan.crypto.md5(appcan.getUID(32).toUpperCase() + dt.getTime());
+                App.setVal("sessionid", sessionid);
+            }
+            var msgSetData = {
+                pushEnable : "1", //推送通知开关
+                enable : "1", //0-关闭，1-开启。默认为1 开启新消息提醒
+                soundEnable : "1", // 0-关闭，1-开启。默认为1 开启声音提醒
+                vibrateEnable : "1", // 0-关闭，1-开启。默认为1 开启震动提醒
+                userSpeaker : "0", // 0-关闭，1-开启。默认为1 开启扬声器播放（仅Android可用）
+                showNotificationInBackgroud : "0", // 0-关闭，1-开启。默认为1。设置后台接收新消息时是否通过通知栏提示 （仅Android可用）
+                acceptInvitationAlways : "0", // 0-关闭，1-开启。默认添加好友时为1，是不需要验证的，改成需要验证为0（仅Android可用）
+                deliveryNotification : "0" // 0-关闭 1-开启  默认为1 开启消息送达通知    （仅iOS可用）
+            };
+            uexWindow.onPopoverLoadFinishInRootWnd = function(name, url) {
+                App.Logs("onPopoverLoadFinishInRootWnd:" + name + "," + url);
+                if (name == "helpContent") {
+                    App.evalJs({
+                        winName : "help",
+                        type : 1,
+                        js : "setIsOpen(true,'" + url + "')"
+                    })
+                } else if (name == "message_content") {
+                    if (!App.getAppPlat()) {
+                        uexEasemob.getRecentChatters();
+                    }
+                } else if (name == "compQuery") {
+                    //App.closeLoading();
+                    App.evalJs({
+                        winName : "tools",
+                        js : "closeLoading()"
+                    });
+                    App.evalJs({
+                        winName : "tools",
+                        type : 1,
+                        js : "setContentUrl('" + url + "')"
+                    })
+                } else if (name == "examQuery" || name == "shipxy" || name == "typhoon") {
+                    App.evalJs({
+                        winName : "tools",
+                        js : "closeLoading()"
+                    });
+                }
+            }
+            if (!isdebug) {
+                uexUpdate.onWidgetPatchUpdate = function(opId, dataType, data) {
+                    var obj = App.toJson(data);
+                    if (obj.status == "ok") {
+                        App.alertEx("版本升级完成,请退出应用，重新打开", function() {
+                            uexWidgetOne.exit(0);
+                        });
+                    }
+                }
+                uexWidget.onResume = function() {
+                    isBackGround = false;
+                    App.Logs("onResume:回到前台");
+                    if (!App.getAppPlat()) {
+                        uexEasemob.getLoginInfo();
+                    }
+                    onResumeFunc();
+                }
+                uexWidget.onSuspend = function() {
+                    isBackGround = true;
+                    App.Logs("onSuspend:被压入后台");
+                }
+                uexWidget.onEnterForeground = function() {
+
+                }
+                uexWidget.onEnterBackground = function() {
+
+                }
+                uexWidget.onLoadByOtherApp = function(data) {
+                    App.Logs("uexWidget.onLoadByOtherApp:" + data)
+                }
+                /**极光插件回调相关**/
+                uexJPush.onReceiveConnectionChange = function(data) {
+                    App.Logs("uexJPush.onReceiveConnectionChange:" + data);
+                }
+                uexJPush.onReceiveRegistration = function(data) {
+                    App.Logs("uexJPush.onReceiveRegistration:" + data);
+                }
+                uexJPush.cbSetAlias = function(data) {
+                    App.Logs("uexJPush.cbSetAlias-->" + data);
+                    var obj = JSON.parse(data);
+                    if (parseInt(obj.result) == 6002) {
+                        var userId = App.getUserInfo().userid;
+                        App.regPushInfo(userId);
+                    }
+                }
+                uexJPush.onReceiveNotificationOpen = function(data) {
+                    App.Logs("onReceiveNotificationOpen:" + data);
+                    data = data.replace(/(\"{)/g, '{').replace(/(}\")/g, '}');
+                    var obj = JSON.parse(data);
+                    if (!App.isNull(obj.extras) && obj.extras.type != "local") {
+
+                    } else {
+                        if (!App.isNull(obj.extras) && obj.extras.action == "reqAddFriend") {
+                            App.openWin({
+                                backName : App.getCurrWinName(),
+                                name : 'newFriend',
+                                url : 'contact/newFriend.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        }
+                        var json = {
+                            notificationId : obj.notificationId
+                        }
+                        uexJPush.removeLocalNotification(JSON.stringify(json));
+                    }
+                }
+                uexJPush.onReceiveMessage = function(data) {
+                    App.Logs("onReceiveMessage:" + data);
+                    var obj = App.toJson(data);
+                    if (!App.isNull(obj)) {
+                        var message = obj.message;
+                        var extras = obj.extras;
+                        switch(message) {
+                        case "reqAddFriend":
+                            App.evalJs({
+                                winName : "indexNew",
+                                type : 1,
+                                js : "shwoTabBage(\"renmai\",1)"
+                            });
+                            App.evalJs({
+                                winName : "indexNew",
+                                frameName : "content",
+                                popName : "friends_content",
+                                type : 2,
+                                js : "showlogicmsgBage(\"" + extras.total + "\")"
+                            })
+                            var extras = {
+                                type : "local",
+                                action : "reqAddFriend"
+                            }
+                            App.addLocalNotification("海员港", "您收到一个好友申请", extras);
+                            break;
+                        case "reqDeleteFriend":
+                            App.evalJs({
+                                winName : "indexNew",
+                                frameName : "content",
+                                popName : "friends_content",
+                                type : 2,
+                                js : "removeFriendHtml(\"" + extras.username + "\",0)"
+                            });
+                            App.evalJs({
+                                winName : "indexNew",
+                                frameName : "content",
+                                popName : "message_content",
+                                type : 2,
+                                js : "removeFriendHtml(\"" + extras.username + "\",0)"
+                            })
+                            break;
+                        case "systemMessage":
+                            loadSystemMsg();
+                            if (extras.action == "auditMessage" || extras.action == "reqAuidtPerMessage") {
+                                var userinfo = App.getUserInfo();
+                                if (!App.isNull(userinfo)) {
+                                    userinfo.auditstatus = extras.status;
+                                    App.updateUserInfo(userinfo);
+                                }
+                                App.evalJs({
+                                    winName : "indexNew",
+                                    frameName : "content",
+                                    popName : "myinfo_content",
+                                    type : 2,
+                                    js : "setStatus(\"" + App.getUserStatus(parseInt(extras.status)) + "\",0)"
+                                })
+                            }
+                            break;
+                        case "newDynamicMsg":
+                            App.evalJs({
+                                winName : "indexNew",
+                                type : 1,
+                                js : "shwoTabBage(\"dongtai\",1)"
+                            });
+                            break;
+                        case "dynamicAtMsg":
+                            App.evalJs({
+                                winName : "indexNew",
+                                type : 1,
+                                js : "shwoTabBage(\"dongtai\",1)"
+                            });
+                            App.evalJs({
+                                winName : "indexNew",
+                                frameName : "content",
+                                popName : "indexNew_content",
+                                type : 2,
+                                js : "showtTopTips(true)"
+                            });
+                            break;
+                        }
+                    }
+                }
+                uexJPush.onReceiveNotification = function(data) {
+                    App.Logs("onReceiveNotification:" + data);
+                    data = data.replace(/(\"{)/g, '{').replace(/(}\")/g, '}');
+                    // appcan.window.evaluateScript("index", "getMsgCount()");
+                    var obj = JSON.parse(data);
+                    if (obj.extras.type == "local" && obj.extras.info == "quitApp") {
+                        App.Logs("退出账号！")
+                        var userinfo = App.getUserInfo();
+                        if (!App.isNull(userinfo)) {
+                            App.userLogout({
+                                userId : userinfo.userid,
+                                loginType : "APP"
+                            });
+                            App.openWin({
+                                backName : "root",
+                                name : "indexMain",
+                                url : "main.html",
+                                type : 0,
+                                aniId : 0,
+                                animDuration : 200
+                            })
+                        }
+                    }
+                }
+                if (!App.getAppPlat()) {
+                    uexJPush.disableLocalNotificationAlertView(1);
+                }
+                /**极光插件相关结束**/
+                /**环信插件回调相关**/
+                uexEasemob.onDidJoinedGroup = function(data) {
+                    App.Logs("uexEasemob.onDidJoinedGroup:" + data);
+                }
+                uexEasemob.onDisconnected = function(data) {
+                    var userinfo = App.getUserInfo();
+                    App.Logs("uexEasemob.onDisconnected:" + data);
+                    var extras = {
+                        type : "local",
+                        info : "quitApp"
+                    }
+                    var obj = JSON.parse(data);
+                    switch (parseInt(obj.error)) {
+                    case 1:
+                        App.userLogout({
+                            userId : userinfo.userid,
+                            loginType : "APP"
+                        });
+                        App.addLocalNotification("海员港", "抱歉，您的账号已被禁用.", extras);
+                        App.alertEx("抱歉，您的账号已被禁用.");
+                        App.openWin({
+                            backName : "root",
+                            name : "indexMain",
+                            url : "main.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                        break;
+                    case 2:
+                        App.userLogout({
+                            userId : userinfo.userid,
+                            loginType : "APP"
+                        });
+                        App.addLocalNotification("海员港", "您的账号已在其他机器上登陆，如果不是本人操作，请尽快修改密码.", extras);
+                        App.alertEx("您的账号已在其他机器上登陆，如果不是本人操作，请尽快修改密码.");
+                        App.openWin({
+                            backName : "root",
+                            name : "indexMain",
+                            url : "main.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                        break;
+                    }
+                }
+                uexEasemob.onUserRemoved = function(data) {
+                    //当前用户被管理员移除出群聊
+                    App.Logs("uexEasemob.onUserRemoved:" + data);
+                    var obj = eval('(' + data + ')');
+                    var win = App.getWin("groupChatRoom");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "groupChatRoom",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    }
+                    win = App.getWin("myGroupList");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "myGroupList",
+                            js : "removeGroupListHtml('" + obj.groupId + "')"
+                        });
+                    }
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 2,
+                        popName : "message_content",
+                        js : "removeFriendHtml(" + obj.groupId + ", 1);"
+                    });
+                    App.alertEx("您已经被群主踢出了[" + obj.groupName + "]");
+                }
+                uexEasemob.onApplicationDeclined = function(data) {
+                    //加群申请被拒绝
+                    App.Logs("uexEasemob.onApplicationDeclined:" + data);
+                }
+                uexEasemob.onApplicationAccept = function(data) {
+                    //加群申请被同意
+                    App.Logs("uexEasemob.onApplicationAccept:" + data);
+                }
+                uexEasemob.onApplicationReceived = function(data) {
+                    //用户申请加入群聊,收到加群申请
+                    App.Logs("uexEasemob.onApplicationReceived:" + data);
+                }
+                uexEasemob.onGroupDestroy = function(data) {
+                    //群聊被创建者解散
+                    App.Logs("uexEasemob.onGroupDestroy:" + data);
+                    var obj = eval('(' + data + ')');
+                    var win = App.getWin("groupChatRoom");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "groupChatRoom",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    }
+                    win = App.getWin("myGroupList");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "myGroupList",
+                            js : "removeGroupListHtml('" + obj.groupId + "')"
+                        });
+                    }
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 2,
+                        popName : "message_content",
+                        js : "removeFriendHtml(" + obj.groupId + ", 1);"
+                    });
+                    App.alertEx("[" + obj.groupName + "]已经被群主解散");
+                }
+                if (!App.getAppPlat()) {
+                    uexEasemob.onGroupUpdateInfo = function(data) {
+                        App.Logs("uexEasemob.onGroupUpdateInfo:" + data);
+                        var obj = eval('(' + data + ')');
+                        var win = App.getWin("myGroupList");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "myGroupList",
+                                js : "getMyGroupList(1, 0)"
+                            });
+                        }
+                    }
+                    uexEasemob.cbGetLoginInfo = function(data) {
+                        App.Logs("uexEasemob.cbGetLoginInfo:" + data);
+                        var obj = JSON.parse(data);
+                        if (parseInt(obj.isConnected) == 2) {
+                            App.removeVal("easemobLogin");
+                            App.isLogin(function(data) {
+                                App.Logs("uexEasemob.cbGetLoginInfo:" + data)
+                                var thirdLogin = App.getVal("thirdLogin");
+                                if (!data) {
+                                    if (!App.isNull(hasGuide) && App.isNull(thirdLogin)) {
+                                        App.openWin({
+                                            backName : "root",
+                                            name : "indexMain",
+                                            url : "main.html",
+                                            type : 0,
+                                            aniId : 0,
+                                            animDuration : 200
+                                        })
+                                    }
+                                }
+                                App.removeVal("thirdLogin");
+                            });
+                        } else {
+                            uexEasemob.getRecentChatters();
+                        }
+                    }
+                }
+                uexEasemob.onReceiveGroupInvitation = function(data) {
+                    App.Logs("uexEasemob.onReceiveGroupInvitation" + data);
+                }
+                uexEasemob.onGroupCreated = function(data) {
+                    App.Logs("uexEasemob.onGroupCreated:" + data);
+                    var obj = JSON.parse(data);
+                    if (obj.isSuccess == true || obj.isSuccess == "true") {
+                        if (obj.group.groupMaxUserCount == 0) {
+                            obj.group.groupMaxUserCount = 500;
+                        }
+                        App.setVal("groupInfo", obj.group);
+                        App.evalJs({
+                            winName : "contactList",
+                            js : "addGroupTOServer()"
+                        });
+                    } else {
+                        App.closeLoading();
+                        App.toast("建立群聊失败，请稍后在试.")
+                    }
+                }
+                uexEasemob.cbGetGroup = function(data) {
+                    App.Logs("uexEasemob.cbGetGroup:" + data);
+                    var groupInfo = App.getJson("groupInfo");
+                    if (App.isNull(groupInfo)) {
+                        return;
+                    }
+                    var obj = eval('(' + data + ')');
+                    if (App.isNull(obj.groupMaxUserCount) || obj.groupMaxUserCount == 0) {
+                        obj.groupMaxUserCount = groupInfo.maxUsers;
+                    }
+                    App.setVal("groupInfo", obj);
+                    if (App.isNull(groupInfo.winName)) {
+                        var win = App.getWin("groupChatInfo");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "groupChatInfo",
+                                js : "loadData()"
+                            });
+                        }
+                    } else {
+                        App.openWin({
+                            backName : groupInfo.winName,
+                            name : "groupChatRoom",
+                            url : "chat/groupChatRoom.html",
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    }
+                }
+                uexEasemob.onCmdMessageReceive = function(data) {//收到透传消息
+                    App.Logs("onCmdMessageReceive:" + data);
+                    var obj = eval('(' + data + ')');
+                    var messageType = obj.message.messageType;
+                    var action = obj.action;
+                    action = action.split("$$");
+                    switch(messageType) {
+                    case "cmd":
+                        if (action[0] == "exitGroup") {
+                            var param = {
+                                groupId : action[1], //
+                                loadCache : false //是否从本地加载缓存,(默认为false,从网络获取)
+                            };
+                            uexEasemob.getGroup(App.toJsonStr(param));
+                        } else if (action[0] == "updateLogo") {
+                            var id = action[1];
+                            var headUri = App.headUri + action[2];
+                            App.evalJs({
+                                winName : "indexNew",
+                                type : 2,
+                                popName : "message_content",
+                                js : "updateHeadLogo(" + id + ",'" + headUri + "','" + action[2] + "')"
+                            });
+                            var win = App.getWin("groupChatRoom");
+                            if (!App.isNull(win)) {
+                                App.setVal("oUri", action[2]);
+                                App.setVal("groupHeadUri", headUri);
+                            }
+                            win = App.getWin("myGroupList");
+                            if (!App.isNull(win)) {
+                                App.evalJs({
+                                    winName : "myGroupList",
+                                    js : "updateLogo(" + id + ",'" + headUri + "','" + action[2] + "')"
+                                });
+                            }
+                        } else if (action[0] == "updateGroupInfo") {
+                            var id = action[1];
+                            var groupName = action[2];
+                            var desc = action[3];
+                            var win = App.getWin("myGroupList");
+                            App.evalJs({
+                                winName : "indexNew",
+                                type : 2,
+                                popName : "message_content",
+                                js : "updateTitle(" + id + ",'" + groupName + "')"
+                            });
+                            if (!App.isNull(win)) {
+                                App.evalJs({
+                                    winName : "myGroupList",
+                                    js : "updateInfo(" + id + ",'" + groupName + "','" + desc + "')"
+                                });
+                            }
+                        }
+                        break;
+                    }
+                }
+                uexEasemob.onAckMessage = function(data) {//消息已读回调
+                    App.Logs("onAckMessage:" + data);
+                }
+                uexEasemob.onDeliveryMessage = function(data) {//消息已送达
+                    App.Logs("onDeliveryMessage:" + data);
+                    var obj = JSON.parse(data);
+                    App.addLastMsgId(obj.username, obj.msgId);
+                }
+                uexEasemob.onMessageSent = function(data) {
+                    App.Logs("uexEasemob.onMessageSent:" + data);
+                    var obj = eval('(' + data + ')');
+                    onMessageSent(data);
+                }
+                uexEasemob.onContactInvited = function(data) {//接到好友申请
+                    App.Logs("onContactInvited:" + data);
+                    var obj = JSON.parse(data);
+                    var win = App.getWin("newFriend");
+                    App.Logs("win:" + App.toJsonStr(win))
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "newFriend",
+                            js : "showBtn(\"" + obj.username + "\",0)"
+                        });
+                    }
+                }
+                uexEasemob.onContactAgreed = function(data) {//好友请求被同意
+                    App.Logs("onContactAgreed:" + data);
+                    var obj = JSON.parse(data);
+                    var win = App.getWin("newFriend");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "newFriend",
+                            js : "showBtn(\"" + obj.username + "\",1)"
+                        });
+                    }
+                    win = App.getWin("userAccount");
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "userAccount",
+                            type : 1,
+                            js : "showBtn(1)"
+                        });
+                    }
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 2,
+                        popName : "friends_content",
+                        js : "loadFriendList(1, 0);"
+                    });
+                }
+                uexEasemob.onContactRefused = function(data) {//好友请求被拒绝
+                    App.Logs("onContactRefused:" + data);
+                    var obj = JSON.parse(data);
+                    var win = App.getWin("newFriend");
+                    App.Logs("win:" + App.toJsonStr(win))
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "newFriend",
+                            js : "showBtn(\"" + obj.username + "\",-1)"
+                        });
+                    }
+                }
+                uexEasemob.cbGetContactUserNames = function(data) {
+                    App.Logs("cbGetContactUserNames:" + data);
+                }
+                uexEasemob.onNewMessage = function(data) {//收到新消息监听
+                    App.Logs("onNewMessage:" + data);
+                    App.evalJs({
+                        winName : "indexNew",
+                        type : 1,
+                        js : "shwoTabBage(\"xiaoxi\",1)"
+                    });
+                    var msgData = eval('(' + data + ')');
+                    var setttings = App.getJson("msgSetData");
+                    App.setVal("newMessage", msgData);
+                    if (msgData.chatType == 0) {
+                        App.addLastMsgId(msgData.from, msgData.messageId);
+                        var win = App.getWin("sysChatRoom");
+                        if (!App.isNull(win)) {
+                            appcan.frame.evaluateScript("sysChatRoom", "content", "newMessage()");
+                        } else {
+                            appcan.frame.evaluateScript("chatRoom", "content", "newMessage()");
+                        }
+                    } else {
+                        App.addLastMsgId(msgData.to, msgData.messageId);
+                        appcan.frame.evaluateScript("groupChatRoom", "content", "newMessage()");
+                    }                   
+                    uexEasemob.getRecentChatters();                   
+                }
+                uexEasemob.cbGetRecentChatters = function(data) {//获取近期聊天对象信息
+                    App.Logs("cbGetRecentChatters:" + data);
+                    var win = App.getWin("shareFriendList");
+                    var win1 = App.getWin("forwardList");
+                    App.setVal('cbGetRecentChatters', data);
+                    if (!App.isNull(win)) {
+                        App.evalJs({
+                            winName : "shareFriendList",
+                            js : "getRecentChatters()"
+                        });
+                    } else if (!App.isNull(win1)) {
+                        App.evalJs({
+                            winName : "forwardList",
+                            js : "getRecentChatters()"
+                        });
+                    } else {
+                        uexWindow.evaluateMultiPopoverScript("indexNew", "content", "message_content", "getRecentChatters()");
+                    }
+                }
+                uexEasemob.cbGetMsgCount = function(data) {//获取未读消息数量回调
+                    App.Logs("cbGetMsgCount:" + data);
+                }
+                uexEasemob.cbGetMessageById = function(data) {
+                    App.Logs("cbGetMessageById:" + data);
+                    if (App.isNull(data)) {
+                        return;
+                    }
+                    App.setVal('cbGetMessageById', data);
+                    var win = App.getWin("groupChatRoom");
+                    var win1 = App.getWin("sysChatRoom");
+                    if (!App.isNull(win)) {
+                        appcan.frame.evaluateScript("groupChatRoom", "content", "GetMessageById()");
+                    } else if (!App.isNull(win1)) {
+                        appcan.frame.evaluateScript("sysChatRoom", "content", "GetMessageById()");
+                    } else {
+                        appcan.frame.evaluateScript("chatRoom", "content", "GetMessageById()");
+                    }
+                }
+                uexEasemob.cbGetMessageHistory = function(data) {
+                    App.Logs("cbGetMessageHistory:" + data);
+                    App.setVal("historyMsg", data);
+                    var win = App.getWin("chatRoom");
+                    var win1 = App.getWin("sysChatRoom");
+                    if (!App.isNull(win)) {
+                        appcan.frame.evaluateScript("chatRoom", "content", "addhistory()");
+                    } else if (!App.isNull(win1)) {
+                        appcan.frame.evaluateScript("sysChatRoom", "content", "addhistory()");
+                    } else {
+                        appcan.frame.evaluateScript("groupChatRoom", "content", "addhistory()");
+                    }
+                };
+                uexEasemob.onConnected = function() {
+                    App.Logs("uexEasemob.onConnected");
+                }
+                uexEasemob.cbLogin = function(data) {
+                    App.Logs("uexEasemob.cbLogin-->" + data);
+                    var obj = JSON.parse(data);
+                    App.setVal("easemobLogin", obj.result);
+                    if (parseInt(obj.result) == 1) {//登陆成功修改用户昵称
+                        if (!App.getAppPlat()) {
+                            uexEasemob.registerRemoteNotification();
+                        }
+                        var userinfo = App.getUserInfo();
+                        if (!App.isNull(userinfo.cnname)) {
+                            var nickname = {
+                                nickname : userinfo.cnname
+                            };
+                            uexEasemob.updateCurrentUserNickname(App.toJsonStr(nickname));
+                        }
+                        uexEasemob.getRecentChatters();
+                    } else if (parseInt(obj.result) == 2 && obj.msg != "登录失败:已经登录.") {//失败超时了,5秒后自动重连
+                        setTimeout(function() {
+                            var userinfo = App.getJson('userinfo');
+                            App.loginEasemob(userinfo.userid, userinfo.pass);
+                        }, 5000);
+                    }
+                }
+                var param = {
+                    appKey : "i-csscom#comcsshywan",
+                    apnsCertName : "comcsshywan",
+                    isAutoLoginEnabled : "1",
+                    isAutoAcceptGroupInvitation : "1"
+                }
+                uexEasemob.initEasemob(JSON.stringify(param));
+                if (!App.getAppPlat()) {
+                    uexEasemob.onApnsLaunch = function(data) {
+                        App.Logs("uexEasemob.onApnsLaunch:" + data);
+                    }
+                    uexEasemob.cbUpdatePushOptions = function(data) {
+                        App.Logs("uexEasemob.cbUpdatePushOptions:" + data);
+                    }
+                    uexEasemob.cbRegisterRemoteNotification = function(data) {
+                        App.Logs("uexEasemob.cbRegisterRemoteNotification:" + data);
+                        var obj = JSON.parse(data);
+                        if (parseInt(obj.result) == 1) {
+                        }
+                    }
+                }
+                setTimeout(function() {
+                    if (App.isNull(hasGuide)) {
+                        uexEasemob.setNotifyBySoundAndVibrate(JSON.stringify(msgSetData));
+                    }
+                }, 1000);
+                /**环信插件相关结束**/
+            }
+            if (!App.isNull(hasGuide)) {
+                App.isLogin(function(data) {
+                    App.Logs("index:isLogin:" + data)
+                    if (data) {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexNew",
+                            url : "indexNew.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexMain",
+                            url : "main.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        });
+                    }
+                });
+            } else {
+                $("#slider").height(window.innerHeight)
+                $(".slider-group").css("-webkit-transform", "translateX(-0px)");
+                App.setVal("msgSetData", msgSetData);
+            }
+        });
+        appcan.button(".slider-item", "", function() {
+            var index = parseInt($(this).attr("data-index"));
+            if (index == 3) {
+                App.isLogin(function(data) {
+                    App.Logs("index:isLogin:" + data)
+                    if (data) {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexNew",
+                            url : "indexNew.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                    } else {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexMain",
+                            url : "main.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                    }
+                });
+                App.setVal("hasGuide", true);
+            }
+        })
+
+        $(".slider-item").on("swipeMoveRight", function(evt) {
+            var index = parseInt($(this).attr("data-index"));
+            var width = (index - 1) * window.innerWidth;
+            if (index == 0) {
+                return;
+            }
+            $(".slider-group").on("webkitTransitionEnd", function() {
+                $(".slider-group").off("webkitTransitionEnd");
+                $(".slider-group").removeClass("slider-anim");
+            })
+            $(".slider-group").addClass("slider-anim");
+            $(".slider-group").css("-webkit-transform", "translateX(-" + width + "px)");
+        });
+
+        $(".slider-item").on("swipeMoveLeft", function(evt) {
+            var index = parseInt($(this).attr("data-index"));
+            var width = (index + 1) * window.innerWidth;
+            if (index == 3) {
+                App.isLogin(function(data) {
+                    App.Logs("index:isLogin:" + data)
+                    if (data) {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexNew",
+                            url : "indexNew.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                    } else {
+                        App.openWin({
+                            backName : "root",
+                            name : "indexMain",
+                            url : "main.html",
+                            type : 0,
+                            aniId : 0,
+                            animDuration : 200
+                        })
+                    }
+                });
+                App.setVal("hasGuide", true);
+                return;
+            }
+            $(".slider-group").on("webkitTransitionEnd", function() {
+                $(".slider-group").off("webkitTransitionEnd");
+                $(".slider-group").removeClass("slider-anim");
+            })
+            $(".slider-group").addClass("slider-anim");
+            $(".slider-group").css("-webkit-transform", "translateX(-" + width + "px)");
+        });
+
+        function onMessageSent(data) {
+            var obj = eval('(' + data + ')');
+            if (obj.message.messageType != "cmd" && (obj.isSuccess == true || obj.isSuccess == "true")) {
+                if (obj.message.messageType == "text") {
+                    obj.message.messageBody.text = decode64(obj.message.messageBody.text)
+                }
+                App.authApi({
+                    url : "chat/addMessage",
+                    data : {
+                        params : {
+                            message : obj.message
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            App.addLastMsgId(obj.message.to, data.items.messageId);
+                        }
+                    }
+                });
+                if (obj.message.chatType == 1) {
+                    appcan.frame.evaluateScript("groupChatRoom", "content", "canleImgMask()");
+                } else {
+                    appcan.frame.evaluateScript("chatRoom", "content", "canleImgMask()");
+                }
+            }
+        }
+
+        function onResumeFunc() {
+            App.evalJs({
+                winName : "indexNew",
+                frameName : "content",
+                popName : "friends_content",
+                type : 2,
+                js : "getReqFriendNum()"
+            })
+        }
+
+        function loadSystemMsg() {
+            App.evalJs({
+                winName : "indexNew",
+                type : 1,
+                js : "shwoTabBage(\"xiaoxi\",1)"
+            });
+            App.evalJs({
+                winName : "indexNew",
+                frameName : "content",
+                popName : "message_content",
+                type : 2,
+                js : "getSystemMsg()"
+            });
+        }
+    </script>
+</html>

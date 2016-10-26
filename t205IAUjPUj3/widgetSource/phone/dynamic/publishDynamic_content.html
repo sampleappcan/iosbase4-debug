@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="publishDynamic_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="umar-t-ec2" style="height: 100%">
+            <div class="c-wh uinn-ec1 uh-ect" style="overflow-y: visible">
+                <div class="uinput ub ub-f1" style="overflow-y: visible">
+                    <textarea id="contentMsg" placeholder="来点经验分享,行业评论吧！(您好友、同行能看到)" type="text" class="ub-f1" oninput="changeHeight(this)"></textarea>
+                </div>
+            </div>
+            <div class="ub umar-t-ec3 ">
+                <div id ="picList">
+                    <div data-index="0" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="1" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="2" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="3" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="4" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="5" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="6" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="7" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="8" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                    <div data-index="9" class="ub-img1 uwh-bg imgBg ufl umar-a uhide picItem"></div>
+                </div>
+            </div>
+            <div class="ub ub-ver ub-f1 umar-a uhide">
+                <div class="t-gra ulev-4 ">
+                    提醒谁看
+                </div>
+                <div onclick="openAt(true)" id="atlist" class="ub ub-f1 " style="overflow-x:scroll;"></div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var totalPicNum = 9;
+        //待上传的文件名
+        var picList = [];
+        //已上传的临时文件名
+        var imgList = [];
+        var uploadNum = 0;
+        var atList = [];
+        var labList = [];
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        function changeHeight(item) {
+            if (item.scrollHeight > $(item).height()) {
+                $(item).css('height', item.scrollHeight);
+            }
+        }
+
+
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            $("#contentMsg").focus();
+        }
+
+        function delectPic(src) {
+            for (var i = 0; i < picList.length; i++) {
+                if (picList[i].src == src) {
+                    picList.splice(i, 1);
+                    break;
+                }
+            };
+        }
+
+
+        appcan.button('.picItem', '', function() {
+            var index = parseInt($(this).attr("data-index"));
+            var fileName = $(this).attr("data-src");
+            if ($(this).hasClass('imgBg')) {
+                openPicMunu();
+            } else {
+                $(this).css('background-image', '');
+                $(this).addClass('imgBg');
+                $(this).addClass('uhide');
+                $(this).attr("data-src", "");
+                uexFileMgr.deleteFileByPath(fileName);
+                delectPic(fileName);
+                $('#picList').children().last().removeClass('uhide');
+                // App.Logs(picList.length+","+App.toJsonStr(picList))
+                if (picList.length == 0) {
+                    picList = [];
+                    $('#picList').children().addClass('uhide');
+                }
+            }
+        })
+        function openPicMunu() {
+            uexCamera.cbOpen = function(opCode, dataType, data) {
+                App.Logs("uexCamera.cbOpenInternal:" + data);
+                var obj = {
+                    src : data
+                }
+                picList.push(obj);
+                var index = picList.length - 1;
+                $('#picList').children().eq(index).removeClass('uhide');
+                $('#picList').children().eq(index).removeClass('imgBg');
+                $('#picList').children().eq(index).css("background-image", 'url(' + data + ')');
+                $('#picList').children().eq(index).attr("data-src", data);
+                $('#picList').children().last().removeClass('uhide');
+                if (picList.length == 9) {
+                    $('#picList').children().last().addClass('uhide');
+                }
+            }
+            uexImage.onPickerClosed = function(data) {
+                App.Logs("uexImage.onPickerClosed:" + data);
+                var obj = JSON.parse(data);
+                var startIndex = picList.length;
+                if (obj.isCancelled == false || obj.isCancelled == "false") {
+                    for (var i = 0; i < obj.data.length; i++) {
+                        var objData = {
+                            src : obj.data[i]
+                        }
+                        $('#picList').children().each(function() {
+                            if ($(this).hasClass('imgBg')) {
+                                $(this).removeClass('uhide');
+                                $(this).removeClass('imgBg');
+                                $(this).css("background-image", 'url(' + objData.src + ')');
+                                $(this).attr("data-src", objData.src);
+                                picList.push(objData);
+                                return false;
+                            }
+                        })
+                    };
+                    if (picList.length == 9) {
+                        $('#picList').children().last().addClass('uhide');
+                    } else {
+                        $('#picList').children().last().removeClass('uhide');
+                    }
+                }
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 70);
+                    break;
+                case 1:
+                    var data = {
+                        min : 1,
+                        max : totalPicNum - picList.length,
+                        quality : 0.7,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                }
+            }
+            if (totalPicNum == picList.length) {
+                App.toast("最多只能选9张图片");
+                return;
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        }
+
+        function publishMsg() {
+            var contentMsg = $('#contentMsg').val();
+            if (App.isNull(contentMsg)) {
+                App.toast("请输入动态内容");
+                return;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在发布信息...',
+                canCancel : 1
+            });
+
+            uploadPic(function(data) {
+                if (data) {
+                    //App.Logs("imgList:" + App.toJsonStr(imgList));
+                    contentMsg = contentMsg.replace(/\r\n/g, "<br />")
+                    contentMsg = contentMsg.replace(/\n/g, "<br />");
+                    App.authApi({
+                        url : 'dynamic/publishDynamic',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                content : contentMsg,
+                                imgList : imgList,
+                                atList : atList,
+                                labList : labList,
+                                userType : userinfo.userid
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                App.evalJs({
+                                    winName : 'userDynamicList',
+                                    js : 'addLocalDynimic(\'' + App.toJsonStr(data.items) + '\')'
+                                })
+                                App.evalJs({
+                                    winName : 'indexNew',
+                                    type : 2,
+                                    popName : 'indexNew_content',
+                                    js : 'addLocalDynimic(\'' + App.toJsonStr(data.items) + '\')'
+                                })
+                                App.evalJs({
+                                    winName : 'publishDynamic',
+                                    type : 1,
+                                    js : 'closeWin()'
+                                })
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
+        function uploadPic(callBack) {
+            if (uploadNum == picList.length || picList.length <= 0) {
+                if (callBack) {
+                    uploadNum == 0;
+                    callBack(true);
+                    return true;
+                }
+            }
+            var obj = picList[uploadNum];
+            if (!App.isNull(obj)) {
+                App.uploadTMPFile(obj.src, 0, 720, function(status, obj) {
+                    if (status == 1) {
+                        imgList.push(obj.serverPath);
+                        window.setTimeout(function() {
+                            uploadNum++;
+                            uploadPic(callBack);
+                        }, 200);
+                    }
+                });
+            }
+        }
+
+        function removeAtList() {
+            //console.log("11111")
+            $("#atlist").html("");
+            $("#atlist").parent().addClass("uhide");
+            atList = [];
+            App.removeVal("atList");
+        }
+        
+        function addAtList() {
+            atList = App.getJson("atList");
+            if (App.isNull(atList) || atList.length == 0) {
+                atList = [];
+                $("#atlist").parent().addClass("uhide");
+                return;
+            }
+            $("#atlist").parent().removeClass("uhide");
+            var d = '';
+            for (var i = 0; i < atList.length; i++) {
+                d += createAtListHtml(atList[i]);
+            };
+            $("#atlist").html(d);
+        }
+        
+        function createAtListHtml(obj) {
+            var h = '';
+            h += '<div class="ub-img1 umar-a2" style="background-image: url(' + obj.headUri + ');min-width: 3em;min-height: 3em"></div>';
+            return h;
+        }
+        
+        function openAt(type) {
+            if (type && atList.length > 0) {
+                App.setVal("atList", atList);
+            }
+            App.setVal("groupChat", 3);
+            App.openWin({
+                backName : 'publishDynamic',
+                name : 'contactList',
+                url : '../contact/contactList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function openLabel() {
+
+        }
+    </script>
+</html>

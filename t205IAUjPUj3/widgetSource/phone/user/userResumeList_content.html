@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userResumeList_content/css/main.css">
+        <style>
+            .marg-l {
+                margin-right: 0.4em;
+            }
+            .txt-color {
+                color: #3BA6E7;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-f1 sc-bg ubt bc-border">
+            <div id="resumeList" class="ub ub-ver ub-f1 ">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            loadUserResumeList();
+        }
+
+        function loadUserResumeList() {
+            App.authApi({
+                url : "user/getUserResumeList",
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var d = '';
+                        if (data.items.length > 0) {
+                            for (var i = 0; i < data.items.length; i++) {
+                                d += createResumeHtml(data.items[i]);
+                            };
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra"> 您暂时还没有简历,请添加简历 </div>';
+                            d += '    <div onclick="createResume(1)" class="bc-btn ub-pc ub-ac ub t-wh btn uc-a1 us" style="width:10em;margin-top:1em">添加简历</div>'
+                            d += '</div>'
+                        }
+                        $("#resumeList ul").html(d);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function createResumeHtml(obj) {
+            var h = '';
+            var isshow = "(已发布)";
+            var type = "海员简历";
+            if (obj.type == "normal") {
+                type = "普通简历";
+            }
+            if (obj.isshow == 0) {
+                isshow = "(未发布)";
+                //"(认证后才可以被浏览)"
+            }
+            var photoUri = "./userResumeDetail_content/css/myImg/resume_photo.png";
+            if (!App.isNull(obj.photouri)) {
+                photoUri = App.resumeUri + "o/" + obj.photouri;
+            }
+            h += '<li onclick="openResume(' + obj.id + ',\'' + type + '\')" class="ub ubb bc-border uinn">';
+            h += '   <div id="photoUri" class="ub ub ub-ver umar-r">';
+            h += '      <div class="uba ub ub-ac ub-pc uc-a1" style="background-color:#F6F6F6;border-color:#F6F6F6 ">';
+            h += '         <div class="ub-img1 " style="width: 3.2em;height: 4em;background-image:url(' + photoUri + ')"></div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '   <div class="ub-f1 ub ub-ver marg-l">';
+            h += '      <div class="ub ulev2 ut-m ub-f1">' + obj.resumetitle + '<span class="ulev-2 umar-l txt-color">' + isshow + '</span></div>';
+            h += '      <div class="ulev-1 t-gra uinn3 ut-m">' + type + '</div>';
+            h += '      <div class="ulev-1 t-gra uinn3 ut-m">被浏览次数(' + obj.viewcount + ')</div>';
+            h += '   </div>';
+            h += '   <div class="ub ub-ac fa fa-angle-right ulev2 t-gra"></div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openResume(resumeId, type) {
+            App.setVal("resumeId", resumeId);
+            App.setVal("resumeType", type == "海员简历" ? "seaman" : "normal");
+            App.openWin({
+                backName : "userResumeList",
+                name : 'userResumeDetail',
+                url : 'userResumeDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function createResume(type) {
+            if (type == 1) {
+                App.evalJs({
+                    winName : "userResumeList",
+                    type : 1,
+                    js : "openResumeMenu()"
+                });
+                return;
+            }
+            var resumeType = App.getVal("resumeType");
+            App.authApi({
+                url : "user/createResume",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        type : resumeType
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        loadUserResumeList();
+                    } else {
+                        App.toast(data.message)
+                    }
+                }
+            });
+        }
+    </script>
+</html>

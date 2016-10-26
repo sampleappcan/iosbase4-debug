@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/fonts/cssfont.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style>
+            .sc-text-select {
+                color: #0192FF;
+            }
+            .tab_badge {
+                position: absolute;
+                width: 0.8em;
+                height: 0.8em;
+                right: 2em;
+                top: 0.2em;
+                -webkit-border-radius: 1.2em;
+                border-radius: 1.2em;
+                text-align: center;
+                padding: 0.1em;
+            }
+            .tab_color {
+                background-color: red
+            }
+            .fa-2x {
+                font-size: 1.8em;
+            }
+            .tab_m .item {
+                padding: 0.5em 0;
+            }
+            .focus_btn {
+                background-image: url(./indexNew_content/css/myImg/focus.png);
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header">
+                <div id="mHeaderIdnex" class="uhide">
+                    <div class="uh bc-text-head ub bc-head headerh">
+                        <div class="nav-btn" id="focusBtn">
+                            <div class="ub-img umw4 umh4 focus_btn uhide"></div>
+                        </div>
+                        <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0" >
+                            海友圈
+                        </div>
+                        <div class="nav-btn nav-bt" id="pushlish">
+                            <div class="ub-img umw4 umh4 icon-edit"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mHeaderContacts" class="uhide">
+                    <div class="uh bc-text-head ub bc-head headerh">
+                        <div class="nav-btn" id="scanner">
+                            <div class="ub-img umw4 umh4 icon-scan uhide" style="min-height: 2.5em"></div>
+                        </div>
+                        <div class="ut ub-f1 ulev1 ut-s tx-c headerContacts" tabindex="0" >
+                            海友
+                        </div>
+                        <div class="nav-btn nav-bt addFriend">
+                            <div class="ub-img umw4 umh4 icon-add"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mHeaderMsg" class="uh bc-text-head ub bc-head headerh ">
+                    <div class="nav-btn" id="nav-left"></div>
+                    <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                        消息
+                    </div>
+                    <div class="nav-btn nav-bt msgMenu">
+                        <div class="ub-img umw4 umh4 icon-add"></div>
+                    </div>
+                </div>
+                <div id="mHeaderMy" class="uh bc-text-head ub bc-head headerh uhide">
+                    <div class="nav-btn" id="nav-left"></div>
+                    <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                        我
+                    </div>
+                    <div class="nav-btn nav-bt" id="myQrcode">
+                        <div class="fa-qrcode fa " style="font-size: 1.8em"></div>
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l sc-bg">
+
+            </div>
+            <!--content结束-->
+            <div id="footer" class="uf sc-bg ubt bc-border">
+                <div id="tabview" class="uf sc-bg ">
+                    <div class="uf t-bla ub tab_m">
+                        <div class="ulev-1 ub ub-f1 ub-ac item" id="xiaoxi" >
+                            <div class="ub-f1 ub ub-ver item1 sc-text-select" data-index="2">
+                                <div class="ub-f1 cssfont xiaoxi fa-2x tx-c"></div>
+                                <div class="ulev-1 tx-c" style="padding-top: 0.2em">
+                                    消息
+                                </div>
+                            </div>
+                            <div class="ub ub-ac ub-pc ulev-1 bc-text-head tab_color tab_badge uhide" id="badge_xiaoxi"></div>
+                        </div>
+                        <div class="ulev-1 ub ub-f1 ub-ac item" id="renmai" >
+                            <div class="ub-f1 ub ub-ver item1 sc-text-tab" data-index="1">
+                                <div class="ub-f1 cssfont renmai fa-2x tx-c"></div>
+                                <div class="ulev-1 tx-c" style="padding-top: 0.2em">
+                                    海友
+                                </div>
+                            </div>
+                            <div class="ub ub-ac ub-pc ulev-1 bc-text-head tab_color tab_badge uhide" id="badge_renmai"></div>
+                        </div>
+                        <div class="ulev-1 ub ub-f1 ub-ac item" id="dongtai" >
+                            <div class="ub-f1 ub ub-ver item1 sc-text-tab" data-index="0">
+                                <div class="ub-f1 cssfont dongtai fa-2x tx-c"></div>
+                                <div class="ulev-1 tx-c" style="padding-top: 0.2em">
+                                    海友圈
+                                </div>
+                            </div>
+                            <div class="ub ub-ac ub-pc ulev-1 bc-text-head tab_badge tab_color uhide" id="badge_dongtai"></div>
+                        </div>
+                        <div class="ulev-1 ub ub-f1 ub-ac item" id="wode" >
+                            <div class="ub-f1 ub ub-ver item1  sc-text-tab" data-index="3">
+                                <div class="ub-f1 cssfont wode fa-2x tx-c"></div>
+                                <div class="ulev-1 tx-c" style="padding-top: 0.2em">
+                                    我
+                                </div>
+                            </div>
+                            <div class="ub ub-ac ub-pc ulev-1 bc-text-head tab_color tab_badge uhide" id="badge_wode"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.tab.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/project.js"></script>
+    </body>
+    <script>
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        var friendsMenu = false;
+        var shareMuen = false;
+        var shareInfo = false;
+        var messageMenu = false;
+        appcan.button('#dongtai', '', function() {
+            changeContent(2);
+            // uexWindow.setSelectedPopOverInMultiWindow('content', 0);
+        })
+        appcan.button('#renmai', '', function() {
+            changeContent(1);
+            //uexWindow.setSelectedPopOverInMultiWindow('content', 1);
+        })
+        appcan.button('#xiaoxi', '', function() {
+            changeContent(0);
+            //uexWindow.setSelectedPopOverInMultiWindow('content', 2);
+        })
+        appcan.button('#wode', '', function() {
+            changeContent(3);
+            // uexWindow.setSelectedPopOverInMultiWindow('content', 3);
+        })
+        appcan.button('#myQrcode', 'btn-act', function() {
+            App.openWin({
+                backName : 'indexNew',
+                name : 'userQrCode',
+                url : 'user/userQrCode.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        appcan.button('.msgMenu', '', function() {
+            var titHeight = $('#header').offset().height;
+            if (messageMenu) {
+                closeMessageMenu();
+                return;
+            }
+            messageMenu = true;
+            App.openFrame("messageMenu", "common/messageMenu.html", 0, titHeight);
+        })
+        appcan.button('.addFriend', '', function() {
+            var titHeight = $('#header').offset().height;
+            if (friendsMenu) {
+                closeFriendsMenu();
+                return;
+            }
+            friendsMenu = true;
+            App.openFrame("friendsMenu", "common/friendsMenu.html", 0, titHeight);
+        })
+        function closeFriendsMenu() {
+            friendsMenu = false;
+            appcan.window.closePopover("friendsMenu");
+        }
+
+        function closeMessageMenu() {
+            messageMenu = false;
+            appcan.window.closePopover("messageMenu");
+        }
+
+
+        appcan.button('.headerContacts', '', function() {
+            if (friendsMenu) {
+                closeFriendsMenu();
+            }
+        })
+        appcan.button('#scanner', '', function() {
+            return;
+            if (friendsMenu) {
+                closeFriendsMenu();
+            }
+            var jsonData = {
+                lineImg : "",
+                pickBgImg : "",
+                tipLabel : "将二维码放置框内,即开始扫描",
+                title : "扫一扫"
+            };
+            uexScanner.setJsonData(JSON.stringify(jsonData));
+            uexScanner.open();
+        })
+        function closeOtherWin() {
+            // console.log("indexNew执行-->closeOtherWin");
+            App.evalJs({
+                type : 1,
+                winName : "userLogin",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "userTypeNew",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "userTypeTwoNew",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "userAccount",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "userInfo",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "quickReg",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "quickLogin",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "unionLogin",
+                js : "closeWin(0)"
+            });
+            App.evalJs({
+                type : 1,
+                winName : "indexMain",
+                js : "closeWin(0)"
+            });
+            App.setVal("currWinName", "indexNew");
+        }
+
+
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            var fristRun = App.getVal("fristRun");
+            var userinfo = App.getUserInfo();
+            if ((App.isNull(fristRun) || fristRun == false) && userinfo.usertype == "个人") {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您已完成个人信息编辑,是否立即去发布简历?',
+                    buttons : ['暂不发布', '立即发布'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            App.openWin({
+                                backName : 'indexNew',
+                                name : 'userResumeList',
+                                url : 'user/userResumeList.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        }
+                    }
+                });
+                App.setVal("fristRun", true);
+            }
+            var info = "";
+            var index = 0;
+            appcan.frame.open({
+                id : "content",
+                url : [{
+                    "inPageName" : "message_content",
+                    "inUrl" : "message_content.html"
+                }, {
+                    "inPageName" : "friends_content",
+                    "inUrl" : "friends_content.html"
+                }, {
+                    "inPageName" : "indexNew_content",
+                    "inUrl" : "indexNew_content.html"
+                }, {
+                    "inPageName" : "myinfo_content",
+                    "inUrl" : "myInfo_content.html"
+                }],
+                top : titHeight,
+                left : 0,
+                index : index,
+                change : function(err, res) {
+                    if (App.isNull(err)) {
+                    }
+                }
+            })
+            closeOtherWin();
+            uexScanner.cbOpen = function(opCode, dataType, data) {
+                App.Logs("indexNew:" + data);
+                if (!App.isNull(data)) {
+                    var obj = App.toJson(data);
+                    App.setVal('qrCode', obj.code);
+                    App.openWin({
+                        backName : 'indexNew',
+                        name : 'userQrCodeDetail',
+                        url : 'user/userQrCodeDetail.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    })
+                }
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (shareMuen) {
+                            closeShareMenu();
+                            return;
+                        }
+                        if (friendsMenu) {
+                            closeFriendsMenu();
+                            return;
+                        }
+                        if (shareInfo) {
+                            closeShareInfo();
+                            return;
+                        }
+                        if (messageMenu) {
+                            closeMessageMenu()
+                            return;
+                        }
+                        uexWidget.moveToBack();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+                App.checkUpdate(function(data, type) {
+                    if (type == 1) {
+                        App.appUpdate(data, 1);
+                    }
+                })
+            }
+            if (!isdebug) {
+                uexWeiXin.cbShareLinkContent = function(data) {
+                    App.Logs("uexWeiXin.cbShareLinkContent:indexnew:" + data);
+                    if (parseInt(data) == 0) {
+                        App.toast('分享成功');
+                    } else {
+                        App.toast('取消分享');
+                    }
+                }
+            }
+        });
+        appcan.button('#focusBtn', '', function() {
+            return;
+            App.openWin({
+                backName : 'indexNew',
+                name : 'userFocus',
+                url : 'user/userFocus.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        appcan.button('#pushlish', '', function() {
+            App.openWin({
+                backName : 'indexNew',
+                name : 'publishDynamic',
+                url : 'dynamic/publishDynamic.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function changeContent(index) {
+            $('.item1').addClass('sc-text-tab');
+            $('.item1').removeClass('sc-text-select');
+            switch (parseInt(index)) {
+            case 2:
+                $('#mHeaderMy').addClass('uhide');
+                $('#mHeaderMsg').addClass('uhide');
+                $('#mHeaderContacts').addClass('uhide');
+                $('#mHeaderIdnex').removeClass('uhide');
+                $('#dongtai .item1').addClass('sc-text-select');
+                if (!$("#badge_dongtai").hasClass("uhide")) {
+                    App.evalJs({
+                        popName : "indexNew_content",
+                        type : 2,
+                        js : "loadDynamicList(1,1,0)"
+                    });
+                    $("#badge_dongtai").addClass("uhide");
+                } else {
+                    App.evalJs({
+                        popName : 'indexNew_content',
+                        type : 2,
+                        js : 'loadData()'
+                    })
+                }
+                break;
+            case 1:
+                $('#mHeaderMy').addClass('uhide');
+                $('#mHeaderMsg').addClass('uhide');
+                $('#mHeaderIdnex').addClass('uhide');
+                $('#mHeaderContacts').removeClass('uhide');
+                $('#renmai .item1').addClass('sc-text-select');
+                App.evalJs({
+                    popName : 'friends_content',
+                    type : 2,
+                    js : 'loadData()'
+                })
+                break;
+            case 0:
+                $('#mHeaderMy').addClass('uhide');
+                $('#mHeaderContacts').addClass('uhide');
+                $('#mHeaderIdnex').addClass('uhide');
+                $('#mHeaderMsg').removeClass('uhide');
+                $('#xiaoxi .item1').addClass('sc-text-select');
+                //获取最近连系人
+                /*if (!isdebug) {
+                 uexEasemob.getRecentChatters();
+                 }*/
+                break;
+            case 3:
+                $('#mHeaderMsg').addClass('uhide');
+                $('#mHeaderContacts').addClass('uhide');
+                $('#mHeaderIdnex').addClass('uhide');
+                $('#mHeaderMy').removeClass('uhide');
+                $('#wode .item1').addClass('sc-text-select');
+                break;
+            }
+            var titHeight = $('#header').height();
+            var width = $('#content').width();
+            var height = $('#content').height();
+            //App.Logs(titHeight + "," + width + "," + height);
+            appcan.frame.selectMulti("content", index);
+            if (!isdebug) {
+                uexWindow.setMultiPopoverFrame("content", 0, titHeight, width, height);
+            }
+        }
+
+
+        appcan.button('#changeType', '', function() {
+            var titHeight = $('#header').offset().height;
+            var item = $(this).find('.change');
+            if (item.hasClass('fa-angle-downa')) {
+                item.addClass('fa-angle-upa');
+                item.removeClass('fa-angle-downa');
+            }
+            App.setVal('titHeight', titHeight);
+            $("body").append("<div id='MaskDiv'></div>");
+            App.openFrame("popContent", "common/userTypepop.html", 0, titHeight);
+            appcan.button('#MaskDiv', '', function() {
+                item.addClass('fa-angle-downa');
+                item.removeClass('fa-angle-upa');
+                $('#MaskDiv').remove();
+                appcan.frame.close('popContent');
+            })
+        })
+
+        appcan.button('#changeCity', '', function() {
+            var titHeight = $('#header').offset().height;
+            var item = $(this).find('.change');
+            if (item.hasClass('fa-angle-downa')) {
+                item.addClass('fa-angle-upa');
+                item.removeClass('fa-angle-downa');
+            }
+            App.setVal('titHeight', titHeight);
+            $("body").append("<div id='MaskDiv'></div>");
+            App.openFrame("popContent", "common/citylistpop.html", 0, titHeight);
+            appcan.button('#MaskDiv', '', function() {
+                item.addClass('fa-angle-downa');
+                item.removeClass('fa-angle-upa');
+                $('#MaskDiv').remove();
+                appcan.frame.close('popContent');
+            })
+        })
+        function changeCity(city) {
+            $('#changeCity .city').html(city);
+            $('#changeCity .change').addClass('fa-angle-downa');
+            $('#changeCity .change').removeClass('fa-angle-upa');
+            $('#MaskDiv').remove();
+            appcan.frame.close('popContent');
+        }
+
+        function changeType(type) {
+            $('#changeType .type').html(type);
+            $('#changeType .change').addClass('fa-angle-downa');
+            $('#changeType .change').removeClass('fa-angle-upa');
+            $('#MaskDiv').remove();
+            appcan.frame.close('popContent');
+        }
+
+        function closeWin(type) {
+            App.closeWin("indexNew", type);
+            if (type == undefined || type == null) {
+                type = -1
+            }
+            appcan.window.close(type);
+        }
+
+        function shwoTabBage(id, type) {
+            App.Logs("shwoTabBage:" + id + "," + type)
+            var item = $('#badge_' + id);
+            if (type == 1) {
+                item.removeClass('uhide');
+            } else {
+                item.addClass('uhide');
+            }
+        }
+
+        function openInputTextFieldView(type, toUserId, toUserName) {
+            if (!isdebug) {
+                //uexInputTextFieldView.close();
+                uexInputTextFieldView.onCommitJson = function(data) {
+                    //var obj = JSON.parse(data);
+                    App.Logs("onCommitJson:" + App.toJsonStr(data));
+                    var content = data.emojiconsText;
+                    content = App.replaceSpecChar(content);
+                    if (App.isNull(content)) {
+                        App.toast("请输入评论内容");
+                        return;
+                    }
+                    App.evalJs({
+                        type : 2,
+                        popName : 'indexNew_content',
+                        js : 'sendPinglun(\'' + content + '\',' + type + ',\'' + toUserId + '\',\'' + toUserName + '\')'
+                    });
+                    if (App.getAppPlat()) {
+                        uexWindow.hideSoftKeyboard();
+                    }
+                    uexInputTextFieldView.close();
+                }
+                var placeHold = "评论";
+                if (!App.isNull(toUserName)) {
+                    placeHold = "回复 " + toUserName
+                }
+                var data = {
+                    emojicons : "res://emojicons/emojicons.xml",
+                    placeHold : placeHold
+                };
+                var jsonStr = JSON.stringify(data);
+                uexInputTextFieldView.open(jsonStr);
+                uexInputTextFieldView.setInputFocused();
+            };
+        }
+
+        function closeInputTextFieldView() {
+            if (!isdebug) {
+                uexInputTextFieldView.close();
+            }
+        }
+
+        function closeShareMenu() {
+            shareMuen = false;
+            appcan.window.closePopover('mysharepop');
+        }
+
+        function openShareMunu() {
+            shareMuen = true;
+            App.openPopover({
+                name : 'mysharepop',
+                url : 'share/mysharepop.html',
+                left : 0,
+                top : 0,
+                width : window.innerWidth,
+                height : 0
+            })
+        }
+
+        function closeShareInfo() {
+            shareInfo = false;
+            appcan.window.closePopover('shareInfo');
+        }
+
+        function openShareInfo() {
+            shareInfo = true;
+            App.openPopover({
+                name : 'shareInfo',
+                url : 'share/shareInfoPop.html',
+                left : 0,
+                top : 0,
+                width : window.innerWidth,
+                height : 0
+            })
+        }
+    </script>
+</html>

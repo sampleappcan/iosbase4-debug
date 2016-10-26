@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="eduExpList" class="ub ub-ver ub-f1 c-wh ubt bc-border">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loaddata();
+        })
+        function loaddata() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            if (!App.isNull(userinfo)) {
+                App.authApi({
+                    url : "user/getUserEduExpList",
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            page : page,
+                            pageSize : pageSize
+                        }
+                    },
+                    callBack : function(data) {
+                        App.ajaxLoading(0);
+                        //App.Logs(App.toJsonStr(data))
+                        if (data.code == 0) {
+                            var objData = data.items;
+                            var d = '';
+                            if (objData.dataList.length > 0) {
+                                for (var i = 0; i < objData.dataList.length; i++) {
+                                    var info = objData.dataList[i].starttime + "至" + objData.dataList[i].endtime + "," + objData.dataList[i].specialty + "," + objData.dataList[i].educational;
+                                    d += '<li class="ub ubb bc-border uinn3">';
+                                    d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                    d += '      <div class="ub uinn3 ulev-3  ut-s">';
+                                    d += '         <div class="ub-f1">' + objData.dataList[i].school + '</div>';
+                                    d += '         <div onclick="openDetail(' + objData.dataList[i].eduexpid + ')" class="edit t-color fa fa-pencil ulev-3">编辑</div>';
+                                    d += '     </div>';
+                                    d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                    d += '     <div class="ulev-5 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em;">' + objData.dataList[i].remark + '</div>';
+                                    d += '   </div>';
+                                    d += '</li>';
+                                };
+                                $('#eduExpList ul').html(d);
+                            }
+                        }
+                    }
+                })
+            } else {
+                App.ajaxLoading(0);
+            }
+        }
+
+        function openDetail(eduexpid) {
+            App.setVal('eduexpid', eduexpid);
+            App.setVal('eduType', 0);
+            App.openWin({
+                backName : "userEduExp",
+                name : 'userEduDetail',
+                url : 'userEduDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+    </script>
+</html>

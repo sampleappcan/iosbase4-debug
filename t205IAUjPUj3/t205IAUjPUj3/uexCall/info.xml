@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+  <plugin uexName="uexCall" version="3.0.4" build="4">
+    <info>4: IDE证书更新</info>
+    <build>3: 添加IDE支持</build>
+    <build>2: uexCall.call方法取消"应用程序需要拨打电话,是否确定拨号?"的提示</build>
+    <build>1: 使用新版Xcode重新编译,支持arm64</build>
+    <build>0: 打电话功能插件</build>
+  </plugin>
+</uexplugins>

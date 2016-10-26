@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="quickLogin_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver uinn-a3 ub-fv ub-f1">
+            <div class="ub ub-ver ub-f1 umar-a">
+                <div class="ulev-5 umar-a">
+                    关联已有的海员港账号
+                </div>
+                <div class="c-wh ub" >
+                    <div class="ub ub-pc ub-ac" style="min-width: 4em;color: #0080E1">
+                        +86
+                    </div>
+                    <div class="ub ub-ac ubl bc-border ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1" style="padding-left: 0.4em">
+                            <input id="userId" placeholder="手机号/用户名" type="text" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="c-wh ub umar-t">
+                    <div class="ub ub-ac ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1" style="padding-left: 0.4em">
+                            <input id="passWord" placeholder="请输入密码" type="password" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ulev-5 " style="padding-top: 1em;padding-left: 0.5em">
+                    登陆后,您关联的<span id="loginType"></span>账号和海员港号都 可以登陆
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" id="submit" style="min-height: 2.2em">
+                        登录
+                    </div>
+                    <div class="uinn-at2 ub ulev-1 ub-pe" style="margin-top:0.6em;">
+                        <div id="restPass" class="ub ub-pe " style="margin-right: 0.4em;color: #0080E1">
+                            忘记密码了?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var loginParms;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loginParms = App.getJson('loginParms');
+            if (App.isNull(loginParms)) {
+                App.alertEx("登陆参数获取不正确，请稍后重试!", function() {
+                    appcan.window.evaluateScript('quicklogin', 'closeWin()');
+                });
+                return;
+            }
+            var loginType = "";
+            switch(loginParms.type) {
+            case 'Sina':
+                loginType = "新浪";
+                break;
+            case 'QQ':
+                loginType = "腾讯";
+                break;
+            case 'Weixin':
+                loginType = "微信";
+                break;
+            }
+            $('#loginType').html(loginType);
+        })
+
+        appcan.button('#submit', 'btn-act', function() {
+            var userId = appcan.trim($('#userId').val());
+            var passWord = appcan.trim($('#passWord').val());
+            if (App.isNull(userId)) {
+                App.toast("用户名不能为空");
+                return;
+            }
+            if (App.isNull(passWord)) {
+                App.toast("密码码不能为空");
+                return;
+            }
+            App.openLoading({
+                title : "",
+                msg : "正在登录请稍后...",
+                canCancel : 1
+            });
+            var lat = App.getVal('curLat');
+            var lng = App.getVal('curLng');
+            if (App.isNull(lat)) {
+                lat = "";
+            }
+            if (App.isNull(lng)) {
+                lng = "";
+            }
+            App.authApi({
+                url : 'user/userLoginThird',
+                data : {
+                    params : {
+                        userId : userId,
+                        userPass : hex_md5(passWord),
+                        loginType : loginParms.type,
+                        openId : loginParms.openid,
+                        lat : lat,
+                        lng : lng
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.loginSuccess(data);
+                        App.openWin({
+                            backName : 'root',
+                            name : 'indexNew',
+                            url : '../indexNew.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        })
+
+        appcan.button('#restPass', 'btn-act', function() {
+            App.openWin({
+                backName : 'quickLogin',
+                name : 'userRestPwd',
+                url : '../user/userRestPwd.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+    </script>
+</html>

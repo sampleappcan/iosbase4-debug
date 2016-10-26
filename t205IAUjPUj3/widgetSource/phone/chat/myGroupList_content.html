@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../message_content/css/main.css">
+        <style>
+            .tab_badge2 {
+                width: 1.8em;
+                height: 1.8em;
+                -webkit-border-radius: 1.8em;
+                border-radius: 1.8em;
+                text-align: center;
+            }
+            .uinn5 {
+                padding: 0.6em 0.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver sc-bg umar-t" id="comment">
+            <div id="friendMsgList" class="ub-f1">
+                <ul></ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.optionList.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var userinfo;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                App.setPageBounce(function(bounceType) {
+                    getMyGroupList(1, 0, bounceType);
+                }, function(bounceType) {
+                    page++;
+                    getMyGroupList(page, 1, bounceType);
+                })
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            getMyGroupList(page, 0);
+        }
+
+        function getMyGroupList(pages, add, bounceType) {
+            page = pages
+            App.authApi({
+                url : "group/getMyGroupList",
+                data : {
+                    params : {
+                        page : pages,
+                        pageSize : pageSize,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        App.Logs(bounceType + "," + App.toJsonStr(objData))
+                        if (App.isNull(objData.dataList.length) && pages > 1) {
+                            uexWindow.resetBounceView(bounceType);
+                            // uexWindow.resetBounceView(1);
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createGroupHtml(objData.dataList[i]);
+                            };
+                            if (add) {
+                                $('#friendMsgList ul').append(d);
+                            } else {
+                                $('#friendMsgList ul').html(d);
+                            }
+
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra"> 您暂时还没有群聊 </div>';
+                            d += '    <div onclick="creatGroupChat()" class="bc-btn ub-pc ub-ac ub t-wh btn uc-a1 us" style="width:10em;margin-top:1em">发起群聊</div>'
+                            d += '</div>'
+                            $('#friendMsgList ul').html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                        //uexWindow.resetBounceView(1);
+                    }
+                }
+            })
+        }
+
+        function creatGroupChat() {
+            App.setVal('groupChat', 1);
+            App.openWin({
+                backName : 'myGroupList',
+                name : 'contactList',
+                url : '../contact/contactList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function removeGroupListHtml(groupId) {
+            $("#g" + groupId).remove();
+        }
+
+        function createGroupHtml(obj) {
+            var headuri = App.isNull(obj.headuri) ? App.ajax_ip + "common/images/comImg.png" : App.headUri + obj.headuri;
+            var h = '';
+            h += '<li id="g' + obj.groupid + '" onclick="openGroupChat(\'' + obj.groupid + '\',\'' + obj.groupnumber + '\',\'' + obj.maxusers + '\')" id="u' + obj.groupid + '" class="ub ub-f1 ub-ac uinn5 ubb bc-border">';
+            h += '   <div class="ub-img1 " data-imgo="' + obj.headuri + '" data-img="' + headuri + '" style="min-width:3em;min-height:3em;background-image:url(' + headuri + ')"></div>';
+            h += '   <div class="ub ub-f1 ub-ver tip-right">';
+            h += '      <div class="ub ub-f1">';
+            h += '         <div class="ub-f1 userName">' + obj.groupname + '</div>';
+            h += '      </div>';
+            h += '      <div id="logicContent" class="ulev-1 tip-cont">' + obj.descscription + '</div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function updateInfo(groupId, groupName, desc) {
+            if (App.isNull(groupId)) {
+                return;
+            }
+            if (!App.isNull(groupName)) {
+                $("#g" + groupId).find(".userName").html(groupName);
+            }
+            if (!App.isNull(desc)) {
+                $("#g" + groupId).find(".tip-cont").html(desc);
+            }
+        }
+
+        function updateLogo(groupId, headUri, oUri) {
+            $("#g" + groupId).find(".ub-img1").attr("data-imgo", oUri);
+            $("#g" + groupId).find(".ub-img1").attr("data-img", headUri);
+            $("#g" + groupId).find(".ub-img1").css("background-image", "url(" + headUri + ")");
+        }
+
+        function openGroupChat(groupId, groupNumber, maxUsers) {
+            var headUri = $("#g" + groupId).find(".ub-img1").attr("data-img");
+            var oUri = $("#g" + groupId).find(".ub-img1").attr("data-imgo");
+            App.setVal('groupNumber', groupNumber);
+            App.setVal('groupHeadUri', headUri);
+            App.setVal('oUri', oUri);
+            if (!isdebug) {
+                var param = {
+                    groupId : groupId, //
+                    loadCache : false //是否从本地加载缓存,(默认为false,从网络获取)
+                };
+                var groupInfo = {
+                    winName : "myGroupList",
+                    maxUsers : maxUsers
+                }
+                App.setVal("groupInfo", groupInfo);
+                uexEasemob.getGroup(App.toJsonStr(param));
+            } else {
+                App.openWin({
+                    backName : "myGroupList",
+                    name : "groupChatRoom",
+                    url : "groupChatRoom.html",
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            }
+        }
+    </script>
+</html>

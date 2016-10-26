@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .b-newclor {
+                background-color: #FA7C27;
+                color: #fff;
+            }
+            .bc-border {
+                border-color: #DBDBDB;
+            }
+            .btn-cancel {
+                border-color: #BFBFBF;
+                background-color: #F8F8F8;
+            }
+            .sc-bg-active {
+                background-color: #fff;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="ub ub-ac ub-pc " style="padding:0;background: rgba(0, 0, 0, 0.3);height: 100%">
+            <div class="ub ub-ver sc-bg-active uba bc-border set-price">
+                <div id="title" class="ub uinn ubb bc-border ulev-5">
+                    请输入内容
+                </div>
+                <div class="ub ub-ver ub-ac ub-pc ub-f1 " style="padding-left: 0.4em;padding-bottom: 0.4em;width: 18em;height: 8em">
+                    <div class="ub ub-ac ulev-5 ub-f1 uinn" style="width:90%;height: 1.8em">
+                        <div class="sc-bg-active uinput ub ub-f1 bc-border uba uc-a1 pro-num" >
+                            <input onclick="selectText(this)" id="content" type="text" class="ub-f1" style="outline:none;">
+                        </div>
+                    </div>
+                    <div class="ub ub-ac ub-pc">
+                        <div id="cancel" class="ub ub-ac ub-pc ulev-5 uc-a1 uba btn-cancel" style="padding: 0.4em;width:6em;height: 1.8em;margin-right:2em;">
+                            取消
+                        </div>
+                        <div id="queren" class="ub ub-ac ub-pc ulev-5 b-newclor t-wh  uc-a1" style="padding: 0.4em;width:6em;height: 1.8em;">
+                            确认
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var prompData;
+        appcan.ready(function() {
+            prompData = App.getJson('prompData');
+            App.Logs(JSON.stringify(prompData))
+            if (!App.isNull(prompData)) {
+                $('#title').html(prompData.title);
+                $('#content').val(prompData.content);
+                if (!App.isNull(prompData.inputType)) {
+                    $('#content').attr("type", prompData.inputType);
+                }
+                if(!App.isNull(prompData.maxLength)){
+                    $('#content').attr("maxlength", prompData.maxLength);
+                }
+            }
+            $('#content').focus();
+        })
+        
+        function selectText(item) {
+            item.select();
+        }
+
+
+        appcan.button('#queren', 'btn-act', function() {
+            if (!App.isNull(prompData.callback)) {
+                prompData.content = $('#content').val();
+                App.setVal('prompData', prompData);
+                eval(prompData.callback);
+            }
+            if (App.getAppPlat() && !isdebug) {
+                uexWindow.hideSoftKeyboard();
+            }
+            appcan.window.closePopover("promptPop");
+        })
+
+        appcan.button("#cancel", "btn-act", function() {
+            if (App.getAppPlat() && !isdebug) {
+                uexWindow.hideSoftKeyboard();
+            }
+            appcan.window.closePopover("promptPop");
+        })
+
+    </script>
+</html>

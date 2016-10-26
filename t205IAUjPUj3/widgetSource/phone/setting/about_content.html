@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="mySetting_content/css/main.css">
+        <link rel="stylesheet" href="about_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver">
+            <div class="ub ub-ver ub-ac ub-pc ub-fh uinn-ver">
+                <div class="ub-img uwh-ver2 umar-b-ver" style="background-image: url(../wgtRes/version.png)"></div>
+                <div class="ulev-4 t-gra8">
+                    版本号 <span class="version">8.0</span>
+                </div>
+            </div>
+            <div class="ubt ubb bc-border c-wh">
+                <ul onclick="advice()" ontouchstart="appcan.touch('btn-act')" class="ub ub-ac lis ubb bc-border">
+                    <li class="ub-f1 ut-s ulev-app2">
+                        意见反馈
+                    </li>
+                    <li class="fa fa-angle-right ulev2 sc-text"></li>
+                </ul>
+                <ul onclick="openMarket()" ontouchstart="appcan.touch('btn-act')" class="ub ub-ac lis ubb bc-border">
+                    <li class="ub-f1 ut-s ulev-app2">
+                        给海员港好评
+                    </li>
+                    <li class="fa fa-angle-right ulev2 sc-text"></li>
+                </ul>
+                <ul id="checkupdate" onclick="checkupdate()" ontouchstart="appcan.touch('btn-act')" class="ub ub-ac lis ubb bc-border uhide">
+                    <li class="ub-f1 ut-s">
+                        检测新版本
+                    </li>
+                    <li id="newversion" class="ub ub-ac ub-pc uhide">
+                        <div class="ub-img updatepic uwh-icon6"></div>
+                    </li>
+                    <li class="ulev-4 umar-r" style="color: #707374">
+                        当前<span class="version"></span>版
+                    </li>
+                    <li class="fa fa-angle-right ulev2 sc-text"></li>
+                </ul>
+                <ul onclick="openHelp()" ontouchstart="appcan.touch('btn-act')" class="ub ub-ac lis ubb bc-border">
+                    <li class="ub-f1 ut-s ulev-app2">
+                        常见问题与帮助
+                    </li>
+                    <li class="fa fa-angle-right ulev2 sc-text"></li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            uexWidgetOne.cbGetCurrentWidgetInfo = function(opId, dataType, data) {
+                var obj = JSON.parse(data);
+                if (App.getAppPlat()) {
+                    $('#checkupdate').removeClass('uhide');
+                    App.authApi({
+                        url : "update/checkUpdate",
+                        data : {
+                            params : {
+                                device : "android",
+                                version : obj.version
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0) {
+                                $('#newversion').removeClass('uhide');
+                            }
+                        }
+                    })
+                }
+                $('.version').html(obj.version);
+            }
+            uexWidgetOne.getCurrentWidgetInfo();
+
+        });
+        function openHelp() {
+            App.openWin({
+                backName : 'aubout',
+                name : 'help',
+                url : '../common/help.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function advice() {
+            App.openWin({
+                backName : 'about',
+                name : 'advice',
+                url : 'advice.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function checkupdate() {
+            //alert("1111")
+            App.checkUpdate(function(data, type) {
+                // alert(JSON.stringify(data))
+                if (type == 1) {
+                    App.appUpdate(data);
+                } else {
+                    if (!App.isNull(data.code) && data.code) {
+                        App.toast("已经是最新版本了");
+                    }
+                }
+            })
+        }
+
+        function openMarket() {
+            if (App.getAppPlat()) {
+                //打开应用市场
+                var main = "android.intent.action.VIEW";
+                var addinfo = '{"data":{"scheme":"market://details?id=com.css.hywang"}}';
+                uexWidget.startApp("1", main, addinfo);
+            } else {
+                //打开APP STORE
+                uexWidget.loadApp("https://itunes.apple.com/cn/app/hai-yuan-gang/id1134779536?mt=8");
+            }
+        }
+    </script>
+</html>

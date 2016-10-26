@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userResumeDetail_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div id="listview1"  class="ubt bc-border c-wh">
+                <ul>
+                    <li class="ubb ub bc-border t-bla ub-ac lis" data-index="0">
+                        <ul class="ub-f1 ub ub-pj ub-ac">
+                            <div id="photoUri" class="ub ub ub-ver umar-r">
+                                <div class="uba ub ub-ac ub-pc uc-a1" style="background-color:#F6F6F6;border-color:#F6F6F6 ">
+                                    <div class="ub-img1 resume_photo headUri" style="width: 3.2em;height: 4em;"></div>
+                                </div>
+                                <div class="ub-img1 resume_camera" style="position: absolute;bottom: -0.2em;right: -0.6em;min-width: 1.3em;min-height: 1.3em"></div>
+                            </div>
+                            <div class="ub-f1 ub ub-ver umar-r umar-l">
+                                <li class="bc-text ub ub-ver ut-m line1">
+                                    <div class="ub">
+                                        <div id="resumeTitle" class="umar-ar3 ulev1">
+
+                                        </div>
+                                    </div>
+                                </li>
+                            </div>
+                            <div onclick="changeTitle()" class="ulev-1 sc-text-active fa fa-pencil">
+                                修改名称
+                            </div>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="ub t-gra sc-bg umar-at1 uinn">
+                <div class="ub-img1 resume_info umw1 umh1"></div>
+                <div class="ulev-5 umar-l">
+                    基本信息
+                </div>
+            </div>
+            <div id="listview2"  class="ubt bc-border ubb c-wh ">
+                <ul>
+                    <li id="userinfo" onclick="openUserInfo()" class="ubb ub bc-border bc-text ub-ac lis" data-index="0">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            个人信息
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                    <li id="eduExpList" onclick="openEduExpList()" class="ubb ub bc-border bc-text ub-ac lis normal uhide" data-index="2">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            教育经历
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                    <li id="workExpList" onclick="openWorkExpList()" class="ubb ub bc-border bc-text ub-ac lis normal uhide" data-index="2">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            工作经历
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                    <li id="shipExpList" onclick="openShipExp()" class="ubb ub bc-border bc-text ub-ac lis seaman uhide" data-index="2">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            航海经历
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                    <li id="certList" onclick="openCertList()" class="ubb ub bc-border bc-text ub-ac lis seaman uhide" data-index="2">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            持有证书
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="ub t-gra sc-bg umar-at1 uinn">
+                <div class="ub-img1 resume_more umw1 umh1"></div>
+                <div class="ulev-5 umar-l">
+                    其他信息
+                </div>
+            </div>
+            <div id="listview2"  class="ubt bc-border ubb c-wh ">
+                <ul>
+                    <li id="applyExpect" onclick="openApply()" class="ubb ub bc-border bc-text ub-ac lis" data-index="1">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            应聘期望
+                        </div>
+                        <div class="ub-img1 resume_no umar-r" style="min-width: 2em;min-height: 1.2em"></div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var resumeTitle;
+        var resumeType;
+        var userinfo;
+        var resumeId;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.ajaxLoading(true, 1);
+            loadData();
+        })
+        function loadData() {
+            resumeTitle = App.getVal("resumeTitle");
+            resumeType = App.getVal("resumeType");
+            resumeId = App.getVal("resumeId");
+            userinfo = App.getUserInfo();
+            loadResumeDetail();
+        }
+
+        function uploadImg(pic) {
+            App.openLoading({
+                title : "",
+                msg : "正在更新简历头像...请稍后...",
+                canCancel : 1
+            });
+            App.uploadTMPFile(pic, 2, 480, function(status, obj) {
+                if (status == 1) {
+                    uexFileMgr.deleteFileByPath(pic);
+                    App.authApi({
+                        url : 'user/updateResumeLogo',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                fileName : obj.serverPath,
+                                imageType : "6",
+                                resumeType : resumeType
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                $('.headUri').css('background-image', 'url(' + App.resumeUri + "o/" + data.items.logo + ')');
+                                $('.headUri').removeClass('userHeader');
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    });
+                }
+            })
+        }
+
+
+        appcan.button("#photoUri", '', function() {
+            if (!isdebug) {
+                uexImage.onCropperClosed = function(data) {
+                    App.Logs("uexImage.onCropperClosed:" + data);
+                    var obj = App.toJson(data);
+                    if (obj.isCancelled == false || obj.isCancelled == "false") {
+                        uploadImg(obj.data);
+                    }
+                }
+                uexCamera.cbOpen = function(opId, dataType, data) {
+                    if (!App.isNull(data)) {
+                        var params = {
+                            src : data,
+                            quality : 0.8,
+                            usePng : false,
+                            mode : 1
+                        }
+                        uexImage.openCropper(App.toJsonStr(params));
+                    }
+                }
+                uexImage.onPickerClosed = function(data) {
+                    var obj = JSON.parse(data);
+                    if (!obj.isCancelled) {
+                        var pic = obj.data[0];
+                        var params = {
+                            src : pic,
+                            quality : 0.8,
+                            usePng : false,
+                            mode : 1
+                        }
+                        uexImage.openCropper(App.toJsonStr(params));
+                    }
+                };
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 80);
+                    break;
+                case 1:
+                    var data = {
+                        min : 1,
+                        max : 1,
+                        quality : 0.8,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                case 2:
+                    if (!$(".headUri").hasClass("resume_photo")) {
+                        App.authApi({
+                            url : 'user/updateResumeLogo',
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    fileName : "",
+                                    imageType : "6",
+                                    resumeType : resumeType
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    $(".headUri").css("background-image", "");
+                                    $(".headUri").addClass("resume_photo");
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                    break;
+                }
+            }
+            var funStr = "拍照,从相册选择";
+            if (!$(".headUri").hasClass("resume_photo")) {
+                funStr += ",删除照片";
+            }
+            uexWindow.actionSheet("", "取消", funStr);
+        })
+        function loadResumeDetail() {
+            App.authApi({
+                url : "user/getResumeDetail",
+                data : {
+                    params : {
+                        resumeId : resumeId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!App.isNull(data.items.photouri)) {
+                            var fileName = App.resumeUri + "o/" + data.items.photouri;
+                            $('.headUri').removeClass('resume_photo');
+                            $('.headUri').css('background-image', 'url(' + fileName + ')');
+                        }
+                        $("#resumeTitle").html(data.items.resumetitle);
+                        checkUserInfo(data.items.type);
+                        $("." + data.items.type).removeClass("uhide");
+                        if (data.items.type == "seaman") {
+                            if (data.items.isshipexp > 0) {
+                                $("#shipExpList .ub-img1").removeClass("resume_no");
+                                $("#shipExpList .ub-img1").addClass("resume_yes");
+                            }
+                            if (userinfo.certnum > 0) {
+                                $("#certList .ub-img1").removeClass("resume_no");
+                                $("#certList .ub-img1").addClass("resume_yes");
+                            }
+                        } else {
+                            if (data.items.isworkexp > 0) {
+                                $("#workExpList .ub-img1").removeClass("resume_no");
+                                $("#workExpList .ub-img1").addClass("resume_yes");
+                            }
+                            if (data.items.iseduexp > 0) {
+                                $("#eduExpList .ub-img1").removeClass("resume_no");
+                                $("#eduExpList .ub-img1").addClass("resume_yes");
+                            }
+                        }
+                        if (data.items.isexpect > 0) {
+                            $("#applyExpect .ub-img1").removeClass("resume_no");
+                            $("#applyExpect .ub-img1").addClass("resume_yes");
+                        }
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function checkUserInfo(type) {
+            if (type == "seaman") {
+                if (!App.isNull(userinfo.idcode) && !App.isNull(userinfo.sex) && !App.isNull(userinfo.birthday) && !App.isNull(userinfo.jobtitle) && !App.isNull(userinfo.livingplace) && !App.isNull(userinfo.certificatelv) && !App.isNull(userinfo.resumestatus)) {
+                    $("#userinfo .ub-img1").removeClass("resume_no");
+                    $("#userinfo .ub-img1").addClass("resume_yes");
+                }
+            } else {
+                if (!App.isNull(userinfo.idcode) && !App.isNull(userinfo.sex) && !App.isNull(userinfo.birthday) && !App.isNull(userinfo.livingplace) && !App.isNull(userinfo.workexp) && !App.isNull(userinfo.educational)) {
+                    $("#userinfo .ub-img1").removeClass("resume_no");
+                    $("#userinfo .ub-img1").addClass("resume_yes");
+                }
+            }
+        }
+
+        function updateInfo() {
+            var inputOpts = App.getJson('inputOpts');
+            if (!App.isNull(inputOpts)) {
+                App.authApi({
+                    url : "user/updateResumeTitle",
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            type : resumeType,
+                            title : inputOpts.text
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            App.removeVal("inputOpts");
+                            $(inputOpts.selector).html(inputOpts.text);
+                            App.setVal("resumeTitle", inputOpts.text);
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        function changeTitle() {
+            App.openInputWin({
+                winName : "userResumeDetail",
+                title : "设置简历标题",
+                callBack : "updateInfo()",
+                method : "resumeTitle",
+                selector : '#resumeTitle',
+                text : appcan.trim($('#resumeTitle').html()),
+                txtLength : 20,
+                update : false,
+                type : "text",
+                placeholder : "请输入简历名称(如:王船长)"
+            });
+        }
+
+        function openUserInfo() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userBaseInfo',
+                url : 'userBaseInfo.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openShipExp() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userShipLineExpList',
+                url : 'userShipLineExpList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openCertList() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userCertificate',
+                url : 'userCertificate.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openEduExpList() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userEduExp',
+                url : 'userEduExp.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openWorkExpList() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userWorkExp',
+                url : 'userWorkExp.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openApply() {
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userApplyExpect',
+                url : 'userApplyExpect.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function publishResume() {
+            var allOk = true;
+            var resumeTitle = appcan.trim($("#resumeTitle").html())
+            $(".resume_no").each(function() {
+                var id = $(this).parent().attr("id");
+                switch(id) {
+                case "userinfo":
+                    App.toast("请填写完打红色星号个人信息后在发布!");
+                    return false;
+                    break;
+                case "applyExpect":
+                    App.toast("请填写完应聘需求后在发布!");
+                    return false;
+                    break;
+                }
+            });
+            if (resumeType == "seaman") {
+                if (resumeTitle == "我的简历") {
+                    App.toast("建议您修改简历名称,例如:王船长");
+                    return;
+                }
+            }
+            App.authApi({
+                url : "user/updateResumeStatus",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        type : resumeType
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.toast("简历发布成功");
+                        setTimeout(function() {
+                            App.evalJs({
+                                winName : "userResumeDetail",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }, 1000);
+                    } else if (data.code == 405) {
+                        appcan.window.confirm({
+                            title : '提醒',
+                            content : '您的身份还没认证，发布的信息将不能被搜索到!',
+                            buttons : ['稍候认证', '立即验证'],
+                            callback : function(err, data, dataType, optId) {
+                                if (err) {
+                                    return;
+                                }
+                                if (parseInt(data) == 1) {
+                                    App.openWin({
+                                        backName : 'userResumeDetail',
+                                        name : 'userPersonAudit',
+                                        url : '../audit/userPersonAudit.html',
+                                        type : 4,
+                                        aniId : 2,
+                                        animDuration : 200
+                                    });
+                                } else {
+                                    App.evalJs({
+                                        winName : "userResumeDetail",
+                                        type : 1,
+                                        js : "closeWin()"
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function openPreview() {
+            App.setVal("resumeId", resumeId);
+            App.setVal("resumeType", resumeType);
+            App.openWin({
+                backName : 'userResumeDetail',
+                name : 'userResumePreview',
+                url : 'userResumePreview.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+    </script>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userReg_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver uinn-a3 ub-fv ub-f1">
+            <div class="ub ub-ver ub-f1 umar-a">
+                <div class="ulev-1 t-gra umar-a">
+                    请输入手机号和短信验证码，并设置新的登陆密码
+                </div>
+                <div class="c-wh ub umar-t">
+                    <div class="ub ub-pc ub-ac ulev-5 ubr bc-border uhide" style="min-width: 4em;color: #0080E1">
+                        +86
+                    </div>
+                    <div class="ub ub-ac ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1 ulev-5 " style="padding-left: 0.4em">
+                            <input id="mobile" placeholder="手机号码" type="tel" class="ub-f1">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="ub ub-ac umar-t">
+                    <div class="ub ub-ac ub-f1 c-wh" style="height: 2.5em">
+                        <div class="uinput ub ub-f1 ulev-5 " style="padding-left: 0.4em">
+                            <input id="vCode" placeholder="请输入验证码" type="tel" class="ub-f1">
+                        </div>
+                    </div>
+                    <div class="btn ub ub-ac ub-f1 t-wh ub-pc bc-btn uc-a1 umar-l ulev-5" style="min-height: 1.8em" id="sendYzmBtn">
+                        获取验证码
+                    </div>
+                </div>
+                <div class="c-wh ub umar-t">
+                    <div class="ub ub-ac ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1 ulev-5 " style="padding-left: 0.4em">
+                            <input id="passWord" placeholder="设置新密码6-20位" type="password" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1 " id="submit" style="margin-top: 1em;min-height: 2.2em">
+                        提交
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var count = 120;
+        var timer;
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            userinfo = App.getUserInfo();
+            if (!App.isNull(userinfo.mobile)) {
+                $("#mobile").val(userinfo.mobile);
+            }
+        })
+        appcan.button('#submit', 'btn-act', function() {
+            var mobile = appcan.trim($('#mobile').val());
+            var vCode = appcan.trim($('#vCode').val());
+            var passWord = appcan.trim($('#passWord').val());
+            if (!App.isMobile(mobile)) {
+                App.toast("请输入正确的手机号");
+                return;
+            }
+            if (App.isNull(vCode)) {
+                App.toast("验码不能为空");
+                return;
+            }
+            if (App.isNull(passWord)) {
+                App.toast("密码不能为空");
+                return;
+            }
+            if (passWord.length < 6) {
+                App.toast("密码长度不能小于6位");
+                return;
+            }
+            App.openLoading({
+                title : "温馨提示",
+                msg : "正在提交请求请稍后...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : 'user/restUserPwd',
+                data : {
+                    params : {
+                        mobile : mobile,
+                        passWord : passWord,
+                        vCode : vCode
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    App.toast(data.message);
+                    setTimeout(function() {
+                        App.evalJs({
+                            type : 1,
+                            winName : "userRestPwd",
+                            js : "closeWin()"
+                        })
+                    }, 1000);
+                }
+            })
+
+        })
+        appcan.button('#sendYzmBtn', 'btn-act', function() {
+            var timeStmap = App.getVal('rpwTimeStmap');
+            if (count != 120) {
+                return;
+            }
+            if (!App.isNull(timeStmap) && ((new Date().getTime() - timeStmap) / 1000) < 120) {
+                App.toast("获取太频繁");
+                return;
+            }
+            var mobile = $('#mobile').val();
+            if (!App.isMobile(mobile)) {
+                App.toast("请输入正确的手机号");
+                return;
+            }
+            App.authApi({
+                url : 'hyw/getSmsCode',
+                data : {
+                    params : {
+                        mobile : mobile,
+                        isCheck : false
+                    }
+                },
+                callBack : function(data) {
+                    App.toast(data.message);
+                    countTime();
+                    App.setVal('rpwTimeStmap', new Date().getTime());
+                }
+            });
+        })
+        function countTime() {
+            if (count > 0) {
+                count--;
+                $('#sendYzmBtn').html("重新获取(" + count + "s)");
+                timer = setTimeout('countTime()', 1000);
+            } else {
+                count = 120;
+                $('#sendYzmBtn').html("获取验证码");
+                clearTimeout(timer);
+            }
+        }
+    </script>
+</html>

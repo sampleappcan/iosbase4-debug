@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userServiceList_content/css/main.css">
+        <link rel="stylesheet" href="../audit/userAnnexAudit_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-f1 ubb bc-border ub-ac uinn ulev-3" style="color: red">
+            请上传真实有效的信息，以便尽快通过审核。<span class="ulev-1">注意:每次上传服务簿照片，都要经过审核后才会被显示,且审核期间，新上传的照片不能被修改。</span>
+        </div>
+        <div id="serviceList" class="uinn-a1">
+            <div class="ub ub-ver ufl item">
+                <div data-index="0" data-change="false" class="ub-img1 uwh-bg imgBg umar-a picItem">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+                <div class="ub ub-pc ub-ac ulev-1 t-red status uhide">
+                    审核中
+                </div>
+            </div>
+            <div class="ub-img1 uwh-bg imgBg ufl umar-a picItem uhide"></div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var uploadNum = 0;
+        var picList = [];
+        var imgList = [];
+        var auditStatus = false;
+        var allAudit = true;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexImage.onPickerClosed = function(data) {
+                    App.Logs("uexImage.onPickerClosed:" + data);
+                    var obj = JSON.parse(data);
+                    if (obj.isCancelled == false || obj.isCancelled == "false") {
+                        var len = obj.data.length;
+                        var html = '';
+                        for (var i = 0; i < len; i++) {
+                            var data = {
+                                src : obj.data[i],
+                                isChange : true,
+                                status : 0
+                            }
+                            if (i == 0 && $("#serviceList .picItem").last().hasClass("uhide")) {
+                                $(".item").eq(0).find(".picItem").removeClass('imgBg');
+                                $(".item").eq(0).find(".picItem").css("background-image", 'url(' + data.src + ')');
+                                $(".item").eq(0).find(".picItem").attr("data-src", data.src);
+                                $(".item").eq(0).find(".picItem").attr("data-change", true);
+                                $(".item").eq(0).find(".picItem").children().removeClass("uhide");
+                                $(".item").eq(0).find(".status").removeClass("uhide");
+                                $(".item").eq(0).find(".status").html("待审核");
+                                $("#serviceList .picItem").last().removeClass("uhide");
+                                allAudit = false;
+                            } else {
+                                html += createItemHtml(data);
+                            }
+                        }
+                        if (!App.isNull(html)) {
+                            $("#serviceList .picItem").last().remove();
+                            html += '<div class="ub-img1 uwh-bg imgBg ufl umar-a picItem"></div>';
+                            $("#serviceList").append(html);
+                            setItemEvent();
+                            allAudit = false;
+                        }
+                    }
+                }
+                uexCamera.cbOpen = function(opCode, dataType, data) {
+                    App.Logs("uexCamera.cbOpenInternal:" + data);
+                    var len = $(".item").length;
+                    var obj = {
+                        src : data,
+                        isChange : true,
+                        status : 0
+                    }
+                    if (len == 1 && $("#serviceList .picItem").last().hasClass("uhide")) {
+                        $(".item").eq(0).find(".picItem").removeClass('imgBg');
+                        $(".item").eq(0).find(".picItem").css("background-image", 'url(' + data + ')');
+                        $(".item").eq(0).find(".picItem").attr("data-src", data);
+                        $(".item").eq(0).find(".picItem").attr("data-change", true);
+                        $(".item").eq(0).find(".picItem").children().removeClass("uhide");
+                        $(".item").eq(0).find(".status").removeClass("uhide");
+                        $(".item").eq(0).find(".status").html("待审核");
+                        $("#serviceList .picItem").last().removeClass("uhide");
+                        allAudit = false;
+                    } else {
+                        $("#serviceList .picItem").last().remove();
+                        var html = createItemHtml(obj);
+                        html += '<div class="ub-img1 uwh-bg imgBg ufl umar-a picItem"></div>';
+                        $("#serviceList").append(html);
+                        setItemEvent();
+                        allAudit = false;
+                    }
+                }
+            }
+            uexWindow.cbActionSheet = function(opId, dataType, data) {
+                switch (parseInt(data)) {
+                case 0:
+                    uexCamera.open(0, 80);
+                    break;
+                case 1:
+                    var data = {
+                        min : 1,
+                        max : 5,
+                        quality : 0.8,
+                        usePng : false,
+                        detailedInfo : false
+                    }
+                    var json = JSON.stringify(data);
+                    uexImage.openPicker(json);
+                    break;
+                }
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadServiceList();
+        }
+
+        function loadServiceList() {
+            App.authApi({
+                url : 'audit/getUserServiceList',
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (data.items.length > 0) {
+                            var h = '';
+                            for (var i = 0; i < data.items.length; i++) {
+                                h += createItemHtml(data.items[i], i);
+                                if (data.items[i].status == 1) {
+                                    auditStatus = true;
+                                }
+                                if (data.items[i].status != 2) {
+                                    allAudit = false;
+                                }
+                            };
+                            h += '<div class="ub-img1 uwh-bg imgBg ufl umar-a picItem"></div>';
+                            $("#serviceList").html(h);
+                            App.evalJs({
+                                winName : "userServiceList",
+                                type : 1,
+                                js : "showBtn(1)"
+                            })
+                        }
+                    }
+                    App.ajaxLoading(0);
+                    setItemEvent();
+                }
+            });
+        }
+
+        function createItemHtml(obj, index) {
+            var h = '';
+            var isChange = "uhide";
+            var status = "";
+            if ((obj.isChange || obj.id) && obj.status != 1) {
+                isChange = "";
+            }
+            if (obj.status == 0) {
+                status = "待审核";
+            } else if (obj.status == 1) {
+                status = "审核中";
+            } else if (obj.status == 2) {
+                status = "已审核";
+            } else {
+                status = "不通过";
+            }
+            var src = "";
+            var oriSrc = "";
+            if (obj.id) {
+                oriSrc = App.downIp + "user_Image/serviceImage/" + obj.serveruri;
+                src = App.downIp + "user_Image/serviceImage/t/320x320/" + obj.serveruri;
+            } else {
+                src = obj.src;
+                oriSrc = obj.src;
+            }
+            h += '<div class="ub ub-ver ufl item">';
+            h += '    <div data-id="' + obj.id + '" data-index="' + index + '" data-ori="' + obj.serveruri + '" data-src="' + oriSrc + '" data-status="' + obj.status + '" data-change="false" class="ub-img1 uwh-bg umar-a picItem" style="background-image:url(' + src + ')">';
+            h += '       <div class="ub-img delBg delcss ' + isChange + '"></div>';
+            h += '    </div>';
+            h += '     <div class="ub ub-pc ub-ac ulev-1 t-red status" >' + status + '</div>';
+            h += '</div>';
+            return h;
+        }
+
+        function setItemEvent() {
+            appcan.button(".picItem", '', function(evt) {
+                var target = $(evt.target);
+                var fileName = $(this).attr("data-src");
+                var status = parseInt($(this).attr("data-status"));
+                var oriImg = $(this).attr("data-ori");
+                var index = $(this).attr("data-index");
+                if (status == 1 || status == 2) {
+                    var auditInfoList = [];
+                    $(".picItem").each(function() {
+                        if (!$(this).hasClass("imgBg") && (parseInt($(this).attr("data-status")) == 1 || parseInt($(this).attr("data-status")) == 2)) {
+                            var obj = {
+                                src : $(this).attr("data-src")
+                            }
+                            auditInfoList.push(obj);
+                        }
+                    });
+                    if (auditInfoList.length > 0) {
+                        if (App.isNull(index)) {
+                            index = 0;
+                        }
+                        var param = {
+                            displayActionButton : false,
+                            displayNavArrows : true,
+                            enableGrid : false,
+                            startOnGrid : false,
+                            startIndex : index,
+                            data : auditInfoList
+                        }
+                        uexImage.openBrowser(App.toJsonStr(param));
+                    }
+                    return;
+                }
+                if (target.hasClass("delBg") && !auditStatus) {
+                    if (fileName.substr(0, 4) == "http") {
+                        appcan.window.confirm({
+                            title : '提醒',
+                            content : '确定要删除这张图片吗?',
+                            buttons : ['我要删除', '暂不删除'],
+                            callback : function(err, data, dataType, optId) {
+                                if (err) {
+                                    return;
+                                }
+                                if (parseInt(data) == 0) {
+                                    App.authApi({
+                                        url : 'audit/delUserServiceUri',
+                                        data : {
+                                            params : {
+                                                userId : userinfo.userid,
+                                                oriImg : oriImg
+                                            }
+                                        },
+                                        callBack : function(data) {
+                                            if (data.code == 0) {
+                                                target.parent().css("background-image", '');
+                                                target.parent().addClass("imgBg");
+                                                target.addClass("uhide");
+                                                target.parent().attr("data-src", "");
+                                                target.parent().attr("data-change", true);
+                                                target.parent().parent().addClass("uhide");
+                                                target.parent().parent().remove();
+                                            } else {
+                                                App.toast(data.message);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        target.parent().css("background-image", '');
+                        target.parent().addClass("imgBg");
+                        target.addClass("uhide");
+                        target.parent().attr("data-src", "");
+                        target.parent().attr("data-change", true);
+                        if (fileName.substr(0, 4) != "http") {
+                            uexFileMgr.deleteFileByPath(fileName);
+                        }
+                        target.parent().parent().addClass("uhide");
+                        target.parent().parent().remove();
+                    }
+                    return;
+                }
+                if (!$(this).hasClass("imgBg")) {
+                    return;
+                }
+                uexWindow.actionSheet("", "取消", "拍照,从相册选择");
+            })
+        }
+
+        function uploadPic(callBack) {
+            if (uploadNum >= picList.length || picList.length <= 0) {
+                if (callBack) {
+                    uploadNum = 0;
+                    callBack(true);
+                    return true;
+                }
+            }
+            var obj = picList[uploadNum];
+            if (!App.isNull(obj) && obj.src.substr(0, 4) != "http") {
+                App.uploadTMPFile(obj.src, 0, 480, function(status, serverObj) {
+                    if (status == 1) {
+                        var data = {
+                            id : obj.id,
+                            serverPath : serverObj.serverPath
+                        }
+                        imgList.push(data);
+                        window.setTimeout(function() {
+                            uploadNum++;
+                            uploadPic(callBack);
+                        }, 100);
+                    }
+                });
+            } else {
+                var data = {
+                    id : obj.id,
+                    serverPath : ""
+                }
+                imgList.push(data);
+                window.setTimeout(function() {
+                    uploadNum++;
+                    uploadPic(callBack);
+                }, 100);
+            }
+        }
+
+        function sumbitData() {
+            if (allAudit) {
+                App.toast("当前没有新增信息，不用重复提交审核");
+                return;
+            }
+            if (auditStatus) {
+                App.toast("当前信息正在审核中.暂时不能提交");
+                return;
+            }
+            $(".picItem").each(function() {
+                var src = $(this).attr("data-src");
+                var id = $(this).attr("data-id");
+                if (!$(this).hasClass("imgBg")) {
+                    var obj = {
+                        src : src,
+                        id : id
+                    }
+                    picList.push(obj);
+                }
+            });
+            App.openLoading({
+                title : '',
+                msg : '正在提交审核信息...请稍候...',
+                canCancel : 1
+            });
+            uploadPic(function(data) {
+                if (data) {
+                    App.authApi({
+                        url : 'audit/submitServiceUri',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                imgList : imgList
+                            }
+                        },
+                        callBack : function(data) {
+                            App.closeLoading();
+                            if (data.code == 0) {
+                                App.toast("提交成功,等待管理员审核");
+                                setTimeout(function() {
+                                    App.evalJs({
+                                        winName : "userServiceList",
+                                        type : 1,
+                                        js : "closeWin()"
+                                    });
+                                }, 1000);
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+        function edit() {
+            $(".picItem").each(function() {
+                var status = parseInt($(this).attr("data-status"));
+                if (status != 1 && !auditStatus) {
+                    $(this).children().removeClass("uhide");
+                }
+            })
+        }
+    </script>
+</html>

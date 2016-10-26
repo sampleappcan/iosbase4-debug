@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userBaseInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+            .uinput textarea {
+                min-height: 5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1 sc-bg ubt bc-border">
+            <div id="idCode" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5" style="min-width: 5em">
+                    身份证号
+                </div>
+                <div class="ub ub-ac sc-text ub-f1">
+                    <div class="ulev-5 ub-f1 tx-r ut-s txt-color" style="margin-right:0.5em;">
+                        点击设置身份证号
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div id="sex" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5">
+                    性别
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择性别
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="sex" selectedindex="0">
+                        <option value="">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+            </div>
+            <div id="birthday" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5">
+                    出生日期
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        请选择出生日期
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div id="livingPlace" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5">
+                    现居住地
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        点击设置现居住地
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div id="workExp" class="ub uinn ub-ac ub-f1 ubb bc-border uhide normal">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5 ub-ac ub">
+                    工作经验
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择工作经验
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="workExp" selectedindex="0">
+                        <option value="">请选择工作经验</option>
+                        <option value="应届生">应届生</option>
+                        <option value="1-2年">1-2年</option>
+                        <option value="2-5年">2-5年</option>
+                        <option value="5-10年">5-10年</option>
+                        <option value="10年以上">10年以上</option>
+                    </select>
+                </div>
+            </div>
+            <div id="educational" class="ub uinn ub-ac ub-f1 ubb bc-border uhide normal">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5 ub-ac ub">
+                    学历
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择学历
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="educational" selectedindex="0">
+                        <option value="">请选择学历</option>
+                        <option value="初中">初中</option>
+                        <option value="高中">高中</option>
+                        <option value="中专">中专</option>
+                        <option value="大专">大专</option>
+                        <option value="本科">本科</option>
+                        <option value="硕士">硕士</option>
+                        <option value="博士">博士及以上</option>
+                    </select>
+                </div>
+            </div>
+            <div id="jobTitle" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5 ub-ac ub">
+                    现任职务
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择现任职务
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="jobTitle" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="certificateLv" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5 ub-ac ub">
+                    证书等级
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择证书等级
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="certificateLv" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="resumeStatus" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub ub-ac ub-pc" style="color: red">
+                    *
+                </div>
+                <div class="ub-f1 ulev-5">
+                    求职状态
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择求职状态
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="resumeStatus" selectedindex="0">
+                        <option value="">请选择求职状态</option>
+                        <option value="求职中">求职中</option>
+                        <option value="休假中">休假中</option>
+                        <option value="已上船">已上船</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    民族
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input  id="nation" placeholder="请输入民族(如：汉)" type="text" class="ub-f1 tx-r txt-color inputbtn" style="padding-right: 1.5em;">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    身高
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input  id="bodyHeight" placeholder="请输入身高" type="number" class="ub-f1 tx-r txt-color inputbtn">
+                    </div>
+                </div>
+                <div class="ulev-5 umar-l">
+                    cm
+                </div>
+            </div>
+            <div id="birthPlace" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    籍贯
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        点击设置籍贯
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    毕业院校
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="school" placeholder="请输入学校名称" type="text" class="ub-f1 tx-r txt-color inputbtn" style="padding-right: 1.5em;">
+                    </div>
+                </div>
+            </div>
+            <div id="profession" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    所学专业
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择所学专业
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="profession" selectedindex="0">
+                        <option value="">请选择所学专业</option>
+                        <option value="航海技术">航海技术</option>
+                        <option value="轮机工程">轮机工程</option>
+                        <option value="船舶电气">船舶电气</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div id="graduationDate" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    毕业时间
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+                        点击设置毕业时间
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    航海经验
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="shipExp" placeholder="请输入航海经验" type="number" class="ub-f1 tx-r txt-color inputbtn">
+                    </div>
+                </div>
+                <div class="ulev-5 umar-l">
+                    年
+                </div>
+            </div>
+            <div id="foreignLanguage" class="ub uinn ub-ac ub-f1 ubb bc-border uhide seaman">
+                <div class="ub-f1 ulev-5">
+                    外语水平
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择外语水平
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="foreignLanguage" selectedindex="0">
+                        <option value="">请选择外语水平</option>
+                        <option value="一般">一般</option>
+                        <option value="熟练">熟练</option>
+                        <option value="优秀">优秀</option>
+                    </select>
+                </div>
+            </div>
+            <div id="mobile" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    手机号
+                </div>
+                <div class="ub ub-pe ub-ac sc-text">
+                    <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    邮箱
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="email" placeholder="请输入电子邮箱(必填)" type="email" class="ub-f1 tx-r txt-color inputbtn">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    QQ
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="QQ" placeholder="请输入QQ号(选填)" type="text" class="ub-f1 tx-r txt-color inputbtn">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    微信
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="wechat" placeholder="请输入微信号(选填)" type="text" class="ub-f1 tx-r txt-color inputbtn">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ubb bc-border ub-f1 ub-ver">
+                <div  class="ulev-5 umar-b">
+                    特殊技能
+                </div>
+                <div class="uba bc-border uinput ub ub-f1">
+                    <textarea id="specSkill" placeholder="请输入特殊技能,请调整清晰格式，方便阅读" type="text" class="ub-f1 ulev-1" ></textarea>
+                </div>
+            </div>
+            <div class="ub uinn ubb bc-border ub-f1 ub-ver">
+                <div  class="ulev-5 umar-b">
+                    求职备注
+                </div>
+                <div class="uba bc-border uinput ub ub-f1">
+                    <textarea  id="resumeRemark" placeholder="请输入求职备注,请调整清晰格式，方便阅读" type="text" class="ub-f1 ulev-1" ></textarea>
+                </div>
+            </div>
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/mycitys.js"></script>
+        <script src="../js/options.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var pickViewType = 1;
+        var resumeType;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWheelPickView.onConfirmClick = function(data) {
+                    App.Logs("uexWheelPickView.onConfirmClick:" + data)
+                    var obj = App.toJson(data);
+                    if (pickViewType == 1) {
+                        $('#livingPlace .txt-color').html(obj.data.join(" "));
+                        if ($('#livingPlace').attr("data-old") != obj.data.join(" ")) {
+                            $('#livingPlace').attr("data-change", true);
+                        }
+                    } else if (pickViewType == 2) {
+                        $('#birthPlace .txt-color').html(obj.data.join(" "));
+                        if ($('#birthPlace').attr("data-old") != obj.data.join(" ")) {
+                            $('#birthPlace').attr("data-change", true);
+                        }
+                    }
+                }
+            }
+            loadData()
+        });
+        function loadData() {
+            resumeType = App.getVal("resumeType");
+            userinfo = App.getUserInfo();
+            loadOptionData();
+            loadBaseInfo();
+        }
+
+        function loadOptionData() {
+            var position = "<option value=''>请选择现任职务</option>";
+            var certlv = "<option value=''>请选择证书等级</option>";
+            for (var i = 0; i < certificateTypeArray.length; i++) {
+                certlv += "<option value=" + certificateTypeArray[i] + ">" + certificateTypeArray[i] + "</option>";
+            };
+            for (var i = 1; i < positionArray.length; i++) {
+                position += "<option value=" + positionArray[i] + ">" + positionArray[i] + "</option>";
+            };
+            $("#jobTitle select").html(position);
+            $("#certificateLv select").html(certlv);
+        }
+
+        function loadBaseInfo() {
+           // console.log(userinfo.jobtitle)
+            if (resumeType == "seaman") {
+                $("#jobTitle .txt-color").html(userinfo.jobtitle);
+                $("#jobTitle").attr("data-old", userinfo.jobtitle);
+                $("#certificateLv .txt-color").html(userinfo.certificatelv);
+                $("#certificateLv").attr("data-old", userinfo.certificatelv);
+                if (App.isNull(userinfo.profession)) {
+                    $("#profession .txt-color").html("请选择所学专业");
+                    $("#profession").attr("data-old", "请选择所学专业");
+                } else {
+                    $("#profession .txt-color").html(userinfo.profession);
+                    $("#profession").attr("data-old", userinfo.profession);
+                }
+                $("#graduationDate .txt-color").html(userinfo.graduationdate);
+                $("#graduationDate").attr("data-old", userinfo.graduationdate);
+                $("#shipExp").val(userinfo.shipexp);
+                $("#shipExp").attr("data-old", userinfo.shipexp);
+                if (App.isNull(userinfo.foreignlanguage)) {
+                    $("#foreignLanguage .txt-color").html("请选择外语水平");
+                    $("#foreignLanguage").attr("data-old", "请选择外语水平");
+                } else {
+                    $("#foreignLanguage .txt-color").html(userinfo.foreignlanguage);
+                    $("#foreignLanguage").attr("data-old", userinfo.foreignlanguage);
+                }
+                $("#resumeStatus .txt-color").html(userinfo.resumestatus);
+                $("#resumeStatus").attr("data-old", userinfo.resumestatus);
+                if (!App.isNull(userinfo.jobtitle)) {
+                    $("[value='" + userinfo.jobtitle + "']").attr("selected", true);
+                }
+                if (!App.isNull(userinfo.certificatelv)) {
+                    $("[value='" + userinfo.certificatelv + "']").attr("selected", true);
+                }
+                if (!App.isNull(userinfo.resumestatus)) {
+                    $("[value='" + userinfo.resumestatus + "']").attr("selected", true);
+                }
+                if (!App.isNull(userinfo.profession)) {
+                    $("[value='" + userinfo.profession + "']").attr("selected", true);
+                }
+                if (!App.isNull(userinfo.foreignlanguage)) {
+                    $("[value='" + userinfo.foreignlanguage + "']").attr("selected", true);
+                }
+                $("#nation").val(userinfo.nation);
+                $("#nation").attr("data-old", userinfo.nation);
+                $("#bodyHeight").val(userinfo.bodyheight);
+                $("#bodyHeight").attr("data-old", userinfo.bodyheight);
+                $("#school").val(userinfo.school);
+                $("#school").attr("data-old", userinfo.school);
+            } else {
+                $("#educational .txt-color").html(userinfo.educational);
+                $("#workExp .txt-color").html(userinfo.workexp);
+                $("[value='" + userinfo.educational + "']").attr("selected", true);
+                $("[value='" + userinfo.workexp + "']").attr("selected", true);
+            }
+            $("#idCode .txt-color").html(userinfo.idcode);
+            $("#sex .txt-color").html(userinfo.sex);
+            $("#sex").attr("data-old", userinfo.sex);
+            $("#birthday .txt-color").html(userinfo.birthday);
+            $("#birthday").attr("data-old", userinfo.birthday);
+            $("#livingPlace .txt-color").html(userinfo.livingplace);
+            $("#livingPlace").attr("data-old", userinfo.livingplace);
+            $("#birthPlace .txt-color").html(userinfo.birthplace);
+            $("#birthPlace").attr("data-old", userinfo.birthplace);
+            $("#specSkill").val(userinfo.specskill);
+            $("#specSkill").attr("data-old", userinfo.specskill);
+            $("#resumeRemark").val(userinfo.resumeremark);
+            $("#resumeRemark").attr("data-old", userinfo.resumeremark);
+            $("#mobile .txt-color").html(userinfo.mobile);
+            $("#mobile").attr("data-old", userinfo.mobile);
+            $("#email").val(userinfo.email);
+            $("#email").attr("data-old", userinfo.email);
+            $("#QQ").val(userinfo.qq);
+            $("#QQ").attr("data-old", userinfo.qq);
+            $("#wechat").val(userinfo.wechat);
+            $("#wechat").attr("data-old", userinfo.wechat);
+            $("[value='" + userinfo.sex + "']").attr("selected", true);
+            $("." + resumeType).removeClass("uhide");
+        }
+
+        function submitData() {
+            //console.log($("#jobTitle select [selected='true']"))
+            var idCode = appcan.trim($("#idCode .txt-color").html());
+            var sex = appcan.trim($("#sex select")[0].value);
+            var birthday = appcan.trim($("#birthday .txt-color").html());
+            var livingPlace = appcan.trim($("#livingPlace .txt-color").html());
+            var jobTitle = appcan.trim($("#jobTitle select")[0].value);
+            var certificateLv = appcan.trim($("#certificateLv select")[0].value);
+            var nation = appcan.trim($("#nation").val());
+            var height = appcan.trim($("#bodyHeight").val());
+            var birthPlace = appcan.trim($("#birthPlace .txt-color").html());
+            var school = appcan.trim($("#school").val());
+            var profession = appcan.trim($("#profession select")[0].value);
+            var graduationDate = appcan.trim($("#graduationDate .txt-color").html());
+            var shipExp = appcan.trim($("#shipExp").val());
+            var foreignLanguage = appcan.trim($("#foreignLanguage select")[0].value);
+            var resumeStatus = appcan.trim($("#resumeStatus select")[0].value);
+            var specSkill = appcan.trim($("#specSkill").val());
+            var resumeRemark = appcan.trim($("#resumeRemark").val());
+            var email = appcan.trim($("#email").val());
+            var qq = appcan.trim($("#QQ").val());
+            var wechat = appcan.trim($("#wechat").val());
+            var workExp = appcan.trim($("#workExp select")[0].value);
+            var educational = appcan.trim($("#educational select")[0].value);
+            if (App.isNull(idCode) || idCode == "点击设置身份证号") {
+                App.toast("身份证号不能为空");
+                return;
+            }
+            if (App.isNull(sex) || sex == "请选择性别") {
+                App.toast("请选择性别");
+                return;
+            }
+            if (App.isNull(sex) || sex == "请选择出生日期") {
+                App.toast("请选择出生日期");
+                return;
+            }
+            if (App.isNull(livingPlace) || livingPlace == "点击设置现居住地") {
+                App.toast("请设置现居住地");
+                return;
+            }
+            var params = {};
+            if (resumeType == "seaman") {
+                if (App.isNull(jobTitle)) {
+                    App.toast("请选择现任职务");
+                    return;
+                }
+                if (App.isNull(certificateLv)) {
+                    App.toast("请选择证书等级");
+                    return;
+                }
+                if (App.isNull(resumeStatus)) {
+                    App.toast("请选择求职状态");
+                    return;
+                }
+                params = {
+                    userId : userinfo.userid,
+                    idCode : idCode,
+                    sex : sex,
+                    birthday : birthday,
+                    livingPlace : livingPlace,
+                    jobTitle : jobTitle,
+                    certificateLv : certificateLv,
+                    nation : nation,
+                    bodyHeight : height,
+                    birthPlace : birthPlace,
+                    school : school,
+                    profession : profession,
+                    graduationDate : graduationDate,
+                    shipExp : shipExp,
+                    foreignLanguage : foreignLanguage,
+                    specSkill : specSkill,
+                    resumeStatus : resumeStatus,
+                    resumeRemark : resumeRemark,
+                    email : email,
+                    qq : qq,
+                    wechat : wechat,
+                    resumeType : resumeType
+                }
+            } else {
+                if (App.isNull(workExp)) {
+                    App.toast("请选择工作经验");
+                    return;
+                }
+                if (App.isNull(educational)) {
+                    App.toast("请选择学历");
+                    return;
+                }
+                params = {
+                    userId : userinfo.userid,
+                    idCode : idCode,
+                    sex : sex,
+                    birthday : birthday,
+                    livingPlace : livingPlace,
+                    birthPlace : birthPlace,
+                    specSkill : specSkill,
+                    resumeRemark : resumeRemark,
+                    email : email,
+                    qq : qq,
+                    wechat : wechat,
+                    workExp : workExp,
+                    educational : educational,
+                    resumeType : resumeType
+                }
+            }
+            appcan.window.confirm({
+                title : "提醒",
+                content : "如果你有多份简历，如果修改，则其它简历的个人息信将同时修改.",
+                buttons : ["确定", "取消"],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 0) {
+                        App.authApi({
+                            url : "user/addOrUpdateUserDetail",
+                            data : {
+                                params : params
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    if (resumeType == "seaman") {
+                                        userinfo.jobtitle = jobTitle;
+                                        userinfo.certificatelv = certificateLv;
+                                        userinfo.nation = nation;
+                                        userinfo.bodyheight = height;
+                                        userinfo.school = school;
+                                        userinfo.profession = profession;
+                                        userinfo.graduationdate = graduationDate;
+                                        userinfo.shipexp = shipExp;
+                                        userinfo.foreignlanguage = foreignLanguage;
+                                    } else {
+                                        userinfo.workexp = workExp;
+                                        userinfo.educational = educational;
+                                    }
+                                    userinfo.idcode = idCode;
+                                    userinfo.sex = sex;
+                                    userinfo.birthday = birthday;
+                                    userinfo.livingplace = livingPlace;
+                                    userinfo.birthplace = birthPlace;
+                                    userinfo.specskill = specSkill;
+                                    userinfo.resumestatus = resumeStatus;
+                                    userinfo.resumeremark = resumeRemark;
+                                    userinfo.email = email;
+                                    userinfo.qq = qq;
+                                    userinfo.wechat = wechat;
+                                    App.updateUserInfo(userinfo);
+                                    App.toast("保存成功!");
+                                    setTimeout(function() {
+                                        App.evalJs({
+                                            winName : "userBaseInfo",
+                                            type : 1,
+                                            js : "closeWin()"
+                                        });
+                                    }, 1000);
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+        }
+
+
+        appcan.button("#graduationDate", '', function() {
+            var date = appcan.trim($(this).find(".txt-color").html());
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            if (date != "点击设置籍贯") {
+                date = date.split("-");
+                year = date[0];
+                month = date[1];
+            }
+            uexControl.cbOpenDatePickerWithoutDay = function(opId, dataType, data) {
+                App.Logs("uexControl.cbOpenDatePickerWithoutDay:" + data);
+                var obj = App.toJson(data);
+                var reStr = obj.year + "-" + (obj.month < 10 ? "0" + obj.month : obj.month);
+                $("#graduationDate .txt-color").html(reStr);
+                if (reStr != $("#graduationDate").attr("data-old")) {
+                    $("#graduationDate").attr("data-change", true);
+                }
+            }
+            uexControl.openDatePickerWithoutDay(year, month);
+        })
+        appcan.button('#birthPlace', '', function() {
+            pickViewType = 2;
+            var compArea = appcan.trim($(this).find(".txt-color").html());
+            var select = [0, 0, 0];
+            if (compArea != "点击设置籍贯") {
+                compArea = compArea.split(" ");
+                if (compArea.length > 2) {
+                    select = getSelect(compArea[0], compArea[1], compArea[2]);
+                } else {
+                    select = getSelect(compArea[0], compArea[0], compArea[1]);
+                }
+                App.Logs("select:" + App.toJsonStr(select));
+            }
+            var params = {};
+            if (App.getAppPlat()) {
+                params = {
+                    src : "res://citys.json",
+                    select : select
+                };
+            } else {
+                var y = screen.availHeight - 280;
+                params = {
+                    x : 0,
+                    y : y,
+                    width : window.innerWidth,
+                    height : 300,
+                    src : "res://citys.json",
+                    select : select
+                };
+            }
+            App.Logs("uexWheelPickView.open:" + App.toJsonStr(params));
+            uexWheelPickView.open(JSON.stringify(params));
+        })
+        function getSelect(prov, city, dist) {
+            var select = [];
+            for (var i = 0; i < myCitys.length; i++) {
+                if (myCitys[i].name == prov) {
+                    select.push(i);
+                    if (!App.isNull(myCitys[i].sub)) {
+                        if (prov == city) {
+                            for (var j = 0; j < myCitys[i].sub.length; j++) {
+                                if (myCitys[i].sub[j].name == dist) {
+                                    select.push(j);
+                                    break;
+                                };
+                            };
+                        } else {
+                            for (var j = 0; j < myCitys[i].sub.length; j++) {
+                                if (myCitys[i].sub[j].name == city) {
+                                    select.push(j);
+                                    if (!App.isNull(myCitys[i].sub[j].sub)) {
+                                        for (var k = 0; k < myCitys[i].sub[j].sub.length; k++) {
+                                            if (myCitys[i].sub[j].sub[k] == dist) {
+                                                select.push(k);
+                                                break;
+                                            };
+                                        };
+                                    }
+                                    break;
+                                };
+                            };
+                        }
+                    }
+                    break;
+                };
+            };
+            return select;
+        }
+
+
+        $("textarea").blur(function() {
+           // console.log("1111")
+            if ($(this).attr("data-old") != $(this).val()) {
+                $(this).attr("data-change", true);
+            }
+        })
+
+        $(".inputbtn").blur(function() {
+            if ($(this).attr("data-old") != $(this).val()) {
+                $(this).attr("data-change", true);
+            }
+        })
+
+        appcan.select(".select", function(ele, value) {
+            var id = ele.attr("data-id");
+            if (value != $("#" + id).attr("data-old")) {
+                $("#" + id).attr("data-change", true);
+            }
+        });
+
+        function updateInfo() {
+            var inputOpts = App.getJson('inputOpts');
+            if (!App.isNull(inputOpts)) {
+                $(inputOpts.selector).html(inputOpts.text);
+            }
+        }
+
+
+        appcan.button("#livingPlace", '', function() {
+            pickViewType = 1;
+            var compArea = appcan.trim($(this).find(".txt-color").html());
+            var select = [0, 0, 0];
+            if (compArea != "点击设置现居住地") {
+                compArea = compArea.split(" ");
+                if (compArea.length > 2) {
+                    select = getSelect(compArea[0], compArea[1], compArea[2]);
+                } else {
+                    select = getSelect(compArea[0], compArea[0], compArea[1]);
+                }
+                App.Logs("select:" + App.toJsonStr(select));
+            }
+            var params = {};
+            if (App.getAppPlat()) {
+                params = {
+                    src : "res://citys.json",
+                    select : select
+                };
+            } else {
+                var y = screen.availHeight - 280;
+                params = {
+                    x : 0,
+                    y : y,
+                    width : window.innerWidth,
+                    height : 300,
+                    src : "res://citys.json",
+                    select : select
+                };
+            }
+            App.Logs("uexWheelPickView.open:" + App.toJsonStr(params));
+            uexWheelPickView.open(JSON.stringify(params));
+        })
+
+        appcan.button("#birthday", '', function() {
+            var date = appcan.trim($(this).find(".txt-color").html());
+            var old = $(this).attr("data-old");
+            var year = new Date().getFullYear();
+            var month = new Date().getMonth() + 1;
+            var day = new Date().getDate();
+            if (date != "请选择出生日期(必填)") {
+                date = date.split("-");
+                year = date[0];
+                month = date[1];
+                day = date[2];
+            }
+            uexControl.cbOpenDatePicker = function(opId, dataType, data) {
+                App.Logs("uexControl.cbOpenDatePickerWithoutDay:" + data);
+                var obj = App.toJson(data);
+                var reStr = obj.year + "-" + (obj.month < 10 ? "0" + obj.month : obj.month) + "-";
+                reStr += obj.day < 10 ? "0" + obj.day : obj.day;
+                $("#birthday .txt-color").html(reStr);
+            }
+            uexControl.openDatePicker(year, month, day);
+        })
+
+        appcan.button('#idCode', '', function() {
+            var text = appcan.trim($("#idCode .txt-color").html())
+            if (text != "身份证号(必填)") {
+                App.toast("身份证号不能修改");
+                return;
+            }
+            App.alertEx("身份证号一经设置，将不能在修改！", function() {
+                App.openInputWin({
+                    winName : "userBaseInfo",
+                    title : "设置身份证号",
+                    callBack : "updateInfo()",
+                    method : "idCode",
+                    selector : '#idCode .txt-color',
+                    txtLength : 20,
+                    update : false,
+                    type : "text"
+                });
+            })
+        });
+
+        function checkIsChange() {
+            var length = $("[data-change='true']").length;
+            if (length > 0) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '你还有没保存的内容，确定不保存吗?',
+                    buttons : ['确定', '取消'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 0) {
+                            App.evalJs({
+                                winName : "userBaseInfo",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }
+                    }
+                });
+            } else {
+                App.evalJs({
+                    winName : "userBaseInfo",
+                    type : 1,
+                    js : "closeWin()"
+                });
+            }
+        }
+    </script>
+</html>

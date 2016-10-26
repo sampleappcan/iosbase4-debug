@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.5em;
+                min-height: 1.8em;
+            }
+            .triangle3 {
+                width: 0px;
+                height: 0;
+                border-top: 0;
+                right: 1.2em;
+                border-right: 0.71875em solid rgba(0, 0, 0, 0);
+                border-bottom: 0.71875em solid #FFFFFF;
+                border-left: 0.71875em solid rgba(0, 0, 0, 0);
+                position: absolute;
+                top: -0.7em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="c-wh-pLG" style="padding:0;background: rgba(0, 0, 0, 0.1);height: 100%">
+            <div id="listview"  class="ubt ubb bc-border sc-bg tx-c us" style="position: absolute;right: 0.5em;top:0;width: 40%">
+                <div class="triangle3" ></div>
+                <ul id="paixulist">
+                    <li id="saveToContact" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >
+                        <div class="line1 ulev0">
+                            保存到通讯录
+                        </div>
+                    </li>
+                    <li id="operator" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2">
+                        <div class="line1 ulev0">
+                            拉黑/举报
+                        </div>
+                    </li>
+                    <li id="deleteFriend" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2 ">
+                        <div class="line1 ulev0">
+                            删除好友
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userId;
+        appcan.ready(function() {
+            userId = App.getVal("userId");
+        })
+        appcan.button('.btn2', '', function() {
+            var id = this.id;
+            //App.Logs(id);
+            switch(id) {
+            case 'saveToContact':
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    js : "addUserTOSysContact()"
+                });
+                closePop();
+                break;
+            case 'operator':
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userAccountSetting',
+                    url : '../user/userAccountSetting.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                closePop();
+                break;
+            case 'deleteFriend':
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    type : 1,
+                    js : 'deleteFriend()'
+                })
+                closePop();
+                break;
+            }
+        })
+        function closePop() {
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : "closeOpratroMenu()"
+            })
+        }
+
+
+        appcan.button("#pop", "", function() {
+            closePop();
+        })
+    </script>
+</html>

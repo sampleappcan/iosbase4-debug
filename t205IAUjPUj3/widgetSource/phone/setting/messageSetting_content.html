@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="messageSetting_content/css/main.css">
+        <style>
+            .bc-head {
+                background-color: #006ce1;
+            }
+            .sc-bg-active {
+                background-color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver">
+            <div class="sc-bg uinn-a7">
+                <div id="listview1">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv1 = appcan.listview({
+            selector : "#listview1",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasControl : true,
+        });
+        /*window.onerror = function(sMessage, sUrl, sLine) {
+         alert(sMessage + " " + sUrl + " " + sLine)
+         }*/
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            getNotifyBySoundAndVibrate();
+
+        })
+        function createSetHtml(key, value, index, plat) {
+            var html = '';
+            var name = '';
+            var checked = value == 1 ? true : false;
+            var bchead = value == 1 ? 'bc-head' : "";
+            var show = '';
+            switch (key) {
+            case 'pushEnable':
+                name = '接收推送通知';
+                break;
+            case 'enable':
+                name = '开启新消息提醒';
+                break;
+            case 'soundEnable':
+                name = '开启声音提醒';
+                break;
+            case 'vibrateEnable':
+                name = '开启震动提醒';
+                break;
+            case 'userSpeaker':
+                name = '开启扬声器播放';
+                if (!plat) {
+                    show = 'uhide';
+                }
+                break;
+            case 'showNotificationInBackgroud':
+                name = '是否通过通知栏提示';
+                //if (!plat) {
+                    show = 'uhide';
+                //}
+                break;
+            case 'acceptInvitationAlways':
+                name = '添加好友验证';
+                break;
+            case 'deliveryNotification':
+                name = '开启消息送达通知';
+                if (plat) {
+                    show = 'uhide';
+                }
+                break;
+            }
+            html += '<li class="ubb ub bc-border bc-text ub-ac lis ' + show + '" data-index="' + index + '">';
+            html += '   <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">';
+            html += '      <ul class="ub t-bla ub-ac ">';
+            html += '         <li class="ub-f1 ut-s ulev-app1">' + name + '</li>';
+            html += '      </ul>';
+            html += '   </div>';
+            html += '   <div data-id="' + key + '" class="switch uba bc-border switch-mini bc-bg ' + bchead + '" data-checked="' + checked + '">'
+            html += '      <div class="switch-btn sc-bg-active"></div>';
+            html += '   </div>';
+            html += '</li>';
+            return html;
+        }
+
+        function getNotifyBySoundAndVibrate() {
+            var plat = App.getAppPlat();
+            var obj = App.getJson('msgSetData');
+            if (App.isNull(obj)) {
+                return;
+            }
+            var html = '';
+            var index = 0;
+            for (var key in obj) {
+                if (key == "acceptInvitationAlways")
+                    continue;
+                html += createSetHtml(key, obj[key], index, plat);
+                index++;
+            }
+            $('#listview1 ul').append(html);
+            
+            appcan.button('.switch', '', function() {
+                var data = App.getJson('msgSetData');
+                var key = $(this).attr("data-id");
+                if ($(this).attr("data-checked") == "true") {
+                    $(this).attr("data-checked", false);
+                    $(this).removeClass('bc-head');
+                    data[key] = "0";
+                    if (key == "pushEnable") {
+                        uexJPush.stopPush();
+                    } 
+                } else {
+                    $(this).attr("data-checked", true);
+                    $(this).addClass('bc-head');
+                    data[key] = "1";
+                    if (key == "pushEnable") {
+                        uexJPush.resumePush();
+                    }
+                }
+                App.setVal('msgSetData', data);
+                if (!isdebug) {
+                    var msgSetData = {
+                        enable : data.enable, //0-关闭，1-开启。默认为1 开启新消息提醒
+                        soundEnable : data.soundEnable, // 0-关闭，1-开启。默认为1 开启声音提醒
+                        vibrateEnable : data.vibrateEnable, // 0-关闭，1-开启。默认为1 开启震动提醒
+                        userSpeaker : data.userSpeaker, // 0-关闭，1-开启。默认为1 开启扬声器播放（仅Android可用）
+                        showNotificationInBackgroud : "0", // 0-关闭，1-开启。默认为1。设置后台接收新消息时是否通过通知栏提示 （仅Android可用）
+                        acceptInvitationAlways : "0", // 0-关闭，1-开启。默认添加好友时为1，是不需要验证的，改成需要验证为0（仅Android可用）
+                        deliveryNotification : data.deliveryNotification // 0-关闭 1-开启  默认为1 开启消息送达通知    （仅iOS可用）
+                    };
+                    App.Logs("msgSetData:"+App.toJsonStr(msgSetData));
+                    uexEasemob.setNotifyBySoundAndVibrate(JSON.stringify(msgSetData));
+                }
+            })
+        }
+    </script>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="chatRoom_content/css/main.css">
+        <style>
+            .nav-btn1 {
+                min-height: 2em;
+                min-width: 4em;
+                display: -webkit-box !important;
+                display: box !important;
+                position: relative;
+                -webkit-box-align: center;
+                box-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head headerh">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x" ></div>
+                </div>
+                <div id="title" class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0" >
+
+                </div>
+                <div class="nav-btn" id="nav-right">
+                    <div id="nav-right1" class="ub-img umw4 umh4 icon_group"></div>
+                </div>
+                <div class="nav-btn nav-bt" style="display: none !important" >
+                    <div id="nav-pos" class="ulev1">
+                        发送
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <div id="footer" class="uf bc-bg" style="height: 2.8em">
+
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var showLocation = false;
+        var groupInfo;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;  
+            setTitle();         
+            App.setVal('chatHeight', titHeight);
+            App.openFrame("content", "groupChatRoom_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (showLocation == true || showLocation == "true") {
+                            changeTitle(0);
+                            appcan.frame.evaluateScript('', 'content', 'closemap()');
+                            return;
+                        }
+                        appcan.frame.evaluateScript('', 'content', 'closeKeyBoard()');
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+            App.evalJs({
+                winName : 'contactList',
+                type : 1,
+                js : 'closeWin()'
+            });
+        });
+        
+        function setTitle(){
+            groupInfo = App.getJson('groupInfo');
+            $('#title').html(groupInfo.groupName);
+        }
+
+        function reSizeWin(height, winHeight, stat, emHeight) {
+            var titHeight = $('#header').offset().height;
+            var plat = App.getAppPlat();
+            if (stat == 0) {
+                if (plat) {
+                    appcan.window.resizePopover("content", 0, titHeight, window.innerWidth, winHeight);
+                } else {
+                    appcan.frame.resize("content", 0, titHeight);
+                }
+            } else {
+                if (plat) {
+                    if (emHeight == 0) {
+                        appcan.frame.resize("content", 0, titHeight);
+                    }
+                }
+            }
+            appcan.frame.evaluateScript('', 'content', 'scrollWin()');
+        }
+
+        function changeTitle(type) {
+            var chatname = App.getVal('chatname');
+            switch(parseInt(type)) {
+            case 0:
+                $('#to').html(chatname);
+                $('.nav-bt').css('display', 'none !important');
+                $('#nav-right').css('display', '-webkit-box !important');
+                $('#nav-right1').css('display', 'block !important');
+                showLocation = false;
+                break;
+            case 1:
+                $('#to').html("我的位置");
+                $('.nav-bt').css('display', '-webkit-box !important');
+                $('#nav-right').css('display', 'none !important');
+                showLocation = true;
+                break;
+            case 2:
+                $('#to').html("查看位置");
+                $('.nav-bt').css('display', 'none !important');
+                $('#nav-right1').css('display', 'none !important');
+                showLocation = true;
+                break;
+            }
+
+        }
+
+
+        appcan.button('#nav-pos', 'bnt-act', function() {
+            appcan.frame.evaluateScript('', 'content', 'sendPosition()');
+        })
+
+        appcan.button("#nav-left", "btn-act", function() {
+            if (showLocation == true || showLocation == "true") {
+                changeTitle(0);
+                appcan.frame.evaluateScript('', 'content', 'closemap()');
+                return;
+            }          
+            appcan.frame.evaluateScript('', 'content', 'closeKeyBoard()');
+        })
+        
+        function closeWin(type) {  
+            App.removeVal('oUri');         
+            App.removeVal('groupHeadUri');
+            App.removeVal('groupInfo');
+            App.removeVal('groupNumber');
+            App.removeVal('chatHeight');
+            App.removeVal('chatname');
+            App.removeVal('chatpic');
+            App.removeVal('chatId');
+            App.closeWin(App.getCurrWinName(), type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+
+        appcan.button('#nav-right1', '', function() {
+            App.openWin({
+                backName : "groupChatRoom",
+                name : 'groupChatInfo',
+                url : 'groupChatInfo.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+    </script>
+</html>

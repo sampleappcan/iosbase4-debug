@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userRecruitApplyList_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="" id="listview">
+                <ul>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var recruitId;
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            recruitId = App.getVal("recruitId");
+            userinfo = App.getUserInfo();
+            getRecuritApplyList();
+        }
+
+        function getRecuritApplyList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "user/getRecuritApplyList",
+                data : {
+                    params : {
+                        recruitId : recruitId,
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        type : "seaman"
+                    }
+                },
+                callBack : function(data) {
+                   // console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createApplyHtml(objData.dataList[i]);
+                            }
+                            if (add) {
+                                $('#listview ul').append(d);
+                            } else {
+                                $('#listview ul').html(d);
+                            }
+                            $('#listview li').on("click", function(evt) {
+                                var item = $(evt.target);
+                                var resumeId = $(this).attr("data-resume");
+                                var userId = $(this).attr("data-chatid");
+                                var cnName = $(this).attr("data-chatname");
+                                var headUri = $(this).attr("data-headuri");
+                                if (item.hasClass("addBtn")) {
+                                    App.setVal('chatId', userId);
+                                    App.setVal('chatname', cnName);
+                                    App.setVal('chatpic', headUri);
+                                    if (!isdebug) {
+                                        var data = {
+                                            username : userId,
+                                            chatType : "0"
+                                        }
+                                        uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                                        App.evalJs({
+                                            winName : "indexNew",
+                                            type : 1,
+                                            js : 'shwoTabBage("xiaoxi",0)'
+                                        });
+                                    }
+                                    App.openWin({
+                                        backName : App.getCurrWinName(),
+                                        name : 'chatRoom',
+                                        url : '../chat/chatRoom.html',
+                                        type : 4,
+                                        aniId : 2,
+                                        animDuration : 200
+                                    })
+                                } else {
+                                    App.setVal("resumeId", resumeId);
+                                    App.setVal("resumeType", "seaman");
+                                    App.openWin({
+                                        backName : App.getCurrWinName(),
+                                        name : 'userResumePreview',
+                                        url : 'userResumePreview.html',
+                                        type : 4,
+                                        aniId : 2,
+                                        animDuration : 200
+                                    })
+                                }
+                            })
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createApplyHtml(obj) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            h += '<li data-resume="' + obj.resumeid + '" data-chatid="' + obj.userid + '" data-headuri="' + headuri + '" data-chatname="' + obj.cnname + '" class="ub ub-f1 ub-ac sc-bg uinn ubb bc-border" >';
+            h += '  <div class="ub ub-f1 ">';
+            h += '     <div class="uc-a1 ub-img1 umar-r" style="background-image:url(' + headuri + ');width:2.5em;height:2.5em"></div>';
+            h += '     <div class="ub item b-gra ub-ver ub-f1">';
+            h += '        <div class="ub ub-ac">' + obj.cnname + '</div>';
+            h += '        <div class="ulev-4 umar-t ub-f1 ut-s t-gra">申请时间:' + obj.regtime + '</div>';
+            h += '     </div>';
+            h += '     <div class="ub ub-pc ub-f1 ub-ac" >';
+            h += '        <div class="addBtn uc-a1 ub ub-pc ub-ac uinn ulev-5 us " style="background-color: #008CE4;color: #FFFFFF;min-width: 4em;height:1.2em">发送消息</div>';
+            h += '     </div>';
+            h += '  </div>';
+            h += '</li>';
+            return h;
+        }
+    </script>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userAccountSetting_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="uba bc-border c-wh umar-at1 ub-f1">
+                <div id="listview2"></div>
+
+            </div>
+            <div class="uba bc-border c-wh umar-at1">
+                <ul onclick="openReoprt()" ontouchstart="appcan.touch('btn-act')" class="ubb ub bc-border t-bla ub-ac ">
+                    <li class="ub-f1 ut-s lis ub ub-ac">
+                        举报
+                    </li>
+                    <li class="fa fa-angle-right ulev2 sc-text-hint umar-r" ></li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            userinfo = App.getUserInfo();
+        })
+        function openReoprt() {
+            App.openWin({
+                backName : "userAccountSetting",
+                name : 'report',
+                url : '../common/report.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        var lv2 = appcan.listview({
+            selector : "#listview2",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasControl : true,
+        });
+        lv2.set([{
+            title : '<ul class="ub t-bla ub-ac ">' + '<li class="ub-f1 ut-s ulev-app1">加入黑名单</li>' + '</ul>',
+            "switchBtn" : {
+                value : false,
+                mini : true
+            }
+        }]);
+
+        lv2.on("switch:change", function(ele, obj) {
+            var userId = App.getVal('chatId');
+            addUserToBlackList(userId, obj.switchBtn.value);
+        })
+        function addUserToBlackList(userId, type) {
+            App.authApi({
+                url : 'friend/addOrRemoveUserToBlackList',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        blackId : userId,
+                        type : type
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var params = {
+                            username : userId
+                        }
+                        if (type) {
+                            uexEasemob.addUserToBlackList(App.toJsonStr(params));
+                            App.toast("用户已加入黑名单");
+                        } else {
+                            uexEasemob.deleteUserFromBlackList(App.toJsonStr(params));
+                            App.toast("用户已从黑名单移出");
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<widget appId="11531421" channelCode="0000" height="480" pid="" sreensize="4.5" version="00.00.0000" viewmode="application" widgetId="" width="320">
+    <name>海员网</name>
+    <description/>
+    <author email="info@i-css.com">上海海商信息科技有限公司</author>
+    <icon src="icon.png"/>
+    <license href="www.i-css.cn">上海海商信息科技有限公司</license>
+    <content encoding="utf-8" src="index.html"/>
+    <updateurl/>
+    <logserverip>192.168.1.168</logserverip>
+    <showmyspace>false</showmyspace>
+    <obfuscation>true</obfuscation>
+    <bgcolor>#fefefe</bgcolor>
+    <orientation>1</orientation>
+    <debug>false</debug>
+    <partobfuscation>false</partobfuscation>
+    <webapp/>
+    <error/>
+    <removeloading/>
+    <config desc="appcanscheme" type="KEY">
+        <param name="appcanscheme" platform="android" value="comcsshywang"/>
+    </config>
+    <config desc="comcsshywang" type="URLSCHEME">
+        <urlScheme name="comcsshywang" schemes="['comcsshywang']"/>
+    </config>
+    <config desc="uexSina" type="URLSCHEME">
+        <urlScheme name="uexSina" schemes="['wb2018306363']"/>
+    </config>
+    <config desc="uexQQ" type="URLSCHEME">
+        <urlScheme name="uexQQ" schemes="['tencent1105312071']"/>
+    </config>
+    <config desc="uexQQ" type="KEY">
+        <param name="$UEXQQ_APPID$" platform="android" value="tencent1105312071"/>
+    </config>
+    <config desc="uexWeiXin" type="URLSCHEME">
+        <urlScheme name="uexWeiXin" schemes="['wx54d082e5147a62fd']"/>
+    </config>
+    <config desc="uexGaodeMap" type="KEY">
+        <param name="$uexGaodeMap_APIKey$" platform="ios" value="2cc933c107925a9bfe126916f6bb7a29"/>
+        <param name="$uexGaodeMap_APIKey$" platform="android" value="5a2ecdaa3e8cf323312fdc70b0fd8035"/>
+    </config>
+    <config desc="uexJPush" type="KEY">
+        <param name="$UEXJPUSH_PACKAGE$" platform="android" value="com.css.hywang"/>
+        <param name="$UEXJPUSH_APPKEY$" platform="android" value="7a6600640831abb97b267cd4"/>
+        <param file="uexGroupfolder/PushConfig.plist" name="$UEXJPUSH_APP_KEY$" platform="ios" value="7a6600640831abb97b267cd4"/>
+        <param file="uexGroupfolder/PushConfig.plist" name="$UEXJPUSH_PUSH_CHANNEL$" platform="ios" value="csshywang"/>
+        <param file="uexGroupfolder/PushConfig.plist" name="$UEXJPUSH_APS_ENVIRONMENT$" platform="ios" value="1"/>
+    </config>
+    <config desc="whiteList" type="AUTHORITY">
+        <permission info="urlSchemeWhiteList" platform="iOS">
+            <string>wechat</string>
+            <string>weixin</string>
+            <string>sinaweibohd</string>
+            <string>sinaweibo</string>
+            <string>sinaweibosso</string>
+            <string>sinaweibohdsso</string>
+            <string>weibosdk</string>
+            <string>weibosdk2.5</string>
+            <string>mqzoneopensdk</string>
+            <string>mqzoneopensdkapi</string>
+            <string>mqzoneopensdkapi19</string>
+            <string>mqzoneopensdkapiV2</string>
+            <string>mqqOpensdkSSoLogin</string>
+            <string>mqqopensdkapiV2</string>
+            <string>mqqopensdkapiV3</string>
+            <string>wtloginmqq2</string>
+            <string>mqqapi</string>
+            <string>mqqwpa</string>
+            <string>mqzone</string>
+            <string>mqq</string>
+            <string>alipay</string>
+            <string>alipayshare</string>
+        </permission>
+    </config>
+</widget>

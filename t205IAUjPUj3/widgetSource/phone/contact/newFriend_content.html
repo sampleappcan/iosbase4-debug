@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="contacts_content/css/main.css">
+        <style>
+            .tab_badge2 {
+                width: 1.8em;
+                height: 1.8em;
+                -webkit-border-radius: 1.8em;
+                border-radius: 1.8em;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1 sc-bg" id="comment" style="padding-left: 0.4em;padding-right: 0.4em">
+            <ul>
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(0);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadNewFirendList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadNewFirendList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadNewFirendList(page, 0);
+        }
+
+        function loadNewFirendList(pages, add, bounceType) {
+            page = pages;
+            App.authApi({
+                url : "friend/getAddFriendReqList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pages,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    // console.log(data)
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pages > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createContactHtml(objData.dataList[i], i);
+                            };
+                        }
+                        $('#comment ul').html(d);
+                    }
+                    if (bounceType != null && bounceType != undefined) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createContactHtml(obj, index) {
+            console.log(obj)
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            var cnname = obj.cnname;
+            var status = obj.status;
+            var comparea = obj.city;
+            var jobtitle = obj.jobtitle;
+            var usertype = obj.comptype;
+            var userid = obj.userid;
+            var auditstatus = obj.auditstatus;
+            var statusTxt = "已拒绝你的请求";
+            if (!App.isNull(comparea)) {
+                comparea = comparea.split(" ")[0] + "-";
+            } else {
+                comparea = "";
+            }
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            var showOpBtn = "uhide";
+            var showChatBtn = "uhide";
+            var verify = "uhide";
+            if (obj.auditstatus == 2) {
+                verify = "";
+            }
+            if (status == 0) {
+                showOpBtn = "";
+                statusTxt = obj.remark;
+            } else if (status == 1) {
+                statusTxt = "已成为你的好友";
+                showChatBtn = "";
+            } else if (status == 2) {
+                statusTxt = "等待对方验证"
+            }
+            h += '<li id="u' + userid + '" class="ub ub-f1 ubb bc-border" style="padding-top:0.4em;padding-bottom:0.4em ">';
+            h += '   <div onclick="openUserDetail(\'' + userid + '\')" class="ub ub-f1">';
+            h += '       <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '       <div class="ub-f1 ub umar-r">';
+            h += '           <div class="ub ub-f1 ub-ver">';
+            h += '               <div class="ub ub-ver ub-f1">';
+            h += '                  <div class="ub ub-f1 ub-ac umar-b">';
+            h += '                     <div class="ut-s userName " >' + cnname + '</div>';
+            h += '                     <div class="ub-img verify umw1 umh1 ' + verify + '"></div>';
+            h += '                  </div>';
+            h += '               </div>';
+            h += '               <div class="ub ub-f1 umar-b">';
+            h += '                 <div class="ub-f1 ub sc-text-active ub-ac">';
+            h += '                    <div class="ub-f1 ut-s ulev-1 ">【' + comparea + usertype + '】</div>';
+            h += '                 </div>';
+            h += '               </div>';
+            h += '              <div class="ulev-1 sc-text-active status">' + statusTxt + '</div>';
+            h += '           </div>';
+            h += '         </div>';
+            h += '   </div>';
+            h += '   <div class="ub ub-pc statusBtn" style="min-width: 2em">';
+            h += '       <div onclick="openChat(\'' + userid + '\',\'' + cnname + '\',\'' + headuri + '\')" class="ub-img msg ' + showChatBtn + '" style="min-width:2em;min-height:2em;background-image: url(../wgtRes/images/msg_icon.png);margin-right:0.5em"></div>';
+            h += '          <div onclick="acceptInvitid(\'' + userid + '\',\'' + cnname + '\')" class="ub-img jieshou ' + showOpBtn + '" style="min-width:2em;min-height:2em;margin-right: 1em"></div>';
+            h += '          <div onclick="rejectInvitid(\'' + userid + '\',\'' + cnname + '\')" class="ub-img jujue ' + showOpBtn + '" style=" min-width:2em;min-height:2em;"></div>';
+            h += '      </div>';
+            h += '   </div>'
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function showBtn(id, status) {
+            if (parseInt(status) == 1) {
+                //App.Logs("showBtn:" + id + "," + status);
+                $('#u' + id).find('.jieshou').addClass('uhide');
+                $('#u' + id).find('.jujue').addClass('uhide');
+                $('#u' + id).find('.msg').removeClass('uhide');
+                $('#u' + id).find('.status').html("已成为你的好友");
+            } else if (parseInt(status) == 0) {
+                //App.Logs("showBtn:" + id + "," + status);
+                $('#u' + id).find('.jieshou').removeClass('uhide');
+                $('#u' + id).find('.jujue').removeClass('uhide');
+                $('#u' + id).find('.msg').addClass('uhide');
+                $('#u' + id).find('.status').html("请求成为你的好友");
+            } else {
+                $('#u' + id).find('.jieshou').addClass('uhide');
+                $('#u' + id).find('.jujue').addClass('uhide');
+                $('#u' + id).find('.msg').addClass('uhide');
+                $('#u' + id).find('.status').html("已拒绝你的请求");
+                //App.Logs("showBtn:" + id + "," + status);
+            }
+        }
+
+        function openChat(toId, toName, headUri) {
+            App.setVal('chatId', toId);
+            App.setVal('chatname', toName);
+            App.setVal('chatpic', headUri);
+            App.openWin({
+                backName : "newFriend",
+                name : 'chatRoom',
+                url : '../chat/chatRoom.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function acceptInvitid(userId, cnName) {
+            App.authApi({
+                url : "friend/acceptInvitation",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toUserId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!isdebug) {
+                            var param = {
+                                username : userId ,
+                            };
+                            App.Logs("acceptInvitation:" + App.toJsonStr(param));
+                            uexEasemob.acceptInvitation(App.toJsonStr(param));
+                        }
+                        $('#u' + userId + ' .msg').removeClass('uhide');
+                        $('#u' + userId + ' .jieshou').addClass('uhide');
+                        $('#u' + userId + ' .jujue').addClass('uhide');
+                        $('#u' + userId + ' .status').html(cnName + "已成为你的好友");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function rejectInvitid(userId, cnName) {
+            appcan.window.confirm({
+                title : '温馨提示',
+                content : '拒绝添加:直接拒绝对方\n忽略消息:拒绝对方并且不在收到对方加好友消息',
+                buttons : ['拒绝添加', '忽略消息'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    var type = data;
+                    App.authApi({
+                        url : "friend/refuseInvitation",
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                toUserId : userId,
+                                type : type
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0) {
+                                if (!isdebug) {
+                                    var param = {
+                                        username : userId,
+                                        reason : ""
+                                    };
+                                    App.Logs("refuseInvitation:" + App.toJsonStr(param));
+                                    uexEasemob.refuseInvitation(App.toJsonStr(param));
+                                }
+                                $('#u' + userId + " .statusBtn").addClass('uhide');
+                                $('#u' + userId + " .status").html("你已拒绝对方请求");
+                            } else {
+                                App.toast(data.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</html>

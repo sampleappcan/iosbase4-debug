@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userLogin_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver uinn-a3 ub-fv ub-f1">
+            <div class="ub ub-ver ub-f1 umar-a">
+                <div class="c-wh ub" >
+                    <div class="ub ub-pc ub-ac ubr bc-border uhide" style="min-width: 4em;color: #0080E1">
+                        +86
+                    </div>
+                    <div class="ub ub-ac ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1" style="padding-left: 0.4em">
+                            <input id="userName" placeholder="手机号/用户名" type="text" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="c-wh ub umar-t">
+                    <div class="ub ub-ac ub-f1" style="height: 2.5em">
+                        <div class="uinput ub ub-f1" style="padding-left: 0.4em">
+                            <input id="passWord" placeholder="请输入密码" type="password" class="ub-f1">
+                        </div>
+                    </div>
+                </div>
+                <div class="ub ub-ver uinn">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" id="submit" style="min-height: 2.2em">
+                        登录
+                    </div>
+                    <div class="uinn-at2 ub ulev-1" style="margin-top:0.6em;">
+                        <div class="ub-f1 ">
+                            <span class="t-gra">还未注册?</span><span id="lijireg" style="color:#0080E1">点此注册</span>
+                        </div>
+                        <div id="restPass" class="ub ub-pe t-gra" style="margin-right: 0.4em">
+                            忘记密码了?
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer" class="ub ub-ver ub-f1 " >
+                <div class="ulev-1 t-gra ub ub-ae ub-f1" style="margin-left: 0.6em">
+                    其他方式登录
+                </div>
+                <div class="ub ub-pc ub-ae uinn ">
+                    <div id="sina" class="ub ub-pc ub-f1">
+                        <div class="ub-img sina" style="width: 3em;height: 3em"></div>
+                    </div>
+                    <div id="QQ" class="ub ub-pc  ub-f1">
+                        <div class="ub-img QQ" style="width: 3em;height: 3em"></div>
+                    </div>
+                    <div id="weixin" class="ub ub-pc  ub-f1">
+                        <div class="ub-img weixin" style="width: 3em;height: 3em"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var weixinData;
+        var weiboData;
+        var weiboInfo;
+        var qqData;
+        var qqInfo;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            var loginName = App.getVal('loginName');
+
+            if (!App.isNull(loginName)) {
+                $('#userName').val(loginName)
+            }
+
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexQQ.cbGetUserInfo = function(opId, dataType, data) {
+                    App.Logs("uexQQ.cbGetUserInfo:" + JSON.stringify(data))
+                    qqInfo = data;
+                    if ( typeof data == "string") {
+                        qqInfo = JSON.parse(data);
+                    }
+                    if (App.isNull(qqInfo.nickname)) {
+                        App.toast("拉取用户信息失败，请重试");
+                        App.closeLoading();
+                        return;
+                    }
+                    var params = {
+                        openid : qqData.data.openid,
+                        userName : qqInfo.nickname,
+                        logoUri : qqInfo.figureurl_qq_2,
+                        type : "QQ"
+                    };
+                    App.setVal('loginParms', params);
+                    App.openLoading({
+                        title : "",
+                        msg : "正在登录请稍后...",
+                        canCancel : 1
+                    });
+                    App.userLogin({
+                        userName : "",
+                        userPass : "",
+                        loginType : "APP",
+                        params : params
+                    });
+                }
+                uexQQ.cbLogin = function(opId, dataType, data) {
+                    App.Logs("uexQQ.cbLogin:" + data);
+                    App.closeLoading();
+                    qqData = JSON.parse(data);
+                    if (parseInt(qqData.ret) == 0) {
+                        if (App.getAppPlat()) {
+                            uexQQ.getUserInfo(App.qqAppId);
+                        } else {
+                            uexQQ.getUserInfo(App.iOSqqAppId);
+                        }
+                    } else {
+                        App.toast("取消登陆");
+                    }
+                }
+                uexSina.cbGetUserInfo = function(opCode, dataType, data) {
+                    App.Logs("uexSina.cbGetUserInfo:" + data);
+                    weiboInfo = eval('(' + data + ')');
+                    var params = {
+                        openid : weiboInfo.id,
+                        userName : weiboInfo.name,
+                        logoUri : weiboInfo.avatar_large,
+                        type : "Sina"
+                    };
+                    App.setVal('loginParms', params);
+                    App.openLoading({
+                        title : "",
+                        msg : "正在登录请稍后...",
+                        canCancel : 1
+                    });
+                    App.userLogin({
+                        userName : "",
+                        userPass : "",
+                        loginType : "APP",
+                        params : params
+                    });
+                }
+                uexSina.cbLogin = function(opCode, dataType, data) {
+                    App.Logs("uexSina.cbLogin:" + data);
+                    App.closeLoading();
+                    weiboData = eval('(' + data + ')');
+                    if (!App.isNull(weiboData.uid)) {
+                        uexSina.getUserInfo();
+                    } else {
+                        App.toast("取消登陆");
+                    }
+                }
+            }
+        })
+
+        appcan.button('#QQ', '', function() {
+            App.setVal("thirdLogin", 1);
+            App.openLoading({
+                title : "",
+                msg : "加载中请稍后...",
+                canCancel : 1
+            });
+            if (App.getAppPlat()) {
+                App.Logs("QQ登陆-->" + App.qqAppId);
+                uexQQ.login(App.qqAppId);
+            } else {
+                App.Logs("QQ登陆-->" + App.iOSqqAppId);
+                uexQQ.login(App.iOSqqAppId);
+            }
+        })
+
+        appcan.button('#sina', '', function() {
+            App.Logs("新浪登陆-->" + App.sinaAppKey + "," + App.sinaRegisterUrl);
+            App.openLoading({
+                title : "",
+                msg : "加载中请稍后...",
+                canCancel : 1
+            });
+            App.setVal("thirdLogin", 1);
+            uexSina.login(App.sinaAppKey, App.sinaRegisterUrl);
+        })
+        appcan.button('#weixin', '', function() {
+            App.Logs('微信登陆-->' + App.weixinAppKey);
+            App.openLoading({
+                title : "",
+                msg : "加载中请稍后...",
+                canCancel : 1
+            });
+            App.setVal("thirdLogin", 1);
+            App.evalJs({
+                winName : "userLogin",
+                type : "1",
+                js : "wxLogin()"
+            })
+        })
+        appcan.button('#submit', 'btn-act', function() {
+            var userName = appcan.trim($('#userName').val());
+            var passWord = appcan.trim($('#passWord').val());
+            if (App.isNull(userName)) {
+                App.toast("用户名不能为空");
+                return;
+            }
+            if (App.isNull(passWord)) {
+                App.toast("密码码不能为空");
+                return;
+            }
+            App.openLoading({
+                title : "",
+                msg : "正在登录请稍后...",
+                canCancel : 1
+            });
+            App.userLogin({
+                userName : userName,
+                userPass : passWord,
+                loginType : "APP"
+            })
+        })
+        appcan.button('#lijireg', 'btn-act', function() {
+            App.openWin({
+                backName : 'userLogin',
+                name : 'userReg',
+                url : 'userReg.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        appcan.button('#restPass', 'btn-act', function() {
+            App.openWin({
+                backName : 'userLogin',
+                name : 'userRestPwd',
+                url : 'userRestPwd.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function rdNumber(n, m) {
+            var c = m - n + 1;
+            return Math.floor(Math.random() * c + n) + "";
+        }
+    </script>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="myInfo_content/css/main.css">
+        <style>
+            .uinn-ar {
+                padding-right: 0.5em;
+            }
+            .uinn-al {
+                padding-left: 0.5em;
+            }
+            .tit-color {
+                color: #BDBDBD;
+            }
+            .lis-icon {
+                width: 3em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 3em;
+            }
+            .lis-icon-s {
+                width: 2.5em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 2.5em;
+            }
+            .tab_badge {
+                position: absolute;
+                width: 1.2em;
+                height: 1.2em;
+                right: 0;
+                top: -0.7em;
+                -webkit-border-radius: 1.2em;
+                border-radius: 1.2em;
+                text-align: center;
+                padding: 0.1em;
+            }
+            .tab_color {
+                background-color: red
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="tips" class="uinn ub ub-ac uhide" style="background-color: #FFF5A9;min-height: 3em">
+            <div class="ub-img umw1 umh1 umar-r" style="background-image: url(./wgtRes/images/icon_alert_orange.png)"></div>
+            <div class="ulev-5 ub-f1">
+                资料完善度<span>70</span>%,完善资料有利于提升信用。
+            </div>
+            <div class="ub ub-pc ub-ac ulev-1 uba sc-bg uinn uc-a1 uhide" style="border-color: #008CE4;color: #008CE4">
+                立即完善
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1" style="padding-bottom: 0.5em">
+            <div id="listview1"  class="ubt bc-border c-wh uhi">
+
+            </div>
+            <div id="listview5"  class="ubt bc-border c-wh umar-at1 uhide">
+
+            </div>
+            <div id="listview2"  class="ubt bc-border c-wh umar-at1 uhide">
+
+            </div>
+            <div id="listview3"  class="ubt bc-border c-wh umar-at1 uhide">
+
+            </div>
+            <div id="listview4"  class="ubt bc-border c-wh umar-at1 ">
+
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/md5.js"></script>
+        <script src="js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var lv1 = appcan.listview({
+            selector : "#listview1",
+            type : "thickLine",
+            hasIcon : true,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1
+        });
+        var lv2 = appcan.listview({
+            selector : "#listview2",
+            type : "thinLine",
+            hasIcon : true,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1
+        });
+        var lv3 = appcan.listview({
+            selector : "#listview3",
+            type : "thinLine",
+            hasIcon : true,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1
+        });
+        var lv4 = appcan.listview({
+            selector : "#listview4",
+            type : "thinLine",
+            hasIcon : true,
+            hasAngle : true,
+            multiLine : 1
+        });
+        var lv5 = appcan.listview({
+            selector : "#listview5",
+            type : "thinLine",
+            hasIcon : true,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1
+        });
+        appcan.ready(function() {
+            loadData();
+        })
+
+        function loadData() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexWindow.setMultilPopoverFlippingEnbaled(1);
+            }
+            userinfo = App.getUserInfo();
+            var title = "";
+            var describe = "";
+            if (!App.isNull(userinfo)) {
+                var headuri = App.isNull(userinfo.headuri) ? "./wgtRes/comImg.png" : userinfo.headuri;
+
+                if (App.isNull(userinfo.parentid)) {
+                    title = '<div class="ub ub-f1 umar-b"><div class="uinn-ar ulev0">' + userinfo.cnname + '</div></div>';
+                } else {
+                    title = '<div class="ub ub-f1 umar-b"><div class="uinn-ar ubr bc-border ulev0" style="min-width:3em">' + userinfo.cnname + '</div><div class="ulev-5 ut-s ub-f1 tit-color uinn-al">' + userinfo.compname + '</div></div>';
+                }
+                describe = '<div class="tit-color">手机号：' + userinfo.mobile + '</div>';
+                if (headuri.substr(0, 4) != "http" && headuri.substr(0, 2) != "./") {
+                    headuri = App.headUri + headuri;
+                }
+                lv1.set([{
+                    icon : headuri,
+                    title : title,
+                    describe : describe
+                }]);
+                if (userinfo.usertype != "系统") {
+                    $("#listview2").removeClass("uhide");
+                    $("#listview3").removeClass("uhide");
+                    var subTitle = "";
+                    //if (App.isNull(userinfo.validated) || userinfo.validated == 0) {
+                    //console.log(userinfo.auditstatus)
+                    subTitle = "<div class='ub'><div class='ub-img umh1 umw1 icon_alert'></div><div class='ulev-5 status' style='color:#FFA235'>" + App.getUserStatus(userinfo.auditstatus) + "</div></div>";
+                    //}
+                    var data = [];
+                    var data1 = [];
+                    if (App.getUserType() == 0) {
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/btn_mycomment.png',
+                            title : '我的动态',
+                            subTitle : '',
+                            id : 6
+                        })
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/myImg7.png',
+                            title : '我的订单',
+                            subTitle : '',
+                            id : 5
+                        });
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/btn_book_guide.png',
+                            title : '上船邀请',
+                            subTitle : '',
+                            id : 4
+                        });
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/myImg1.png',
+                            title : '我的简历',
+                            subTitle : '',
+                            id : 0
+                        });
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/myImg2.png',
+                            title : '我的证书',
+                            subTitle : '',
+                            id : 1
+                        });
+                        data.unshift({
+                            icon : 'myInfo_content/css/myImg/myImg3.png',
+                            title : '求职状态',
+                            subTitle : userinfo.resumestatus,
+                            id : 3
+                        });
+                        data1 = [{
+                            icon : 'myInfo_content/css/myImg/myImg4.png',
+                            title : '<div class="ub">安全中心</div>',
+                            id : 0
+                        }, {
+                            icon : 'myInfo_content/css/myImg/myImg6.png',
+                            title : '<div class="ub">成为认证用户</div>',
+                            subTitle : subTitle,
+                            id : 1
+                        }];
+                    } else {
+                        data.push({
+                            icon : 'myInfo_content/css/myImg/myImg1.png',
+                            title : '我的招聘',
+                            subTitle : '<div class="ub ub-ac ub-pc ulev-1 bc-text-head tab_color tab_badge uhide" id="badge_zp"></div>',
+                            id : 2
+                        }, {
+                            icon : 'myInfo_content/css/myImg/myImg7.png',
+                            title : '我的订单',
+                            subTitle : '',
+                            id : 5
+                        }, {
+                            icon : 'myInfo_content/css/myImg/btn_mycomment.png',
+                            title : '我的动态',
+                            subTitle : '',
+                            id : 6
+                        });
+                        if (App.isNull(userinfo.parentid)) {
+                            data1 = [{
+                                icon : 'myInfo_content/css/myImg/myImg4.png',
+                                title : '<div class="ub">安全中心</div>',
+                                id : 0
+                            }, {
+                                icon : 'myInfo_content/css/myImg/myImg6.png',
+                                title : '<div class="ub">成为认证用户</div>',
+                                subTitle : subTitle,
+                                id : 1
+                            }, {
+                                icon : 'myInfo_content/css/myImg/btn_book_guide.png',
+                                title : '<div class="ub">联系人设置</div>',
+                                id : 2
+                            }]
+                        }
+                    }
+                    data1.push({
+                        icon : 'myInfo_content/css/myImg/btn_myposition.png',
+                        title : '<div class="ub">实用工具</div>',
+                        id : 3
+                    })
+                    lv2.set(data);
+                    lv3.set(data1);
+                } else {
+                    $("#listview5").removeClass("uhide");
+                    lv5.set([{
+                        icon : 'myInfo_content/css/myImg/btn_book_guide.png',
+                        title : '<div class="ub">资质审核</div>',
+                        id : 0
+                    }, {
+                        icon : 'myInfo_content/css/myImg/myImg1.png',
+                        title : '<div class="ub">服务簿审核</div>',
+                        id : 1
+                    }, {
+                        icon : 'myInfo_content/css/myImg/myImg1.png',
+                        title : '<div class="ub">当前服务器总人数</div>',
+                        subTitle : 0,
+                        id : 2
+                    }])
+                    refeshTotalUser();
+                }
+            }
+            $('#listview1 .lis-icon').removeClass('ub-img');
+            $('#listview1 .lis-icon').addClass('ub-img1');
+            $("#listview3 .lv_subTitle").removeClass("ulev-1");
+        }
+
+        function refeshTotalUser() {
+            App.authApi({
+                url : "hyw/getTotalUser",
+                data : {
+                    params : {
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $("#listview5 ul li").eq(2).find(".lv_subTitle").html(data.items.total);
+                    }
+                }
+            })
+        }
+
+
+        lv5.on("click", function(obj, data, subObj) {
+            switch(parseInt(data.id)) {
+            case 0:
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'adminAuditList',
+                    url : 'audit/adminAuditList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            case 1:
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'adminServiceUriList',
+                    url : 'audit/adminServiceUriList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            case 2:
+                refeshTotalUser();
+                break;
+            }
+        })
+
+        lv1.on("click", function(obj, data, subObj) {
+            App.setVal('viewMode', 'edit');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userAccount',
+                url : 'user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+
+        lv2.on("click", function(obj, data, subObj) {
+            switch(parseInt(data.id)) {
+            case 0:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userResumeList',
+                    url : 'user/userResumeList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 2:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userRecruitmentList',
+                    url : 'user/userRecruitmentList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                showBadge("zp", false);
+                break;
+            case 1:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userCertificate',
+                    url : 'user/userCertificate.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 3:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userInfo',
+                    url : 'user/userInfo.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 4:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userResumeInvite',
+                    url : 'user/userResumeInvite.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 5:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'orderList',
+                    url : 'order/orderList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 6:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userDynamicList',
+                    url : 'user/userDynamicList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            }
+        })
+
+        lv3.on('click', function(obj, data, subObj) {
+            switch(parseInt(data.id)) {
+            case 1:
+                if (userinfo.usertype == "企业") {
+                    App.openWin({
+                        backName : 'indexNew',
+                        name : 'userAnnexAudit',
+                        url : 'audit/userAnnexAudit.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    });
+                } else {
+                    App.openWin({
+                        backName : 'indexNew',
+                        name : 'userPersonAudit',
+                        url : 'audit/userPersonAudit.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    });
+                }
+                break;
+            case 0:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userSecurity',
+                    url : 'user/userSecurity.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 3:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'tools',
+                    url : 'common/tools.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 2:
+                App.openWin({
+                    backName : 'indexNew',
+                    name : 'userContactList',
+                    url : 'user/userContactList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            }
+        })
+
+        lv4.set([{
+            icon : 'myInfo_content/css/myImg/myImg5.png',
+            title : '设置'
+        }]);
+
+        lv4.on('click', function(obj, data, subObj) {
+            App.openWin({
+                backName : 'indexNew',
+                name : 'mySetting',
+                url : 'setting/mySetting.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function showBadge(id, type) {
+            if (type) {
+                $("#badge_" + id).removeClass("uhide");
+            } else {
+                $("#badge_" + id).addClass("uhide");
+            }
+        }
+
+        function setStatus(status) {
+            $("#listview3 .status").html(status);
+        }
+    </script>
+</html>

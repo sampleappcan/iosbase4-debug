@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.55em;
+                min-height: 1.8em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="ub ub-ac ub-pc c-wh-pLG" style="padding:0;background: rgba(0, 0, 0, 0.5);height: 100%">
+            <div id="listview"  class="ubt bc-border sc-bg tx-c ulev-3 us" style="width:60%;">
+                <ul id="paixulist">
+                    <li id="forword" class="btn2 ubb ub bc-border bc-text ub-ac lis2 uhide" >
+                        <div class="line1 ulev-1 tx-l">
+                            转发
+                        </div>
+                    </li>
+                    <li id="copyTxt" class="btn2 ubb ub bc-border bc-text ub-ac lis2 uhide">
+                        <div class="line1 ulev-1 tx-l">
+                            复制
+                        </div>
+                    </li>
+                    <li id="delete" class="btn2 ubb ub bc-border bc-text ub-ac  lis2">
+                        <div class="line1 ulev-1 tx-l">
+                            删除
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var chatObj;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            chatObj = App.getJson("chatObj");
+            if (chatObj.type == 1) {
+                $("#copyTxt").removeClass("uhide");
+                $("#forword").removeClass("uhide");
+            }
+        })
+
+        appcan.button('.btn2', '', function() {
+            var win = App.getWin("groupChatRoom");
+            switch (this.id) {
+            case "forword":
+                var backName = "chatRoom";
+                if (!App.isNull(win)) {
+                    backName = "groupChatRoom";
+                }
+                App.openWin({
+                    backName : backName,
+                    name : 'forwardList',
+                    url : '../chat/forwardList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case "copyTxt":
+                if (!App.isNull(win)) {
+                    App.evalJs({
+                        winName : "groupChatRoom",
+                        js : "copyText()"
+                    });
+                } else {
+                    App.evalJs({
+                        winName : "chatRoom",
+                        js : "copyText()"
+                    });
+                }
+                break;
+            case "delete":
+                if (!App.isNull(win)) {
+                    App.evalJs({
+                        winName : "groupChatRoom",
+                        js : "deleteMsg(1)"
+                    });
+                } else {
+                    App.evalJs({
+                        winName : "chatRoom",
+                        js : "deleteMsg(0)"
+                    });
+                }
+                break;
+            }
+        })
+        appcan.button("#pop", "", function() {
+            closePop();
+        })
+        function closePop() {
+            var win = App.getWin("groupChatRoom");
+            if (!App.isNull(win)) {
+                App.evalJs({
+                    winName : "groupChatRoom",
+                    type : 1,
+                    js : "closeMessageMenu()"
+                })
+            } else {
+                App.evalJs({
+                    winName : "chatRoom",
+                    type : 1,
+                    js : "closeMessageMenu()"
+                });
+            }
+        }
+    </script>
+</html>

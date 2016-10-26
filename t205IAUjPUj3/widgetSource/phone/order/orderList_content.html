@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="orderList_content/css/main.css">
+        <style>
+            .uinn-a11 {
+                padding: 0.2em;
+            }
+            .lis-icon {
+                width: 3em;
+                margin: 0em 0.2em 0em 0px;
+                min-height: 3em;
+            }
+            .uinn-a7 {
+                padding: 0 0.125em;
+            }
+            .lis {
+                padding: 0.2em;
+                min-height: 2em;
+            }
+            .btn1 {
+                padding: .2em 0.4em;
+                height: 1.8em;
+                font-size: 0.8125em;
+                text-align: center;
+                width: 5em;
+            }
+            .mar-ar1 {
+                margin-right: 0.4em;
+            }
+        </style>
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="sc-bg" id="top"></div>
+        <div id="bodycontent" class="ub ub-ver">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadOrderList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadOrderList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadOrderList(1, 0);
+        }
+
+        function loadOrderList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            var status = App.getVal("status");
+            if (App.isNull(status)) {
+                status = "";
+            }
+            App.authApi({
+                url : "order/getOrderList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        type : userinfo.usertype,
+                        status : status
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createOrderListHtml(objData.dataList[i]);
+                            }
+                            if (add) {
+                                $('#bodycontent ul').append(d);
+                            } else {
+                                $('#bodycontent ul').html(d);
+                            }
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img" style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra">暂时还没有相关订单</div>';
+                            d += '</div>'
+                            $('#bodycontent ul').html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createOrderListHtml(obj) {
+            var h = '';
+            var name = obj.buyername;
+            if (userinfo.usertype == "个人") {
+                name = obj.sellername;
+            }
+            var status = App.getOrderStatus(parseInt(obj.status));
+            var detailList = obj.detaillist;
+            var detailHtml = ""
+            var buttonHtml = "";
+            if (!App.isNull(detailList) && detailList.length > 0) {
+                for (var i = 0; i < detailList.length; i++) {
+                    detailHtml += createDetailHtml(detailList[i]);
+                };
+            }
+            var time = 1000 * 60 * 30;
+            var endTime = App.dateStrToDate(obj.ordertime).getTime() + time;
+            var nowTime = new Date().getTime();
+            if (nowTime >= endTime && (obj.status == 7 || obj.status == 0 || obj.status == 1)) {
+                status = "超时取消";
+            }
+            if (obj.status != -1 && obj.status != -2 && obj.status != 7 && status != "超时取消") {
+                if (obj.status == 0 && userinfo.usertype == "个人") {
+                    buttonHtml += '<div class="ub ub-ver uinn ubb bc-border ">';
+                    buttonHtml += '   <div class="ub ub-ac ub-pe footer" >';
+                    buttonHtml += '       <div onclick="refuse(\'' + obj.orderid + '\')" class="btn1 ub uba bc-border ub-ac bc-text ub-pc uc-a1 mar-ar1">拒绝请求</div>';
+                    buttonHtml += '       <div onclick="accpect(\'' + obj.orderid + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">接受请求</div>';
+                    buttonHtml += '   </div>';
+                    buttonHtml += '</div>';
+                } else if (obj.status == 1 && userinfo.usertype == "个人") {
+                    buttonHtml += '<div class="ub ub-ver uinn ubb bc-border">';
+                    buttonHtml += '   <div class="ub ub-ac ub-pe footer">';
+                    buttonHtml += '       <div onclick="payNow(\'' + obj.orderid + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">立即支付</div>';
+                    buttonHtml += '   </div>';
+                    buttonHtml += '</div>';
+                } else if (obj.status == 3 && userinfo.usertype == "企业") {
+                    buttonHtml += '<div class="ub ub-ver uinn ubb bc-border">';
+                    buttonHtml += '   <div class="ub ub-ac ub-pe footer" >';
+                    buttonHtml += '       <div onclick="onBoardConfirm(\'' + obj.orderid + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">确认上船</div>';
+                    buttonHtml += '   </div>';
+                    buttonHtml += '</div>';
+                } else if (obj.status == 4 && userinfo.usertype == "个人") {
+                    buttonHtml += '<div class="ub ub-ver uinn ubb bc-border ">';
+                    buttonHtml += '   <div class="ub ub-ac ub-pe footer" >';
+                    buttonHtml += '       <div onclick="refound(\'' + obj.orderid + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">申请退款</div>';
+                    buttonHtml += '   </div>';
+                    buttonHtml += '</div>';
+                } else if (obj.status == 6) {
+                    var payToUserId = obj.paytouserid;
+                    if (userinfo.usertype == "企业" && obj.ispinglun == 1) {
+                        payToUserId = obj.payuserid;
+                        buttonHtml += '<div class="ub ub-ver uinn ubb bc-border ">';
+                        buttonHtml += '   <div class="ub ub-ac ub-pe footer" >';
+                        buttonHtml += '       <div onclick="pinglun(\'' + obj.orderid + '\',\'' + payToUserId + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">评价</div>';
+                        buttonHtml += '   </div>';
+                        buttonHtml += '</div>';
+                    } else if (obj.ispinglun == 0) {
+                        buttonHtml += '<div class="ub ub-ver uinn ubb bc-border ">';
+                        buttonHtml += '   <div class="ub ub-ac ub-pe footer" >';
+                        buttonHtml += '       <div onclick="pinglun(\'' + obj.orderid + '\',\'' + payToUserId + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">评价</div>';
+                        buttonHtml += '   </div>';
+                        buttonHtml += '</div>';
+                    }
+                }
+            }
+            h += '<li id="' + obj.orderid + '" data-time="' + obj.ordertime + '" data-status="' + obj.status + '" class="ub ub-ver c-wh umar-at1 ub-f1 sc-bg">';
+            h += '    <div class="ub ub-f1 ub-ac">';
+            h += '       <div class="ub ub-ac ub-f1 uinn-a11">';
+            h += '          <div class="ub ub-ac ub-f1">';
+            h += '             <div class="uinn-order1 ub-f1 ulev0 ut-s sc-text" style="margin-right: 0.3em;color: #3D4245">' + name + '</div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-ac ub-pe ulev-5 sc-text-warn status" style="margin-right:0.25em;min-width:6em">' + status + '</div>';
+            h += '       </div>';
+            h += '    </div>';
+            h += '    <div class="uinn-a7 ub ub-ver ubt bc-border ub-f1">';
+            h += '       <ul onclick="openOrderDetail(\'' + obj.orderid + '\')" class=" ubb bc-border" style="padding:0.2em">';
+            h += '          ' + detailHtml;
+            h += '       </ul>';
+            h += '       <div class="ub ub-ver ubb bc-border" style="padding: 0.4em;">';
+            h += '          <div class="ub ub-f1 ub-ac">';
+            h += '             <div class="ub ub-ac ulev-1 sc-text">订单时间:' + obj.ordertime + '</div>';
+            h += '             <div class="ub ub-ac ub-pe ub-f1 ">';
+            h += '                 <div class="ub ulev-5 sc-text">实付:</div>';
+            h += '                 <div class="ub ub-pe bc-text ufm1 ulev-5 sc-text-warn" style="font-weight: bold;">';
+            h += '                     ￥<span class="totalMoney ">' + obj.totalmoney.toFixed(2) + '</span>';
+            h += '                 </div>';
+            h += '             </div>';
+            h += '          </div>';
+            h += '       </div>';
+            h += '       ' + buttonHtml;
+            h += '    </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function createDetailHtml(obj) {
+            var h = '';
+            var uri = App.downIp + "item_Image/" + obj.itemuri;
+            h += '<li calss="ub ub-f1">';
+            h += '    <div class="ub t-bla ub-ac lis ub-f1">';
+            h += '       <div class="ub ub-ver">';
+            h += '           <div id="img4" data-img-url="' + uri + '" class="lis-icon ub-img1 uc-a1" style="background-image:url(' + uri + ')"></div>'
+            h += '       </div>';
+            h += '       <div class="ub-f1 ub">';
+            h += '         <div class="ub-f1 ub ub-ver marg-l ub-f1" style="color: #3D4245">';
+            h += '           <div class="ub ub-ver ut-m ulev-5">' + obj.itemname + '</div>';
+            h += '           <div class="ulev-5 sc-text1 uinn3 ut-m">' + obj.remark + '</div>';
+            h += '         </div>';
+            h += '       </div>';
+            h += '       <div class="ub ub-ver ub-pe ub-ae umar-r umar-l ">';
+            h += '          <div class="bc-text lv_subTitle ulev-5">￥<span class="supplyprice ">' + obj.itempirce.toFixed(2) + '</span></div>';
+            h += '          <div class="ulev-5 sc-text1 uinn3" style="margin-top:0.6em">x<span class="supplynum">' + obj.itemcount + '</span></div>';
+            h += '       </div>';
+            h += '    </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function pinglun(orderId, payToUserId) {
+            App.setVal("orderId", orderId);
+            App.setVal("payToUserId", payToUserId);
+            App.openWin({
+                backName : 'orderList',
+                name : 'evaluateOrder',
+                url : 'evaluateOrder.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openOrderDetail(orderId) {
+            App.setVal("orderId", orderId);
+            App.openWin({
+                backName : 'orderList',
+                name : 'orderDetail',
+                url : 'orderDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function refuse(orderId) {
+            appcan.window.confirm({
+                title : '提醒',
+                content : '你确定要拒绝邀请吗?拒绝后此确认单将作废，需对方重新发起确认!',
+                buttons : ['残忍拒绝', '在想想看'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 0) {
+                        App.authApi({
+                            url : "pay/refuse",
+                            data : {
+                                params : {
+                                    orderId : orderId
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    if (!isdebug) {
+                                        var str = "[上船确认消息]";
+                                        var ext = {
+                                            extObj : {
+                                                "type" : "onBoard",
+                                                "orderId" : orderId,
+                                                "cnName" : userinfo.cnname,
+                                                "subType" : "refuse"
+                                            }
+                                        };
+                                        var sendData = {
+                                            username : data.items.chatId,
+                                            chatType : "0",
+                                            content : encode64(str),
+                                            ext : "",
+                                            extObj : ext
+                                        };
+                                        uexEasemob.sendText(JSON.stringify(sendData));
+                                    }
+                                    $("#" + orderId).remove();
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        }
+
+        function accpect(orderId) {
+            appcan.window.confirm({
+                title : '提醒',
+                content : '注意：接受订单后请在30分钟内付款，否则订单将作废.',
+                buttons : ['在想想看', '接受订单'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        App.authApi({
+                            url : "pay/accpect",
+                            data : {
+                                params : {
+                                    orderId : orderId
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    if (!isdebug) {
+                                        var str = "[上船确认消息]";
+                                        var ext = {
+                                            extObj : {
+                                                "type" : "onBoard",
+                                                "orderId" : data.items.orderId,
+                                                "cnName" : userinfo.cnname,
+                                                "subType" : "accpect"
+                                            }
+                                        };
+                                        var sendData = {
+                                            username : data.items.chatId,
+                                            chatType : "0",
+                                            content : encode64(str),
+                                            ext : "",
+                                            extObj : ext
+                                        };
+                                        uexEasemob.sendText(JSON.stringify(sendData));
+                                    }
+                                    var html = '<div onclick="payNow(\'' + data.items.orderId + '\')" class="btn1 ub uba bc-bordern ub-ac t-wh ub-pc sc-bg-alert uc-a1">立即支付</div>';
+                                    $("#" + data.items.orderId).find(".footer").html(html);
+                                    appcan.window.confirm({
+                                        title : '提醒',
+                                        content : '您已接受了对方的邀请，请在30分钟内支付担保金，否则订单将作废',
+                                        buttons : ['立即支付', '稍后支付'],
+                                        callback : function(err, data, dataType, optId) {
+                                            if (err) {
+                                                return;
+                                            }
+                                            if (parseInt(data) == 0) {
+                                                App.setVal("orderId", orderId);
+                                                App.openWin({
+                                                    backName : "orderList",
+                                                    name : 'confirmPay',
+                                                    url : '../pay/confirmPay.html',
+                                                    type : 4,
+                                                    aniId : 2,
+                                                    animDuration : 200
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function payNow(orderId) {
+            var status = parseInt($("#" + orderId).attr("data-status"));
+            if (status == 0 || status == 1) {
+                var orderTime = appcan.trim($("#" + orderId).attr("data-time"));
+                var time = 1000 * 60 * 30;
+                var endTime = getDate(orderTime).getTime() + time;
+                var nowTime = new Date().getTime();
+                if (nowTime >= endTime) {
+                    $("#" + orderId).find(".status").html("超时已过期");
+                    App.toast("订单已超时");
+                    return;
+                }
+            } else if (status == 3) {
+                App.toast("订单已经支付过了");
+                return;
+            }
+            App.setVal("orderId", orderId);
+            App.openWin({
+                backName : "orderList",
+                name : 'confirmPay',
+                url : '../pay/confirmPay.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function onBoardConfirm(orderId) {
+            var status = parseInt($("#" + orderId).attr("data-status"));
+            if (status != 3) {
+                App.toast("该订单还未付款，不能进行上船确认.");
+                return;
+            }
+            App.authApi({
+                url : "pay/onBoardConfirm",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!isdebug) {
+                            var str = "[上船确认消息]";
+                            var ext = {
+                                extObj : {
+                                    "type" : "onBoard",
+                                    "orderId" : orderId,
+                                    "cnName" : userinfo.cnname,
+                                    "subType" : "confirm"
+                                }
+                            };
+                            var sendData = {
+                                username : data.items.chatId,
+                                chatType : "0",
+                                content : encode64(str),
+                                ext : "",
+                                extObj : ext
+                            };
+                            uexEasemob.sendText(JSON.stringify(sendData));
+                        }
+                        $("#" + data.items.orderId).find(".footer").parent().remove();
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function refound(orderId) {
+            var status = parseInt($("#" + orderId).attr("data-status"));
+            if (status != 4) {
+                App.toast("该订单未上船确认，暂不能发起退款申请.");
+                return;
+            }
+            App.authApi({
+                url : "pay/refound",
+                data : {
+                    params : {
+                        orderId : orderId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.alertEx("退款申请成功,客服会在1-2个工作日内将钱退回至你支付时的支付宝账号，请注意查收.", function() {
+                            $("#" + data.items.orderId).find(".footer").parent().remove();
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+
+</html>

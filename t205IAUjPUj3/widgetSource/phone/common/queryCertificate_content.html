@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="queryCertificate_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="t-gra-9f uinn ub-f1 ub">
+                <div class="uinput ub ub-f1 uc-a1 sc-bg umar-r">
+                    <input id="seachVal" placeholder="请输入身份证号" type="search" class="ub-f1" style="padding-left: 0.2em">
+                </div>
+                <div id="search" class="uinn fa fa-search sc-text sc-bg uc-a1">
+                    查询
+                </div>
+            </div>
+            <div id="listview1" class="ubt ubl ubr bc-border c-wh umar-t">
+
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv = appcan.listview({
+            selector : "#listview1",
+            type : "singleLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true
+        });
+        var userinfo;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+
+        $("#seachVal").keyup(function(evt) {
+
+        })
+
+        appcan.button("#search", '', function() {
+            var seachVal = appcan.trim($("#seachVal").val());
+            if (App.isNull(seachVal) || !App.isCardNo(seachVal)) {
+                App.toast("请输入正确的身份证号");
+                return;
+            }
+            App.ajaxLoading(1, true);
+            loadUserCert(seachVal);
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+        }
+
+        function loadUserCert(cardId) {
+            App.authApi({
+                url : "user/queryUserCertificate",
+                data : {
+                    params : {
+                        cardId : cardId
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        var arrData = [];
+                        if (objData.qualified && objData.qualified.length > 0) {
+                            var obj = {};
+                            obj.title = "培训合格证";
+                            obj.subTitle = objData.qualified.length;
+                            obj.id = "qualified";
+                            arrData.push(obj);
+                        }
+                        if (objData.suit && objData.suit.length > 0) {
+                            var obj = {};
+                            obj.title = "适任证";
+                            obj.subTitle = objData.suit.length;
+                            obj.id = "suit";
+                            arrData.push(obj);
+                        }
+                        if (objData.health && objData.health.length > 0) {
+                            var obj = {};
+                            obj.title = "健康证";
+                            obj.subTitle = objData.health.length;
+                            obj.id = "health";
+                            arrData.push(obj);
+                        }
+                        if (objData.seaman && objData.seaman.length > 0) {
+                            var obj = {};
+                            obj.title = "海员证";
+                            obj.subTitle = objData.seaman.length;
+                            obj.id = "seaman";
+                            arrData.push(obj);
+                        }
+                        if (objData.inlandqualified && objData.inlandqualified.length > 0) {
+                            var obj = {};
+                            obj.title = "内河行驶资格证";
+                            obj.subTitle = objData.inlandqualified.length;
+                            obj.id = "inlandqualified";
+                            arrData.push(obj);
+                        }
+                        lv.set(arrData);
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        lv.on('click', function(ele, data, subobj) {
+            data.certList = objData[data.id];
+            App.setVal("certData", data);
+            App.openWin({
+                backName : "userCertificate",
+                name : 'userCertificateDetail',
+                url : '../user/userCertificateDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+
+    </script>
+</html>

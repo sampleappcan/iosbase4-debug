@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="groupChatInfo_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver">
+            <div class=" umar-at1">
+                <div id="listview1"  class="ubt bc-border c-wh">
+                    <ul>
+                        <li class="ubb ub bc-border t-bla ub-ac lis" data-index="0">
+                            <ul class="ub ub ub-ver">
+                                <li class="">
+                                    <div class="lis-icon ub-img1 headUri" style="background-image:url(../wgtRes/comImg.png)"></div>
+                                </li>
+                            </ul>
+                            <ul class="ub-f1 ub ub-pj ub-ac">
+                                <ul class="ub-f1 ub ub-ver marg-l">
+                                    <li class="bc-text ub ub-ver ut-m line1">
+                                        <div class="ub ub-f1">
+                                            <div id="groupName" class="umar-ar3 ub-f1 ut-s"></div>
+                                            <div class="edit t-color fa fa-pencil ulev-5 uhide">
+                                                编辑
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="ulev-1 sc-text umar-t">
+                                        群号码:<span id="groupId"></span>
+                                    </li>
+                                    <li class="ulev-1 sc-text umar-t ut-s">
+                                        群描述:<span id="desc">待完善</span>
+                                    </li>
+                                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div id="listview2"  class=" c-wh umar-at1 ">
+
+                </div>
+            </div>
+            <div id="listview3"  class="c-wh ">
+
+            </div>
+            <div class="uinn ub ub-ae ulev-1 umar-at1 sc-text">
+                群成员列表(<span id="memCount">0</span>/<span id="maxUser">0</span>人)
+            </div>
+            <div class="ub ub-ver ub-f1 c-wh ubt bc-border">
+                <div class="c-wh ub ub-f1">
+                    <div id="addMem" class="ub ub-f1 ubr bc-border ub-pc ub-ac uhide" style="padding: 0.825em 0.825em">
+                        <div class="ub-img add_group umw1 umh1 umar-r"></div>
+                        <div class="ulev-5" style="color: #028BE6">
+                            添加群成员
+                        </div>
+                    </div>
+                    <div id="deleteMem" class="ub ub-f1 ub-pc ub-ac uhide" >
+                        <div class="ub-img del_group umw1 umh1 umar-r"></div>
+                        <div class="ulev-5" style="color: #028BE6">
+                            删除群成员
+                        </div>
+                    </div>
+                </div>
+                <div id="membList" class="ubt bc-border">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var group;
+        var userinfo;
+        var lv2 = appcan.listview({
+            selector : "#listview2",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true,
+            multiLine : 1
+        });
+        var lv3 = appcan.listview({
+            selector : "#listview3",
+            type : "thinLine",
+            hasIcon : false,
+            hasAngle : false,
+            hasControl : true,
+        });
+
+        appcan.button('#listview1', '', function() {
+            if (group.owner != userinfo.userid) {
+                return;
+            }
+            App.openWin({
+                backName : "groupChatInfo",
+                name : 'groupInfo',
+                url : 'groupInfo.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            getGroupInfo();
+        }
+
+        function getGroupInfo() {
+            group = App.getJson('groupInfo');
+            var groupNum = App.getVal('groupNumber');
+            var groupHeadUri = App.getVal('groupHeadUri');
+            var oUri = App.getVal('oUri');
+            $('#groupName').html(group.groupName);
+            $('#groupId').html(groupNum);
+            $("#desc").html(group.groupDescription);
+            $(".headUri").css("background-image", "url(" + groupHeadUri + ")");
+            var listData = [{
+                title : '分享群',
+                subTitle : '',
+                id : 0
+            }]
+            if (group.owner == userinfo.userid) {
+                $("#deleteMem").removeClass('uhide');
+                $('.edit').removeClass('uhide');
+            }
+            if (group.allowInvites) {
+                $('#addMem').removeClass('uhide');
+            }
+            lv2.set(listData);
+            lv3.set([{
+                title : '<ul class="ub t-bla ub-ac ">' + '<li class="ub-f1 ut-s ulev-app1">屏蔽群消息</li>' + '</ul>',
+                "switchBtn" : {
+                    value : group.isBlock,
+                    mini : true
+                }
+            }]);
+            setMemCount();
+            loadMemberList(group.groupId, 1, 0);
+            if (App.isNull(oUri) || oUri.substr(0, 2) == "./" || oUri.substr(0, 3) == "../") {
+                oUri = "res://comImg.png";
+            } else {
+                oUri = App.headUri + "t/100x100/" + oUri;
+            }
+            var shareData = {
+                thumbImg : oUri,
+                wedpageUrl : App.groupShareUri + group.groupId,
+                title : "来海员港[" + group.groupName + "]一起聊聊吧~",
+                description : "拉你进入海员港群",
+                windowName : "groupChatInfo"
+            }
+            App.setVal("shareData", shareData);
+        }
+
+
+        lv3.on("switch:change", function(ele, obj) {
+            var param = {
+                groupId : group.groupId//
+            };
+            if (obj.switchBtn.value) {
+                uexEasemob.blockGroupMessage(App.toJsonStr(param));
+            } else {
+                uexEasemob.unblockGroupMessage(App.toJsonStr(param));
+            }
+        })
+        function setMemCount() {
+            var count = group.members.length;
+            var maxUser = group.groupMaxUserCount;
+            if (App.isNull(maxUser)) {
+                maxUser = group.groupMaxUsersCount;
+            }
+            if (!App.getAppPlat()) {
+                count++;
+            }
+            App.evalJs({
+                winName : "groupChatInfo",
+                type : 1,
+                js : "setMemCount(" + count + ")"
+            });
+            $("#memCount").html(count);
+            $("#maxUser").html(maxUser);
+        }
+
+        function loadMemberList(groupId) {
+            if (App.isNull(groupId)) {
+                return;
+            }
+            App.authApi({
+                url : 'group/getGroupMemberList',
+                data : {
+                    params : {
+                        groupId : groupId
+                    }
+                },
+                callBack : function(data) {
+                   // console.log(data)
+                    if (data.code == 0) {
+                        var d = '';
+                        if (data.items.length > 0) {
+                            for (var i = 0; i < data.items.length; i++) {
+                                d += createMembListHtml(data.items[i]);
+                            };
+                        }
+                        $("#membList ul").html(d);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function createMembListHtml(obj) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            var owner = "uhide";
+            if (obj.isower) {
+                owner = "";
+            }
+            h += '<li id="u' + obj.userid + '" class="ub ub-f1 ubb bc-border" style="padding:0.5em ">';
+            h += '   <div class="ub-f1 ub">';
+            if (!obj.isower) {
+                h += '   <div onclick="removeUser(\'' + obj.userid + '\',\'' + obj.cnname + '\')" class="ub-img del_icon uhide" style="min-width:1.5em;min-height:1.5em;position: absolute;top: -0.3em;left: -0.3em;z-index:999999"></div>'
+            }
+            h += '      <div class="uh-app3 uw-app3 uc-a1 ub-img1 umar-r" style="background-image:url(' + headuri + ');">';
+            h += '      </div>';
+            h += '      <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ub ub-f1 ub-ver">';
+            h += '         <div class="ub ub-f1 ub-ac">';
+            h += '            <div class="ut-s userName" style="max-width: 70%">';
+            h += '                ' + obj.cnname;
+            h += '            </div>';
+            h += '            <div class="ulev-2 ub ub-ac t-wh ub-pc umar-l ' + owner + '">';
+            h += '                <div style="text-align:center;background-color: #55C8C3;padding: 0.2em;min-width: 3em">群主</div>';
+            h += '            </div>';
+            h += '         </div>';
+            h += '         <div class="ub ub-f1 umar-t">';
+            h += '            <div class="ub-f1 ut-s ulev-1 sc-text">' + obj.compname + obj.jobtitle + '</div>';
+            h += '         </div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function removeUser(userId, cnName) {
+            if (group.owner != userinfo.userid) {
+                App.toast("只有群主才可以踢人");
+                return;
+            }
+            if (App.isNull(userId)) {
+                return;
+            }
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定要将' + cnName + '踢出' + group.groupName + '么？',
+                buttons : ['直接踢出', '放他一马'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 0) {
+                        removeUserFromGroup(userId);
+                    }
+                }
+            });
+        }
+
+        function removeUserFromGroup(userId) {
+            App.authApi({
+                url : 'group/removeUserFromGroup',
+                data : {
+                    params : {
+                        groupId : group.groupId,
+                        memberId : userId,
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $("#u" + userId).remove();
+                        if (!isdebug) {
+                            var param = {
+                                groupId : group.groupId,
+                                username : userId
+                            };
+                            uexEasemob.removeUserFromGroup(App.toJsonStr(param));
+                            for (var i = 0; i < group.members.length; i++) {
+                                if (group.members[i] == userId) {
+                                    group.members.splice(i, 1);
+                                }
+                            };
+                            App.setVal("groupInfo", group);
+                            setMemCount();
+                            /*var param = {
+                             groupId : group.groupId, //
+                             loadCache : false //是否从本地加载缓存,(默认为false,从网络获取)
+                             };
+                             uexEasemob.getGroup(App.toJsonStr(param));*/
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button("#addMem", '', function() {
+            App.setVal('groupChat', 2);
+            App.openWin({
+                backName : 'groupChatInfo',
+                name : 'contactList',
+                url : '../contact/contactList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+
+        appcan.button("#deleteMem", '', function() {
+            if ($(this).hasClass("delflag")) {
+                $(".del_icon").addClass('uhide');
+                $(this).removeClass("delflag");
+            } else {
+                $(".del_icon").removeClass('uhide');
+                $(this).addClass("delflag");
+            }
+        })
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            if (userId == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            } else {
+                App.setVal('viewMode', 'view');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+
+        lv2.on('click', function(obj, data, sub) {
+            switch(data.id) {
+            case 1:
+                App.openWin({
+                    backName : "groupChatInfo",
+                    name : 'groupChatSetting',
+                    url : 'groupChatSetting.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            case 0:
+                App.evalJs({
+                    winName : "groupChatInfo",
+                    type : 1,
+                    js : "openShareMunu()"
+                });
+                break;
+            }
+        })
+        function exitGroupChat() {
+            App.authApi({
+                url : 'group/exitFromGroup',
+                data : {
+                    params : {
+                        groupId : group.groupId,
+                        memberId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        //App.Logs("1111111")
+                        var param = {
+                            groupId : group.groupId//
+                        };
+                        if (parseInt(userinfo.userid) == parseInt(group.owner)) {
+                            uexEasemob.exitAndDeleteGroup(App.toJsonStr(param));
+                        } else {
+                            uexEasemob.exitFromGroup(App.toJsonStr(param));
+                            var param = {
+                                chatType : 1, //0-单聊,1-群聊
+                                action : "exitGroup$$" + group.groupId, //
+                                toUsername : group.groupId
+                            };
+                            uexEasemob.sendCmdMessage(App.toJsonStr(param));
+                        }
+                        App.evalJs({
+                            winName : "indexNew",
+                            type : 2,
+                            popName : "message_content",
+                            js : "removeFriendHtml(" + group.groupId + ", 1);"
+                        });
+                        var win = App.getWin("groupChatRoom");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "groupChatRoom",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        }
+                        win = App.getWin("myGroupList");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "myGroupList",
+                                js : "removeGroupListHtml(" + group.groupId + ")"
+                            });
+                        }
+                        App.evalJs({
+                            winName : "groupChatInfo",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+    </script>
+</html>

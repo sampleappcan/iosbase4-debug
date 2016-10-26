@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="tools_content/css/main.css">
+        <style>
+            .lis-icon {
+                width: 2.5em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 2.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver c-wh ub-f1" id="listview">
+            <div class="ub ub-f1">
+                <div id="queryCert" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img cert" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        证书查询
+                    </div>
+                </div>
+                <div id="shipLocation" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%;height: 7em">
+                    <div class="ub-img ship_position" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        船位查询
+                    </div>
+                </div>
+                <div id="typhoon" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img weather" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        台风查询
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-f1 ubb bc-border">
+                <div id="examQuery" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%;height: 7em">
+                    <div class="ub-img score" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        考试查询
+                    </div>
+                </div>
+                <div id="compQuery" class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+                    <div class="ub-img company" style="min-height: 1.5em;min-width: 1.5em"></div>
+                    <div class="ulev0 uinn t-gra umar-t">
+                        机构查询
+                    </div>
+                </div>
+                <div class="ub ub-f1 ubt ubr bc-border ub-pc ub-ac ub-ver uinn" style="width: 30%">
+
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+        })
+        
+        appcan.button("#compQuery", '', function() {
+            App.ajaxLoading(1,true);
+            App.evalJs({
+                winName : "tools",
+                type : 1,
+                js : "compQuery()"
+            })
+        })
+
+        appcan.button("#examQuery", '', function() {
+            App.ajaxLoading(1,true);
+            App.evalJs({
+                winName : "tools",
+                type : 1,
+                js : "examQuery()"
+            })
+        })
+
+        appcan.button("#queryCert", '', function() {
+            App.openWin({
+                backName : "tools",
+                name : 'queryCertificate',
+                url : 'queryCertificate.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function closeLoading(){
+            App.ajaxLoading(0);
+        }
+        appcan.button("#typhoon", '', function() {
+            App.ajaxLoading(1,true);
+            App.evalJs({
+                winName : "tools",
+                type : 1,
+                js : "showTyphoon()"
+            })
+        })
+
+        appcan.button("#shipLocation", '', function() {
+            App.ajaxLoading(1,true);
+            App.evalJs({
+                winName : "tools",
+                type : 1,
+                js : "shipLocation()"
+            })
+        })
+    </script>
+</html>

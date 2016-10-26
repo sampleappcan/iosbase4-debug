@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../indexNew_content/css/main.css">
+        <link rel="stylesheet" href="userAccount_content/css/main.css">
+        <style>
+            .lis-icon {
+                width: 3em;
+                min-height: 3em;
+                margin: 0;
+            }
+            .blue-line {
+                background-color: #54AFF8;
+                width: 0.2em;
+                height: 1.5em;
+                display: inline-block;
+                vertical-align: middle;
+                margin-top: 0.4em;
+            }
+            .spec-title {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                -webkit-line-clamp: 5;
+                word-break: break-all;
+            }
+            .umar-a1 {
+                margin: 0.25em;
+            }
+            .lis {
+                padding: 0.4em;
+                min-height: 2em;
+            }
+            .uwh-bg1 {
+                width: 4.5em;
+                height: 5.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver bc-bg">
+            <div id="listview1"  class="uba bc-border c-wh umar-a us" style="padding: 0.4em">
+                <ul>
+                    <li class="ub t-bla" data-index="0" style="padding: 0.2em">
+                        <div class="ub ub ub-ver umar-r">
+                            <div class="uba ub ub-ac ub-pc uc-a1" style="width: 3em;height: 3em;background-color:#F6F6F6;border-color:#F6F6F6 ">
+                                <div class="lis-icon ub-img1 userHeader" ></div>
+                            </div>
+                        </div>
+                        <div class="ub-f1 ub ub-pj ub-ac">
+                            <div class="ub-f1 ub ub-ver marg-l">
+                                <div id="userDetail" class="ub uinn3 ub-ac sc-text ut-s">
+                                    <div id="cnName" class="ulev1 ub-f1 ut-s">
+
+                                    </div>
+                                    <div data-id="user" class="edit t-color fa fa-pencil ulev-5">
+                                        编辑
+                                    </div>
+                                </div>
+                                <div class="ub ub-f1 uinn3">
+                                    <div id="compName" class="ulev-1 sc-text1 sc-text ut-s"></div>
+                                    <div class="ub-img verify umw1 umh1 uhide"></div>
+                                </div>
+                                <div class="uinn3 ub ub-f1">
+                                    <div id="userType" class="ulev-1 sc-text1 t-color ut-s">
+
+                                    </div>
+                                    <div class="ulev-1 sc-text1 t-color ut-s">
+                                        ,好评度:<span id="creditLv"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ub ub-f1 t-gra" style="padding: 0.1em">
+                            <div class="ulev-1">
+                                手机号：
+                            </div>
+                            <div id="mobile" class="ulev-1 ub ub-ac t-color">
+
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ub ub-f1 t-gra" style="padding: 0.1em">
+                            <div class="ulev-1">
+                                邮&nbsp;&nbsp;&nbsp;&nbsp;箱：
+                            </div>
+                            <div id="email" class="ulev-1 ub ub-ac t-color">
+
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="ub ub-f1 t-gra" style="padding: 0.1em">
+                            <div class="ulev-1">
+                                地&nbsp;&nbsp;&nbsp;&nbsp;址：
+                            </div>
+                            <div id="compArea" class="ulev-1 ub ub-ac t-color">
+
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="ubt bc-border c-wh uhide" style="margin-top: 0.25em">
+                <div id="listview" style="padding-left: 0.5em;padding-right: 0.5em;font-size: 1.06em"></div>
+            </div>
+            <div class="ubt bc-border ubb c-wh uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        标签
+                    </div>
+                    <div data-id="label" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="userLabel">
+                    <div class="ub uinn3 ub-pc">
+                        <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">
+                            未设置标签
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        工作经历
+                    </div>
+                    <div data-id="workExp" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="workExp" class="ub ub-f1 ub-ver" style="padding-left: 0.4em;padding-right: 0.4em">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        航海经历
+                    </div>
+                    <div data-id="shipLineExp" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="shipLineExp" class="ub ub-f1 ub-ver" style="padding-left: 0.4em;padding-right: 0.4em">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        教育经历
+                    </div>
+                    <div data-id="eduExp" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="eduExp" class="ub ub-f1 ub-ver" style="padding-left: 0.4em;padding-right: 0.4em">
+                    <ul>
+
+                    </ul>
+                </div>
+            </div>
+            <div id="recuriment" class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        招聘信息
+                    </div>
+                    <div data-id="recuriment" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="recurimentList" class="ub ub-f1 ub-ver" >
+                    <ul></ul>
+                </div>
+            </div>
+            <div id="contactMsg" class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        联系信息
+                    </div>
+                    <div data-id="contact" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div id="contactName" class="ub ub-f1 uinn uhide">
+                    <div class="ub-f1 ulev-5">
+                        联系人
+                    </div>
+                    <div class="ub ub-pe ub-ac">
+                        <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+
+                        </div>
+                    </div>
+                </div>
+                <div id="jobTitle" class="ub ub-f1 uinn uhide">
+                    <div class="ub-f1 ulev-5">
+                        部门/职位
+                    </div>
+                    <div class="ub ub-pe ub-ac">
+                        <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+
+                        </div>
+                    </div>
+                </div>
+                <div id="compAddr" class="ub ub-f1 uinn">
+                    <div class="ub-f1 ulev-5">
+                        详细地址
+                    </div>
+                    <div class="ub ub-pe ub-ac">
+                        <div class="ulev-5 txt-color" style="margin-right:0.5em;">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="compRemark" class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        公司简介
+                    </div>
+                    <div data-id="compRemark" class="edit uinn t-color fa fa-pencil ulev-3">
+                        编辑
+                    </div>
+                </div>
+                <div class="ub ub-f1 ub-ver uinn contentP" style="padding-left: 0.4em;padding-right: 0.4em;height: 5em">
+                    <div class="content" style="text-indent: 2em"></div>
+                </div>
+                <div id="more" class="ub ub-pc ub-f1 ubt bc-border uhide" style="padding: 0.2em;min-height: 1.5em">
+                    <div class="ulev-5 ub ub-ac">
+                        展开
+                    </div>
+                    <div class="fa fa-angle-double-down ub ub-ac"></div>
+                </div>
+            </div>
+            <div id="auditMsg" class="ubt bc-border ubb c-wh ub-f1 uhide" style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        公司资质
+                    </div>
+                    <div data-id="audit" class="edit uinn t-color fa fa-pencil ulev-3">
+                        更新
+                    </div>
+                </div>
+                <div id="auditInfoList">
+
+                </div>
+            </div>
+            <div id="pinglunMsg" class="ubt bc-border ubb c-wh ub-f1 " style="margin-top: 0.25em">
+                <div class="ub ub-f1 ubb bc-border">
+                    <div class="blue-line"></div>
+                    <div class="uinn t-gra ulev-3 ub-f1">
+                        相关评论
+                    </div>
+                    <div id="pinglun" class="uinn t-color fa fa-pencil ulev-3 uhide">
+                        查看更多
+                    </div>
+                </div>
+                <div id="pinglunList" class="ub ub-f1 ub-ver" >
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var viewMode = "view";
+        var page = 1;
+        var pageSize = 10;
+        var lv = appcan.listview({
+            selector : "#listview",
+            type : "thinLine",
+            hasAngle : true,
+            hasSubTitle : true
+        });
+
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+
+        lv.on("click", function(ele, obj, curEle) {
+            var win = App.getCurrWin();
+            switch(parseInt(obj.id)) {
+            case 0:
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userDynamicList' + win.winId,
+                    url : 'userDynamicList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 1:
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userVisit' + win.winId,
+                    url : 'userVisit.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+                break;
+            case 2:
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userQrCode' + win.winId,
+                    url : 'userQrCode.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+                break;
+            }
+        })
+
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            var userId = App.getVal('userId');
+            viewMode = App.getVal('viewMode');
+            if (viewMode == 'edit' || App.isNull(viewMode)) {
+                userId = userinfo.userid;
+            } else {
+                $('.edit').addClass('uhide');
+            }
+            loadUserInfo(userId);
+            //addVistRecord(userId);
+        }
+
+        function addVistRecord(userId) {
+            if (userId == userinfo.userid) {
+                return;
+            }
+            App.authApi({
+                url : 'user/addUserVisit',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        visitId : userId
+                    }
+                },
+                callBack : function(data) {
+                    App.Logs("addVistRecord:" + App.toJsonStr(data))
+                }
+            })
+        }
+
+
+        appcan.button('.edit', '', function() {
+            var id = $(this).attr("data-id");
+            switch(id) {
+            case "user":
+                editUser();
+                break;
+            case 'eduExp':
+                editUserEdu();
+                break;
+            case 'workExp':
+                editUserComp();
+                break;
+            case 'label':
+                editUserLabel();
+                break;
+            case 'supply':
+                editUserSupply();
+                break;
+            case 'contact':
+                editUserContat();
+                break;
+            case "shipLineExp":
+                editShipLineExp();
+                break;
+            case "audit":
+                editAuditInfo();
+                break;
+            case "recuriment":
+                editRecuriment();
+                break;
+            }
+        })
+        function editRecuriment() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userRecruitmentList',
+                url : 'userRecruitmentList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editAuditInfo() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userAnnexAudit',
+                url : '../audit/userAnnexAudit.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editShipLineExp() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userShipLineExpList',
+                url : 'userShipLineExpList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editUserContat() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userConInfo',
+                url : 'userConInfo.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editUserSupply() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userSupply',
+                url : 'userSupply.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function showUserlab(label) {
+            if (App.isNull(label)) {
+                label = typeof userinfo.userlable == "string" ? App.toJson(userinfo.userlable) : userinfo.userlable
+            }
+            var d = '';
+            if (!App.isNull(label) && label.length > 0) {
+                for (var i = 0; i < label.length; i++) {
+                    d += '<div class="umar-a1 ufl us">';
+                    d += '    <div class="ub ub-ver item ub-ac bc-btn t-wh">';
+                    d += '      <div class="tx-c ub-ac ub ub-pc" style="padding:0.2em 0.4em;height:2em;min-width:4em">' + label[i].name + '</div>';
+                    d += '    </div>';
+                    d += '</div>';
+                };
+            }
+            $('#userLabel').html(d);
+        }
+
+        function openChat() {
+            var chatId = $("#listview1").attr("chatId");
+            var chatname = $("#listview1").attr('chatname');
+            var chatpic = $("#listview1").attr('chatpic');
+            App.setVal("chatId", chatId);
+            App.setVal("chatname", chatname);
+            App.setVal("chatpic", chatpic);
+            if (!isdebug) {
+                var data = {
+                    username : chatId,
+                    chatType : "0"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                App.evalJs({
+                    winName : "indexNew",
+                    type : 1,
+                    js : 'shwoTabBage("xiaoxi",0)'
+                });
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'chatRoom',
+                url : '../chat/chatRoom.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function loadUserInfo(userId) {
+            App.ajaxLoading(1, true);
+            App.authApi({
+                url : 'user/getUserDetail',
+                data : {
+                    params : {
+                        userId : userId,
+                        toId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        if (userId == userinfo.userid) {
+                            userinfo = data.items;
+                            userinfo = App.updateUserInfo(userinfo);
+                        }
+                        var userlabel = data.items.userlable;
+                        // console.log(userlabel)
+                        if (!App.isNull(userlabel)) {
+                            showUserlab(App.toJson(userlabel))
+                        }
+                        var isFriend = App.isNull(data.items.isfriend) ? 0 : data.items.isfriend;
+                        var cnName = data.items.cnname;
+                        var mobile = App.isNull(data.items.mobile) ? "暂未填写" : data.items.mobile;
+                        var compAddr = App.isNull(data.items.compaddr) ? "暂未填写" : data.items.compaddr;
+                        var compName = "个人用户";
+                        if (data.items.usertype != "个人") {
+                            compName = "企业用户";
+
+                        }
+                        if (!App.isNull(data.items.parentid)) {
+                            compName = data.items.compname;
+                        }
+                        var compType = App.isNull(data.items.parentid) ? data.items.comptype : data.items.jobtitle;
+                        var userType = App.isNull(data.items.usertype) ? "" : data.items.usertype;
+                        var email = App.isNull(data.items.email) ? "暂未填写" : data.items.email;
+                        var compArea = App.isNull(data.items.comparea) ? "暂未填写" : data.items.comparea;
+                        var birthday = App.isNull(data.items.birthday) ? "保密" : data.items.birthday;
+                        var visitNum = App.isNull(data.items.visitnum) ? "" : data.items.visitnum;
+                        if (visitNum > 99) {
+                            visitNum = "99+";
+                        }
+                        var dynamicNum = App.isNull(data.items.dynamicnum) ? "" : data.items.dynamicnum;
+                        if (dynamicNum > 99) {
+                            dynamicNum = "99+";
+                        }
+                        var headuri = App.isNull(data.items.headuri) ? "../wgtRes/comImg.png" : data.items.headuri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.headUri + data.items.headuri;
+                        }
+                        $("#listview1").attr("chatId", data.items.userid);
+                        $("#listview1").attr('chatname', cnName);
+                        $("#listview1").attr('chatpic', headuri);
+                        $("#listview1").attr('parentId', data.items.parentid);
+                        $("#listview1").attr('usertype', data.items.usertype);
+                        App.setVal('chatId', data.items.userid);
+                        if (data.items.userid == "1000000") {
+                            headuri = "../wgtRes/version.png";
+                        }
+                        $('.userHeader').css('background-image', 'url(' + headuri + ')');
+                        $("#creditLv").html(data.items.creditlv);
+                        $('#cnName').html(cnName);
+                        $('#compName').html(compName);
+                        $('#userType').html(compType);
+                        $('#compAddr .txt-color').html(compAddr);
+                        if (App.isNull(cnName)) {
+                            $('#cnName').html(userName);
+                        }
+                        if (App.isNull(data.items.compremark)) {
+                            var d = ''
+                            d += '<div class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">暂时没有公司简介</div>';
+                            d += '</div>';
+                            $('#compRemark .content').html(d);
+                        } else {
+                            $('#compRemark .content').html(data.items.compremark);
+                        }
+                        if (data.items.usertype == "个人") {
+                            if (userinfo.auditstatus == 2 || data.items.usertype == "系统" || parseInt(userId) == parseInt(userinfo.userid)) {
+                                $('#mobile').html(mobile);
+                                $('#email').html(email);
+                            } else {
+                                $('#mobile').html("认证用户可见");
+                                $('#email').html("认证用户可见");
+                            }
+                            /*if (data.items.seemyinfo == "所有人" || parseInt(userId) == parseInt(userinfo.userid) || data.items.usertype == "SYSTEM") {
+                            // console.log(111)
+                            $('#mobile').html(mobile);
+                            $('#email').html(email);
+                            } else if (data.items.seemyinfo == '仅好友' && data.items.isfriend == 1) {
+                            //console.log(2222)
+                            $('#mobile').html(mobile);
+                            $('#email').html(email);
+                            } else if (data.items.usertype == "系统") {
+                            //console.log(3333)
+                            $('#mobile').html(mobile);
+                            $('#email').html(email);
+                            } else {
+                            $('#mobile').html("仅好友可见");
+                            $('#email').html("仅好友可见");
+                            }*/
+                            //console.log(userinfo.usertype, data.items.seemyinfo, data.items.isfriend, userId, userinfo.userid)
+                            $('#compArea').html(data.items.livingplace);
+                            $("#shipLineExp").parent().removeClass("uhide");
+                            $("#eduExp").parent().removeClass("uhide");
+                            $("#userLabel").parent().removeClass("uhide");
+                            loadWorkExp(data.items.userid);
+                            loadShipLineExp(data.items.userid);
+                            loadEduExp(data.items.userid);
+                        } else {
+                            $('#compArea').html(compArea);
+                            $("#recuriment").removeClass("uhide");
+                            //$("#contactMsg").removeClass("uhide");
+                            $("#compRemark").removeClass("uhide");
+                            $("#contactName").removeClass("uhide");
+                            $("#auditMsg").removeClass("uhide");
+                            $("#jobTitle").removeClass("uhide");
+                            if (App.isNull(data.items.parentid)) {
+                                getUserDefaultContact(data.items.userid, data.items.seemyinfo, data.items.usertype, data.items.isfriend);
+                            }
+                            loadRecruitmentList(data.items.userid);
+                            if (!App.isNull(data.items.annexaudituri)) {
+                                loadAuditInfo(data.items.annexaudituri);
+                            } else {
+                                if (data.items.auditstatus == 0) {
+                                    loadAuditInfo(data.items.annexaudituri, "暂未上传企业资质");
+                                } else if (data.items.auditstatus == 1) {
+                                    loadAuditInfo(data.items.annexaudituri, "企业资质正在审核");
+                                }
+                            }
+                        }
+                        loadPinglunList(data.items.userid);
+                        if (data.items.auditstatus == 2) {
+                            $(".verify").removeClass("uhide");
+                        }
+                        if ($(".content").height() > $("#compRemark .contentP").height()) {
+                            $("#compRemark .contentP").css("height", '');
+                            $(".content").addClass("spec-title");
+                            $("#more").removeClass("uhide");
+                        }
+                        App.evalJs({
+                            winName : App.getCurrWinName(),
+                            type : 1,
+                            js : "showBtn(" + isFriend + ",'" + data.items.usertype + "','" + data.items.userid + "','" + data.items.parentid + "')"
+                        });
+                        if (!App.isNull(data.items.parentid)) {
+                            $("#userLabel").parent().addClass("uhide");
+                            $("#contactMsg").addClass("uhide");
+                            $("#compRemark .edit").addClass("uhide");
+                            $("#auditMsg .edit").addClass("uhide");
+                        }
+                    }
+                }
+            })
+        }
+
+        function loadPinglunList(userId) {
+            App.authApi({
+                url : "order/getEvalList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createPinglunHtml(objData.dataList[i]);
+                            };
+                            $("#pinglun").removeClass("uhide");
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">暂未收到评论</div>';
+                            d += '</li>';
+                        }
+                        $('#pinglunList ul').html(d);
+                    } else {
+                        App.toast(data.message);
+                    }
+
+                }
+            });
+        }
+
+        function createPinglunHtml(obj) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var cnname = obj.cnname;
+            if (!App.isNull(obj.parentid)) {
+                cnname = '|<span class="ulev-1">' + obj.compname + '</span>';
+            }
+            var verify = "uhide";
+            if (obj.auditstatus == 2) {
+                verify = ""
+            }
+            h += '<li onclick="openUserDetail(\'' + obj.userid + '\')" class="ub ub-f1 ubb bc-border uinn3">';
+            h += '   <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '   <div class="ub-f1 ub ">';
+            h += '      <div class="ub ub-f1 ub-ver ">';
+            h += '          <div class="ub ub-f1">';
+            h += '              <div class="ub ub-f1">';
+            h += '                  <div class="ut-s sc-text-active userName" style="max-width:85%">' + cnname + '</div>';
+            h += '                  <div class="ub-img verify umw1 umh1 ' + verify + '"></div>';
+            h += '              </div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-f1 ub-ver umar-t">';
+            h += '              <div class="t-bla ub-f1 content1 ulev-5">' + obj.content + '</div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-f1 ub-ver umar-t t-gra-comm ulev-4">' + obj.evaltime + '</div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            if (userId == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            } else {
+                App.setVal('viewMode', 'view');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : 'userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+
+        appcan.button("#pinglun", '', function() {
+            var userId = $("#listview1").attr("chatid");
+            var userType = $("#listview1").attr("usertype");
+            App.setVal("userType", userType);
+            App.setVal("userId", userId);
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'evaluateDetial',
+                url : '../order/evaluateDetial.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+        function loadAuditInfo(auditList, str) {
+            var d = '';
+            if (App.isNull(auditList)) {
+                d += '<div class="ub ubt bc-border uinn3 ub-pc">';
+                d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">' + str + '</div>';
+                d += '</div>';
+            } else {
+                var temp = auditList.split(",");
+                for (var i = 0; i < temp.length; i++) {
+                    var url = App.downIp + "user_Image/annexImage/t/320x320/" + temp[i];
+                    d += '<div onclick="openAuditInfo(' + i + ')" data-src="' + url + '" class="ub-img1 uwh-bg1 ufl umar-a picItem" style="background-image:url(' + url + ')"></div>'
+                };
+            }
+            $("#auditInfoList").html(d);
+        }
+
+        function openAuditInfo(index) {
+            var auditInfoList = [];
+            $(".picItem").each(function() {
+                var obj = {
+                    src : $(this).attr("data-src")
+                }
+                auditInfoList.push(obj);
+            });
+            var param = {
+                displayActionButton : false,
+                displayNavArrows : true,
+                enableGrid : false,
+                startOnGrid : false,
+                startIndex : index,
+                data : auditInfoList
+            }
+            uexImage.openBrowser(App.toJsonStr(param));
+        }
+
+
+        appcan.button("#recurimentList", '', function() {
+            var parentId = $("#listview1").attr("parentid");
+            App.setVal("parentId", parentId);
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userAccountRecuList',
+                url : 'userAccountRecuList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function loadRecruitmentList(userId) {
+            App.authApi({
+                url : "user/getUserRecruitList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize,
+                        parentId : App.isNull(userinfo.parentid) ? "" : userinfo.parentid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var payroll = "面议";
+                                if (objData.dataList[i].payrolltype != "面议") {
+                                    payroll = objData.dataList[i].payroll + objData.dataList[i].payrolltype + "/月";
+                                }
+                                d += '<li class="ub uinn ub-f1 ubb bc-border">';
+                                d += '   <div class="ub-f1 ub marg-l ub-ac">';
+                                d += '       <div class="ub umar-r ulev-3 ut-s">' + objData.dataList[i].jobtitle + '</div>';
+                                d += '       <div class="ulev-3 sc-text-warn  ut-s">' + payroll + '</div>';
+                                d += '   </div>';
+                                d += '   <div class="ub ub-ac ub-pe fa fa-angle-right ulev2 t-gra"></div>';
+                                d += '</li>';
+                            };
+                            $('#recurimentList ul').html(d);
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">暂未发布招聘信息</div>';
+                            d += '</li>';
+                            $('#recurimentList ul').html(d);
+                        }
+
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function getUserDefaultContact(userId, seemyinfo, usertype, isfriend) {
+            App.authApi({
+                url : 'user/getUserDefalutContat',
+                data : {
+                    params : {
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (App.isNull(data.items.id)) {
+                            $('#contactName .txt-color').html("未设置");
+                            $('#jobTitle .txt-color').html("未设置");
+                        } else {
+                            $('#contactName .txt-color').html(data.items.contactname);
+                            $('#jobTitle .txt-color').html(data.items.jobtitle);
+                        }
+                        if (userinfo.auditstatus == 2 || usertype == "系统" || userId == userinfo.userid) {
+                            $('#mobile').html(data.items.mobile);
+                            $('#email').html(data.items.email);
+                        } else {
+                            $('#mobile').html("认证用户可见");
+                            $('#email').html("认证用户可见");
+                        }
+                        /*if (seemyinfo == "所有人" || userId == userinfo.userid || usertype == "系统") {
+                         $('#mobile').html(data.items.mobile);
+                         $('#email').html(data.items.email);
+                         } else if (seemyinfo == '仅好友' && isfriend == 1) {
+                         $('#mobile').html(data.items.mobile);
+                         $('#email').html(data.items.email);
+                         } else if (userinfo.usertype == "系统") {
+                         $('#mobile').html(data.items.mobile);
+                         $('#email').html(data.items.email);
+                         } else {
+                         $('#mobile').html("仅好友可见");
+                         $('#email').html("仅好友可见");
+                         }*/
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+
+        appcan.button("#more", '', function() {
+            if ($("#more .fa-angle-double-down").length > 0) {
+                $("#more .ulev-5").html("收起");
+                $("#more .fa").removeClass("fa-angle-double-down");
+                $("#more .fa").addClass("fa-angle-double-up");
+                $(".content").removeClass("spec-title");
+            } else {
+                $("#more .ulev-5").html("展开");
+                $("#more .fa").addClass("fa-angle-double-down");
+                $("#more .fa").removeClass("fa-angle-double-up");
+                $(".content").addClass("spec-title");
+            }
+        })
+        function loadEduExp(userId) {
+            App.authApi({
+                url : "user/getUserEduExpList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "至" + objData.dataList[i].endtime + "," + objData.dataList[i].specialty + "," + objData.dataList[i].educational;
+                                d += '<li class="ub ubt bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3  ut-s">' + objData.dataList[i].school + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em">' + objData.dataList[i].remark + '</div>';
+                                d += '   </div>';
+                                d += '   <div class="ub ub-ac fa fa-angle-right ulev2 t-gra"></div>';
+                                d += '</li>';
+                            };
+                            $('#eduExp ul').html(d);
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">教育经历未填写</div>';
+                            d += '</li>';
+                            $('#eduExp ul').html(d);
+                        }
+                    }
+                }
+            })
+        }
+
+        function loadShipLineExp(userId) {
+            App.authApi({
+                url : "user/getUserShipLineList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    var d = '';
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "~" + objData.dataList[i].endtime + "," + objData.dataList[i].shiptype + "," + objData.dataList[i].shipline;
+                                var experience = objData.dataList[i].shipname + "," + objData.dataList[i].shippower;
+                                d += '<li class="ub ubt bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3 ut-s">' + objData.dataList[i].jobtitle + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + objData.dataList[i].servercomp + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em">' + experience + '</div>';
+                                d += '   </div>';
+                                d += '   <div class="ub ub-ac fa fa-angle-right ulev2 t-gra"></div>';
+                                d += '</li>';
+                            };
+                            $('#shipLineExp ul').html(d);
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                            d += '</li>';
+                            $('#shipLineExp ul').html(d);
+                        }
+                    } else {
+                        d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                        d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                        d += '</li>';
+                        $('#shipLineExp ul').html(d);
+                    }
+                }
+            });
+        }
+
+        function loadWorkExp(userId) {
+            App.authApi({
+                url : "user/getUserWorkExpList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "至" + objData.dataList[i].endtime + "," + objData.dataList[i].jobtitle;
+                                d += '<li class="ub ubt bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3 ut-s">' + objData.dataList[i].compname + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em;">' + objData.dataList[i].experience + '</div>';
+                                d += '   </div>';
+                                d += '   <div class="ub ub-ac fa fa-angle-right ulev2 t-gra"></div>';
+                                d += '</li>';
+                            };
+                            $('#workExp ul').html(d);
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                            d += '</li>';
+                            $('#workExp ul').html(d);
+                        }
+                    }
+                }
+            });
+        }
+
+        function editUserLabel() {
+            App.setVal("cUserType", 3);
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userProLable',
+                url : 'userProLable.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editUserComp() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userWorkExp',
+                url : 'userWorkExp.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editUserEdu() {
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'userEduExp',
+                url : 'userEduExp.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function editUser() {
+            if (!App.isNull(userinfo.parentid)) {
+                App.setVal("contactMode", "edit");
+                App.setVal("contactId", userinfo.contactid);
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userContactDetail',
+                    url : 'userContactDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else {
+                App.openWin({
+                    backName : App.getCurrWinName(),
+                    name : 'userInfo',
+                    url : 'userInfo.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+            }
+        }
+
+        function deleteFriend() {
+            userId = $("#listview1").attr('chatId');
+            App.authApi({
+                url : "friend/deleteFriend",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.evalJs({
+                            winName : App.getCurrWinName(),
+                            type : 1,
+                            js : 'showBtn(-1)'
+                        });
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'message_content',
+                            type : 2,
+                            js : 'removeFriendHtml(' + userId + ')'
+                        });
+                        App.evalJs({
+                            winName : 'indexNew',
+                            popName : 'friends_content',
+                            type : 2,
+                            js : 'removeFriendHtml(' + userId + ')'
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function acceptInvitid() {
+            userId = $("#listview1").attr('chatId');
+            App.authApi({
+                url : "friend/acceptInvitation",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toUserId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!isdebug) {
+                            var param = {
+                                username : userId
+                            };
+                            App.Logs("acceptInvitation:" + App.toJsonStr(param));
+                            uexEasemob.acceptInvitation(App.toJsonStr(param));
+                            App.evalJs({
+                                winName : App.getCurrWinName(),
+                                type : 1,
+                                js : 'showBtn(1)'
+                            });
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function addToFriend() {
+            var userId = $("#listview1").attr('chatId');
+            var cnName = $("#listview1").attr('chatname');
+            if (!isdebug) {
+                if (userId == userinfo.userid) {
+                    App.toast("不能添加自己");
+                    return;
+                }
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : userinfo.cnname + "请求添加你为好友",
+                            remark1 : "你请求添加" + cnName + "为好友"
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            App.evalJs({
+                                winName : App.getCurrWinName(),
+                                type : 1,
+                                js : 'showBtn(0)'
+                            });
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        function addUserTOSysContact() {
+            App.Logs($("#cnName").html())
+            var cnname = appcan.trim($("#cnName").html());
+            var mobile = appcan.trim($("#mobile").html());
+            var email = App.isNull(appcan.trim($("#email").html())) ? "" : appcan.trim($("#email").html());
+            var option = {
+                resultNum : -1
+            }
+            var option1 = {
+                isNeedAlertDialog : true
+            }
+            uexContact.cbAddItem = function(opCode, dataType, data) {
+                if (data == 0) {
+                    App.toast(cnname + "已经保存到通讯录!")
+                } else {
+                    App.toast("保存到通讯录出错，请退重应用重试.")
+                }
+            }
+            uexContact.cbSearchItem = function(opCode, dataType, data) {
+                var obj = App.toJson(data);
+                if (!App.isNull(obj.length)) {
+                    appcan.window.confirm({
+                        title : '提醒',
+                        content : cnname + '已经在手机通讯录了，是否要继续添加?',
+                        buttons : ['暂不添加', '继续添加'],
+                        callback : function(err, data, dataType, optId) {
+                            if (err) {
+                                return;
+                            }
+                            if (parseInt(data) == 1) {
+                                uexContact.addItem(cnname, mobile, email, JSON.stringify(option1));
+                            }
+                        }
+                    });
+                } else {
+                    uexContact.addItem(cnname, mobile, email, JSON.stringify(option1));
+                }
+            }
+            uexContact.searchItem(cnname, App.toJsonStr(option));
+        }
+    </script>
+</html>

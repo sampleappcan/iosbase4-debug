@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userMsg_content/css/main.css">
+        <style>
+            .lis-icon {
+                width: 3em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 3em;
+            }
+            .uw-app3 {
+                width: 3em;
+            }
+            .uh-app3 {
+                height: 3em;
+            }
+            .spec-content {
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                -webkit-line-clamp: 4;
+            }
+            .mar-ar1 {
+                margin-right: 0.4em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div id="visitList" style="padding: 0.4em;">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadDynamicMsg(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadDynamicMsg(page, 1, bounceType);
+            });
+            loadData()
+        });
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadDynamicMsg(1, 0);
+            updateMsgStatus();
+            App.evalJs({
+                winName : "indexNew",
+                type : 1,
+                js : "shwoTabBage(\"xiaoxi\",0)"
+            });
+        }
+
+        function updateMsgStatus() {
+            App.authApi({
+                url : "msg/updateMsgStatus",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        type : "system"
+                    }
+                },
+                callBack : function(data) {
+                }
+            });
+        }
+
+        function loadDynamicMsg(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "msg/getSystemMsg",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        type : "system"
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createDynamicMsgHtml(objData.dataList[i]);
+                            }
+                            if (add) {
+                                $('#visitList ul').append(d);
+                            } else {
+                                $('#visitList ul').html(d);
+                            }
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img" style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra">暂时还没有通知消息</div>';
+                            d += '</div>'
+                            $('#visitList ul').html(d);
+                        }
+                    } else {
+                        var d = '';
+                        d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                        d += '    <div class="ub-img" style="min-height:8em;min-width:8em"></div>'
+                        d += '    <div class="t-gra">暂时还没有通知消息</div>';
+                        d += '</div>'
+                        $('#visitList ul').html(d);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createDynamicMsgHtml(obj) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            var timeStr = App.setMsgTime(obj.messagetime, true);
+            var image = '';
+            var oimage = '';
+            if (!App.isNull(obj.remotepath)) {
+                var image = App.dynamicPicUri + 't/160x160/' + obj.remotepath;
+                var oimage = App.dynamicPicUri + 'o/' + obj.remotepath;
+            }
+            h += '<li id="u' + obj.id + '" data-uid="' + obj.sendid + '" data-type="' + obj.chattype + '" data-id="' + obj.action + '" class="ub ub-f1 ubb bc-border" style="padding:0.4em">';
+            h += '  <div class="ub ub-f1">';
+            h += '     <div class="ub-f1 ub">';
+            h += '        <div onclick="openUserDetail(\'' + obj.sendid + '\')" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '        <div onclick="openContent(' + obj.action + ',\'' + obj.chattype + '\')" class="ub ub-f1 ub-ver other">';
+            h += '           <div class="ub ub-f1 umar-b">';
+            h += '              <div class="ut-s userName ub-f1 ulev-5" style="color: #386096">' + obj.cnname + '</div>';
+            h += '           </div>';
+            h += '           <div class="ub ub-f1 umar-b">';
+            h += '              <div class="ub-f1 ut-s ulev-1 ">' + obj.text + '</div>';
+            h += '           </div>';
+            h += '           <div class="ub ub-f1">';
+            h += '              <div class="ub-f1 ut-s ulev-4" style="color: #737373">' + timeStr + '</div>';
+            h += '           </div>';
+            h += '        </div>';
+            h += '     </div>';
+            h += '  </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            if (userId == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function openContent(id, type) {
+            if (type == "reqResumeApply") {
+                App.setVal("recruitId", id);
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'userRecruitPreview',
+                    url : '../user/userRecruitPreview.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "reqRecruiApply") {
+                App.setVal("resumeId", id);
+                App.setVal("resumeType", "seaman");
+                App.openWin({
+                    backName : "userMsg",
+                    name : 'userResumePreview',
+                    url : '../user/userResumePreview.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "auditMessage") {
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'userAnnexAudit',
+                    url : '../audit/userAnnexAudit.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "reqAuditMessage") {
+                App.setVal("auditId", id);
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'adminAuditDetail',
+                    url : '../audit/adminAuditDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "reqAuidtPerMessage") {
+                App.setVal("auditId", id);
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'adminAuditPDetail',
+                    url : '../audit/adminAuditPDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "auditPerMessage") {
+                App.setVal("auditId", id);
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'userPersonAudit',
+                    url : '../audit/userPersonAudit.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "reqAuditServiceUri") {
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'adminServiceUriList',
+                    url : '../audit/adminServiceUriList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            } else if (type == "auditServiceMsg") {
+                App.openWin({
+                    backName : 'userMsg',
+                    name : 'userServiceList',
+                    url : '../user/userServiceList.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            }
+        }
+
+        function clearMynamicMsg() {
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定要清空所有通知消息吗？',
+                buttons : ['立即清空', '暂不清空'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 0) {
+                        App.authApi({
+                            url : "msg/claerSysMsg",
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    type : "system"
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    App.toast("消息已清空");
+                                    var d = '';
+                                    d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                                    d += '    <div class="ub-img" style="min-height:8em;min-width:8em"></div>'
+                                    d += '    <div class="t-gra">暂时还没有动态通知</div>';
+                                    d += '</div>'
+                                    $('#visitList ul').html(d);
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+</html>

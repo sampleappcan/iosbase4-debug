@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head headerh">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0" >
+                    登陆
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div class="ulev1">
+                        注册
+                    </div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var weixinData;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        function rdNumber(n, m) {
+            var c = m - n + 1;
+            return Math.floor(Math.random() * c + n) + "";
+        }
+
+
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "userLogin_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+
+            }
+            if (!isdebug) {
+                /**微信回调相关**/
+                uexWeiXin.cbGetLoginUnionID = function(data) {
+                    App.Logs("uexWeiXin.cbGetLoginUnionID:" + data);
+                    var obj = JSON.parse(data);
+                    var params = {
+                        openid : obj.unionid,
+                        userName : obj.nickname,
+                        logoUri : obj.headimgurl,
+                        type : "Weixin"
+                    };
+                    App.setVal('loginParms', params);
+                    App.userLogin({
+                        userName : "",
+                        userPass : "",
+                        loginType : "APP",
+                        params : params
+                    })
+                }
+                uexWeiXin.cbGetLoginRefreshAccessToken = function(data) {
+                    App.Logs("uexWeiXin.cbGetLoginRefreshAccessToken:" + data);
+                    var obj = JSON.parse(data);
+                    var params = {
+                        access_token : obj.access_token,
+                        openid : obj.openid
+                    };
+                    uexWeiXin.getLoginUnionID(JSON.stringify(params));
+                }
+
+                uexWeiXin.cbGetLoginCheckAccessToken = function(data) {
+                    App.Logs("exWeiXin.cbGetLoginCheckAccessToken:" + data);
+                    var obj = JSON.parse(data);
+                    if (obj.errcode == 0) {
+                        var params = {
+                            access_token : weixinData.access_token,
+                            openid : weixinData.openid
+                        };
+                        uexWeiXin.getLoginUnionID(JSON.stringify(params));
+                    } else {
+                        var params = {
+                            grant_type : "refresh_token",
+                            refresh_token : weixinData.refresh_token
+                        };
+                        uexWeiXin.getLoginRefreshAccessToken(JSON.stringify(params));
+                    }
+                }
+                uexWeiXin.cbGetLoginAccessToken = function(data) {
+                    App.Logs("uexWeiXin.cbGetLoginAccessToken:" + data);
+                    var obj = JSON.parse(data);
+                    weixinData = obj;
+                    if (!App.isNull(obj.openid)) {
+                        var params = {
+                            access_token : obj.access_token,
+                            openid : obj.openid
+                        };
+                        uexWeiXin.getLoginCheckAccessToken(JSON.stringify(params));
+                    }
+                }
+                uexWeiXin.cbLogin = function(data) {
+                    App.Logs("uexWeiXin.cbLogin:" + data);
+                    App.closeLoading();
+                    var obj = JSON.parse(data);
+                    if (obj.errCode == 0) {
+                        var params = {
+                            secret : App.weixinSecret,
+                            code : obj.code,
+                            grant_type : "authorization_code"
+                        };
+                        uexWeiXin.getLoginAccessToken(JSON.stringify(params));
+                    } else if (obj.errCode == -4) {
+                        App.toast("您已拒绝授权登陆，微信登陆无法使用");
+                    } else {
+                        App.toast("取消登陆");
+                    }
+                }
+                uexWeiXin.cbIsWXAppInstalled = function(opId, dataTpye, data) {
+                    App.Logs("uexWeiXin.cbIsWXAppInstalled:" + data);
+                    if (parseInt(data) != 0) {
+                        App.closeLoading();
+                        App.toast('微信功能不正常，请联系客服！code:101');                       
+                    } else {
+                        var params = {
+                            scope : "snsapi_userinfo",
+                            state : rdNumber(1000, 9999)
+                        };
+                        uexWeiXin.login(JSON.stringify(params));
+                    }
+                }
+                uexWeiXin.cbRegisterApp = function(opCode, dataType, data) {
+                    App.Logs("uexWeiXin.cbRegisterApp:" + data);
+                    if (parseInt(data) != 0) {
+                        App.closeLoading();
+                        App.toast('接口安装失败，请联系客服！code:100');
+                    } else {
+                        var params = {
+                            windowName : "userLogin"
+                        };
+                        uexWeiXin.setCallbackWindowName(JSON.stringify(params));
+                        uexWeiXin.isWXAppInstalled();
+                    }
+                }
+                /**微信回调结束**/
+            }
+        });
+
+        function wxLogin() {            
+            uexWeiXin.registerApp(App.weixinAppKey);
+        }
+
+
+        appcan.button("#nav-left", "btn-act", function() {
+            closeWin();
+        })
+        appcan.button('#nav-right', 'btn-act', function() {
+            App.openWin({
+                backName : 'userLogin',
+                name : 'userReg',
+                url : 'userReg.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        })
+        function closeWin(type) {
+            App.closeWin("userLogin", type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+    </script>
+</html>

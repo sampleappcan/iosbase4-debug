@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../indexNew_content/css/main.css">
+        <link rel="stylesheet" href="evaluateDetial_content/css/main.css">
+        <style>
+            .uh, .uf {
+                display: block;
+                width: 100%;
+            }
+        </style>
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="top" class="sc-bg uinn" >
+            <div class=" ub ub-f1">
+                <div class="uinn umar-r">
+                    好评度:
+                </div>
+                <div class="ub ub-ac ub-pc">
+                    <div class="pos_re uwh-ec2">
+                        <div class="ub ub-ac uwh-ec2">
+                            <div data-id="1" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="2" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="3" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="4" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="5" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                        </div>
+                        <div class=" uabs uof miaosufen" style="width:100%;">
+                            <div class="ub ub-ac">
+                                <div data-id="1" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="2" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="3" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="4" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="5" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-f1">
+                <div class="ub ub-ver ubr bc-border " style="padding-right: 0.8em">
+                    <div class="sc-text-warn" style="font-size: 2.5em;">
+                        <span id="totalpf">0.00</span>分
+                    </div>
+                </div>
+                <div class="ub ub-ver ub-f1" style=" padding-left: 0.8em">
+                    <div class="ulev-1 t-9b" style="margin-bottom: 0.8em">
+                        <span id="score1">职位描述相符</span>:<span class="umar-l sc-text-warn" style="font-weight:bold" id="shiwuxinpf">0.00</span>分
+                    </div>
+                    <div class="ulev-1 t-9b" style="margin-bottom: 0.8em">
+                        <span id="score2">服务态度</span>:<span class="umar-l sc-text-warn" style="font-weight:bold" id="sanxinpf">0.00</span>分
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1 ub-ver">
+            <div id="score1" class="sc-bg uinn ubt ubb bc-border">
+                评论列表
+            </div>
+            <div id="ele_comment" class="sc-bg">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.tab.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var userId;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadPinglunList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadPinglunList(page, 1, bounceType);
+            });
+            App.ajaxLoading(1, true);
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            userId = App.getVal("userId");
+            var userType = App.getVal("userType");
+            if (userType == "个人") {
+                $("#score1").html("英语能力");
+                $("#score2").html("业务水平");
+            }
+            getEvalDetail();
+            loadPinglunList();
+        }
+
+        function getEvalDetail() {
+            App.authApi({
+                url : "order/getEvalDetail",
+                data : {
+                    params : {
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    console.log(data)
+                    if (data.code == 0) {
+                        var score1_t = data.items.score1_1c + data.items.score1_2c + data.items.score1_3c + data.items.score1_4c + data.items.score1_5c;
+                        var score2_t = data.items.score2_1c + data.items.score2_2c + data.items.score2_3c + data.items.score2_4c + data.items.score2_5c;
+                        var score1_1p = data.items.score1_1c > 0 ? data.items.score1_1c / score1_t : 0.00;
+                        var score1_2p = data.items.score1_2c > 0 ? data.items.score1_2c / score1_t : 0.00;
+                        var score1_3p = data.items.score1_3c > 0 ? data.items.score1_3c / score1_t : 0.00;
+                        var score1_4p = data.items.score1_4c > 0 ? data.items.score1_4c / score1_t : 0.00;
+                        var score1_5p = data.items.score1_5c > 0 ? data.items.score1_5c / score1_t : 0.00;
+
+                        var score2_1p = data.items.score2_1c > 0 ? data.items.score2_1c / score2_t : 0.00;
+                        var score2_2p = data.items.score2_2c > 0 ? data.items.score2_2c / score2_t : 0.00;
+                        var score2_3p = data.items.score2_3c > 0 ? data.items.score2_3c / score2_t : 0.00;
+                        var score2_4p = data.items.score2_4c > 0 ? data.items.score2_4c / score2_t : 0.00;
+                        var score2_5p = data.items.score2_5c > 0 ? data.items.score2_5c / score2_t : 0.00;
+
+                        var score1_1 = score1_1p * score1_t * 1;
+                        var score1_2 = score1_2p * score1_t * 2;
+                        var score1_3 = score1_3p * score1_t * 3;
+                        var score1_4 = score1_4p * score1_t * 4;
+                        var score1_5 = score1_5p * score1_t * 5;
+
+                        var score2_1 = score2_1p * score2_t * 1;
+                        var score2_2 = score2_2p * score2_t * 2;
+                        var score2_3 = score2_3p * score2_t * 3;
+                        var score2_4 = score2_4p * score2_t * 4;
+                        var score2_5 = score2_5p * score2_t * 5;
+
+                        var score1 = score1_1 + score1_2 + score1_3 + score1_4 + score1_5;
+                        var score2 = score2_1 + score2_2 + score2_3 + score2_4 + score2_5;
+                        
+                        score1 = score1 /(score1_5p*score1_t+score1_4p*score1_t+score1_3p*score1_t+score1_2p*score1_t+score1_1p*score1_t);
+                        score2 = score2 /(score2_5p*score2_t+score2_4p*score2_t+score2_3p*score2_t+score2_2p*score2_t+score2_1p*score2_t);
+                        $("#shiwuxinpf").html(score1.toFixed(2));
+                        $("#sanxinpf").html(score2.toFixed(2));
+                        var totalpf = ((score1 + score2) / 2).toFixed(2);
+                        var width = (totalpf / 5) * 100;
+                        $(".miaosufen").css("width", width + "%");
+                        $("#totalpf").html(totalpf);
+                    }
+                }
+            })
+        }
+
+        function loadPinglunList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "order/getEvalList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : pageNumber,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pageNumber > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createPinglunHtml(objData.dataList[i]);
+                            };
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">暂未还没相关评论</div>';
+                            d += '</li>';
+                        }
+                        if (add) {
+                            $('#ele_comment ul').append(d);
+                        } else {
+                            $('#ele_comment ul').html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createPinglunHtml(obj) {
+            var h = '';
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var cnname = obj.cnname;
+            if (!App.isNull(obj.parentid)) {
+                cnname = '|<span class="ulev-1">' + obj.compname + '</span>';
+            }
+            var verify = "uhide";
+            if (obj.auditstatus == 2) {
+                verify = ""
+            }
+            h += '<li onclick="openUserDetail(\'' + obj.userid + '\')" class="ub ub-f1 ubb bc-border uinn3">';
+            h += '   <div class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1" style="background-image:url(' + headuri + ');"></div>';
+            h += '   <div class="ub-f1 ub ">';
+            h += '      <div class="ub ub-f1 ub-ver ">';
+            h += '          <div class="ub ub-f1">';
+            h += '              <div class="ub ub-f1">';
+            h += '                  <div class="ut-s sc-text-active userName" style="max-width:85%">' + cnname + '</div>';
+            h += '                  <div class="ub-img verify umw1 umh1 ' + verify + '"></div>';
+            h += '              </div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-f1 ub-ver umar-t">';
+            h += '              <div class="t-bla ub-f1 content1 ulev-5">' + obj.content + '</div>';
+            h += '          </div>';
+            h += '          <div class="ub ub-f1 ub-ver umar-t t-gra-comm ulev-4">' + obj.evaltime + '</div>';
+            h += '      </div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(id) {
+            App.setVal('userId', id);
+            if (id == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            } else {
+                App.setVal('viewMode', 'view');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : id,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+    </script>
+</html>

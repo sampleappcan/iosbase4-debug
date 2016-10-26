@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "iconfont";
+    src: url('./cssfont.ttf') format('truetype');
+    font-weight : normal;
+    font-style: normal;
+}
+
+.cssfont {
+    font-family: "iconfont" !important;
+    font: normal normal normal 14px/1 iconfont;
+    font-size: inherit;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.renmai:before {
+    content: "\e600";
+}
+.xiaoxi:before {
+    content: "\e601";
+}
+.wode:before {
+    content: "\e602";
+}
+.dongtai:before {
+    content: "\e603";
+}
+.fa-2x {
+font-size: 2em;
+}

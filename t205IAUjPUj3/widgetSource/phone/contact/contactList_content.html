@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="addFriend_content/css/main.css">
+        <style>
+            .lis-icon {
+                width: 2.5em;
+                margin: 0em 0.4em 0em 0px;
+                min-height: 2.5em;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+            .uinn1 {
+                padding: 0.4em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver sc-bg bc-border ubt ub-f1" id="listview"></div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var userList = [];
+        var groupChat;
+        var groupInfo;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            uexIndexBar.onTouchResult = function(opId, dataType, data) {
+                if (data == "#") {
+                    window.scrollTo(0, 0);
+                    return;
+                }
+                location.href = "#" + data;
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            groupChat = App.getVal('groupChat');
+            groupInfo = App.getJson("groupInfo");
+            if (groupChat == 3) {
+                userList = App.getJson("atList");
+                if (App.isNull(userList)) {
+                    userList = [];
+                }
+            }
+            App.ajaxLoading(1, true);
+            loadFriendList(1, 0);
+        }
+
+        function loadFriendList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "friend/getFriendList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            // uexWindow.resetBounceView(1);
+                            return;
+                        }
+                        var arr = {
+                            'A' : '',
+                            'B' : '',
+                            'C' : '',
+                            'D' : '',
+                            'E' : '',
+                            'F' : '',
+                            'G' : '',
+                            'H' : '',
+                            'I' : '',
+                            'J' : '',
+                            'K' : '',
+                            'L' : '',
+                            'M' : '',
+                            'N' : '',
+                            'O' : '',
+                            'P' : '',
+                            'Q' : '',
+                            'R' : '',
+                            'S' : '',
+                            'T' : '',
+                            'U' : '',
+                            'V' : '',
+                            'W' : '',
+                            'X' : '',
+                            'Y' : '',
+                            'Z' : ''
+                        };
+                        var str = '';
+                        for (var i in objData.dataList) {
+                            var headuri = App.isNull(objData.dataList[i].headuri) ? App.ajax_ip + "common/images/comImg.png" : objData.dataList[i].headuri;
+                            if (headuri.substr(0, 4) != "http") {
+                                headuri = App.headUri + objData.dataList[i].headuri;
+                            }
+                            var cnname = objData.dataList[i].cnname;
+                            var dataStr = "职业信息未填写";
+                            if (!App.isNull(objData.dataList[i].comptype)) {
+                                dataStr = objData.dataList[i].comptype;
+                            }
+                            var checkBtn = "uhide";
+                            var canEdit = "";
+                            if (groupChat > 0) {
+                                checkBtn = "";
+                            }
+                            if (checkGroupMember(objData.dataList[i].userid)) {
+                                canEdit = 'checked disabled="true"';
+                            } else if (groupChat == 3) {
+                                if (checkInUserList(objData.dataList[i].userid)) {
+                                    canEdit = 'checked ';
+                                }
+                            }
+                            var h = '';
+                            h += '<div id="U' + objData.dataList[i].userid + '" data-cnname="' + cnname + '" data-id="' + objData.dataList[i].userid + '" data-img="' + headuri + '" class="ub ub-f1 uinn ub-ac">';
+                            h += '   <div class="checkbox umar-l ' + checkBtn + '"><input ' + canEdit + ' onchange="checkThis(this)" type="checkbox" class="uabs ub-con" readonly="true"></div>';
+                            h += '   <div onclick="selectThis(this)" class="ub ub-f1 " ' + canEdit + '>'
+                            h += '     <div class="uc-a1 ub-img1 umar-r" style="background-image:url(' + headuri + ');width:2.5em;height:2.5em"></div>';
+                            h += '     <div class="ub item b-gra ub-ver ub-f1">';
+                            h += '        <div class="ub ub-ac">' + cnname + '</div>';
+                            h += '        <div class="ulev-4 umar-t ub-f1 ut-s t-gra">' + dataStr + '</div>';
+                            h += '     </div>';
+                            h += '   </div>';
+                            h += '</div>';
+                            arr[objData.dataList[i].py] += h;
+                        }
+                        for (var i in arr) {
+                            var aa = arr[i];
+                            if (aa != "") {
+                                str += ('<div id="' + i + '" class="uinn1 bc-bg ubb bc-border bc-text">' + i + '</div>' + aa);
+                            }
+
+                        }
+                        $('#listview').html(str);
+                        indexBarOpen();
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function checkInUserList(userId) {
+            var result = false;
+            for (var i = 0; i < userList.length; i++) {
+                if (userList[i].userId == userId) {
+                    result = true;
+                    break;
+                };
+            };
+            return result;
+        }
+
+        function checkGroupMember(userId) {
+            var isMember = false;
+            if (App.isNull(groupInfo) || App.isNull(groupInfo.members)) {
+                return isMember;
+            }
+            //先判断是不是在成员列表里
+            for (var i = 0; i < groupInfo.members.length; i++) {
+                if (Number(groupInfo.members[i]) == Number(userId)) {
+                    isMember = true;
+                    break;
+                }
+            };
+            //如果不在成员列表，则判断是不是群主
+            if (!isMember) {
+                isMember = (Number(userId) == Number(groupInfo.owner));
+            }
+            return isMember;
+        }
+
+        function reomveCheck(userId) {
+            $('#U'+userId).find('input')[0].checked = false;
+            for (var i = 0; i < userList.length; i++) {
+                if (userList[i].userId == userId) {
+                    userList.splice(i, 1);
+                };
+            };
+        }
+
+        function checkThis(item) {
+            var userId = $(item).parent().parent().attr('data-id');
+            var headUri = $(item).parent().parent().attr('data-img');
+            var cnname = $(item).parent().parent().attr('data-cnname');
+            if (item.checked) {
+                var total = userList.length + 1;
+                if (groupChat == 2) {
+                    var count = groupInfo.members.length;
+                    if (!App.getAppPlat()) {
+                        count++;
+                    };
+                    var maxUser = groupInfo.groupMaxUsersCount;
+                    if (App.isNull(maxUser)) {
+                        maxUser = groupInfo.groupMaxUserCount;
+                    }
+                    if (total + count > maxUser) {
+                        App.toast("不能添加更多人了");
+                        item.checked = false;
+                        return;
+                    }
+                } else if (groupChat == 3) {
+                    if (total > 10) {
+                        App.toast("最多只能选10个人");
+                        item.checked = false;
+                        return;
+                    }
+                } else {
+                    if (total > 500) {
+                        App.toast("不能添加更多人了");
+                        item.checked = false;
+                        return;
+                    }
+                }
+                var obj = {
+                    userId : userId,
+                    cnname : cnname,
+                    headUri : headUri
+                }
+                userList.push(obj);
+            } else {
+                for (var i = 0; i < userList.length; i++) {
+                    if (userList[i].userId == userId) {
+                        userList.splice(i, 1);
+                    };
+                };
+            }
+            App.evalJs({
+                winName : 'contactList',
+                type : 1,
+                js : 'addUserList(\'' + userId + '\',\'' + headUri + '\',' + item.checked + ',' + userList.length + ')'
+            })
+        }
+
+        function selectThis(item) {
+            var userId = $(item).parent().attr('data-id');
+            var headUri = $(item).parent().attr('data-img');
+            var cnname = $(item).parent().attr('data-cnname');
+            var disabled = $(item).attr("disabled");
+            if (disabled) {
+                return;
+            }
+            if (groupChat > 0) {
+                var checked;
+                if ($(item).prev().find('input')[0].checked) {
+                    $(item).prev().find('input')[0].checked = false;
+                    checked = false;
+                    for (var i = 0; i < userList.length; i++) {
+                        if (userList[i].userId == userId) {
+                            userList.splice(i, 1);
+                        };
+                    };
+                } else {
+                    $(item).prev().find('input')[0].checked = true;
+                    checked = true;
+                    var total = userList.length + 1;
+                    if (groupChat == 2) {
+                        var count = groupInfo.members.length;
+                        var maxUser = groupInfo.groupMaxUsersCount;
+                        if (App.isNull(maxUser)) {
+                            maxUser = groupInfo.groupMaxUserCount;
+                        }
+                        if (!App.getAppPlat()) {
+                            count++;
+                        };
+                        if (total + count > maxUser) {
+                            App.toast("不能添加更多人了");
+                            $(item).prev().find('input')[0].checked = false;
+                            return;
+                        }
+                    } else if (groupChat == 3) {
+                        if (total > 10) {
+                            App.toast("最多只能选10个人");
+                            $(item).prev().find('input')[0].checked = false;
+                            return;
+                        }
+                    } else {
+                        if (total > 500) {
+                            App.toast("不能添加更多人了");
+                            $(item).prev().find('input')[0].checked = false;
+                            return;
+                        }
+                    }
+                    var obj = {
+                        userId : userId,
+                        cnname : cnname,
+                        headUri : headUri
+                    }
+                    userList.push(obj);
+                }
+                App.evalJs({
+                    winName : 'contactList',
+                    type : 1,
+                    js : 'addUserList(\'' + userId + '\',\'' + headUri + '\',' + checked + ',' + userList.length + ')'
+                })
+            } else {
+                App.setVal('chatId', userId);
+                App.setVal('chatname', cnname);
+                App.setVal('chatpic', headUri);
+                App.openWin({
+                    backName : "contactList",
+                    name : 'chatRoom',
+                    url : '../chat/chatRoom.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            }
+        }
+
+        function indexBarOpen() {
+            var x = parseInt($('#listview').offset().width);
+            var y = parseInt(appcan.getLocVal('titHeight'));
+            var em = $('#listview').css('font-size');
+            var w = 1.5 * parseInt(em);
+            var h = window.innerHeight;
+            var data = {
+                indices : ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+            }
+            uexIndexBar.open(x - w, y, w, h, JSON.stringify(data));
+        }
+
+        function openGroupChat() {
+            if (userList.length == 0) {
+                //App.toast("请先选择聊天对象");
+                return;
+            }
+            var groupName = "";
+            var memList = [];
+            for (var i = 0; i < userList.length; i++) {
+                groupName += userList[i].cnname + "、";
+                memList.push(userList[i].userId);
+            };
+            var headuri = App.isNull(userinfo.headuri) ? App.ajax_ip + "common/images/comImg.png" : userinfo.headuri;
+            if (headuri.substr(0, 4) != "http") {
+                headuri = App.headUri + userinfo.headuri;
+            }
+            if (groupChat == 2) {
+                App.authApi({
+                    url : "group/addUserToGroup",
+                    data : {
+                        params : {
+                            groupId : groupInfo.groupId,
+                            userList : userList
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            isGroupOwner = (groupInfo.owner == userinfo.userid);
+                            var param = {
+                                isGroupOwner : isGroupOwner, //是否群主(仅Android需要)
+                                groupId : groupInfo.groupId, //
+                                newmembers : memList, //群聊新成员,List<String> Json格式
+                                inviteMessage : userinfo.cnname + "邀请你加入群聊"// 新增参数 邀请信息
+                            };
+                            App.Logs("addUsersToGroup:" + App.toJsonStr(param));
+                            uexEasemob.addUsersToGroup(App.toJsonStr(param));
+                            groupInfo.members = groupInfo.members.concat(memList);
+                            App.setVal("groupInfo", groupInfo);
+                            /*var param = {
+                             groupId : groupInfo.groupId, //
+                             loadCache : false //是否从本地加载缓存,(默认为false,从网络获取)
+                             };
+                             uexEasemob.getGroup(App.toJsonStr(param));*/
+                            App.evalJs({
+                                winName : "groupChatInfo",
+                                js : "loadData()"
+                            });
+                            App.evalJs({
+                                winName : 'contactList',
+                                type : 1,
+                                js : 'closeWin(0)'
+                            });
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            } else if (groupChat == 3) {
+                //提醒谁看功能
+                App.setVal("atList", userList);
+                App.evalJs({
+                    winName : "publishDynamic",
+                    js : "addAtList()"
+                });
+                App.evalJs({
+                    winName : 'contactList',
+                    type : 1,
+                    js : 'closeWin(0)'
+                });
+            } else {
+                if (userList.length == 1) {
+                    App.setVal('chatId', userList[0].userId);
+                    App.setVal('chatname', userList[0].cnname);
+                    App.setVal('chatpic', userList[0].headUri);
+                    App.openWin({
+                        backName : "contactList",
+                        name : 'chatRoom',
+                        url : '../chat/chatRoom.html',
+                        type : 4,
+                        aniId : 2,
+                        animDuration : 200
+                    });
+                } else {
+                    var obj = {
+                        userId : userinfo.userid,
+                        cnname : userinfo.cnname,
+                        headUri : headuri
+                    }
+                    userList.push(obj);
+                    groupName = groupName.substr(0, groupName.length - 1);
+                    groupName += "、" + userinfo.cnname;
+                    if (groupName.length > 20) {
+                        groupName = groupName.substr(0, 20);
+                    }
+                    var params = {
+                        groupName : groupName, //要创建的群聊的名称
+                        desc : "暂时没有简介", //群聊简介
+                        members : memList, //群聊成员,为空时这个创建的群组只包含自己
+                        allowInvite : true, //是否允许群成员邀请人进群
+                        maxUsers : 500, //最大群聊用户数,可选参数,默认为200,最大为2000
+                        initialWelcomeMessage : userinfo.cnname + "邀请你加入群聊"//群组创建时发送给每个初始成员的欢迎信息(仅iOS需要)
+                    };
+                    App.openLoading({
+                        title : '',
+                        msg : '正在建立群聊...',
+                        canCancel : 1
+                    });
+                    uexEasemob.createPrivateGroup(App.toJsonStr(params));
+                }
+            }
+        }
+
+        function addGroupTOServer() {
+            var groupInfo = App.getJson('groupInfo');
+            App.authApi({
+                url : "group/addGroup",
+                data : {
+                    params : {
+                        group : groupInfo,
+                        userList : userList
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.openWin({
+                            backName : 'indexNew',
+                            name : 'groupChatRoom',
+                            url : '../chat/groupChatRoom.html',
+                            type : 4,
+                            aniId : 2,
+                            animDuration : 200
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+    </script>
+</html>

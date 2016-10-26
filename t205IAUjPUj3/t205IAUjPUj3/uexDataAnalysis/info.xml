@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uexplugins>
+    <plugin
+        uexName="uexDataAnalysis" version="3.0.9" build="9">
+        <info>9:添加保护</info>
+        <build>8:使用新版Xcode重新编译,支持arm64</build>
+        <build>7:支持arm64</build>
+        <build>6:上报时使用异步请求</build>
+        <build>5:再次修改上报逻辑</build>
+        <build>4:修改上报逻辑</build>
+        <build>3:修复无法启动上报的问题</build>
+        <build>0:uexDataAnalysis 公网appCan.cn用的插件,事件上报</build>
+    </plugin>
+</uexplugins>
+    
+    

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="mysharepop_content/css/main.css">
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div class="ub ub-fv ub-fh urel"  style="background-color:rgba(0, 0, 0, 0.3);"></div>
+        <div id="pop" class="ub ub-ver ub-fv ub-fh c-bla-50 " style="bottom: 0;left: 0;position: absolute;">
+            <div class="urel ub-f1"></div>
+            <div class="uinn-share c-pink ub-ae">
+                <div class="ub">
+                    <div id="weixin" class="ub-f1 ub-ver ub ub-ac ub-pc" >
+                        <div class="ub-img uwh-share wx umar-t-share sc-bg" style="border-radius:0.3em"></div>
+                        <div class="t-gra3 ulev-4 umar-at1">
+                            微信
+                        </div>
+                    </div>
+                    <div id="weixinpy" class="ub-f1 ub-ver ub ub-ac ub-pc uc-a1">
+                        <div class="ub-img uwh-share wx_friend umar-t-share sc-bg" style="border-radius:0.3em"></div>
+                        <div class="t-gra3 ulev-4 umar-at1">
+                            朋友圈
+                        </div>
+                    </div>
+                    <div id="QQ" class="ub-f1 ub ub-ver ub-ac ub-pc ">
+                        <div class="ub-img uwh-share qq umar-t-share"></div>
+                        <div class="t-gra3 ulev-4 umar-at1">
+                            QQ
+                        </div>
+                    </div>
+                    <div id="sina" class="ub-f1 ub-ver ub ub-ac ub-pc ">
+                        <div class="ub-img uwh-share sinawb umar-t-share uc-a1"></div>
+                        <div class="t-gra3 ulev-4 umar-at1">
+                            微博
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="umar-t ">
+                <div class="btn ub ub-ac t-gra3 ub-pc c-pink ub-f1"  id="submit">
+                    取消
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        var scene = 1;
+        var qqshare = 0;
+        //0分享QQ，1分享QQ空间
+        appcan.button(".urel", "", function() {
+            closepop();
+        })
+        appcan.button('#submit', '', function() {
+            closepop();
+        })
+
+        appcan.button('#weixin', '', function() {
+            scene = 0;
+            uexWeiXin.registerApp(App.weixinAppKey);
+        })
+
+        appcan.button('#sina', '', function() {
+            uexSina.registerApp(App.sinaAppKey, App.sinaAppSecret, App.sinaRegisterUrl);
+        })
+        appcan.button('#weixinpy', '', function() {
+            scene = 1;
+            uexWeiXin.registerApp(App.weixinAppKey);
+        })
+
+        appcan.button('#QQ', '', function() {
+            qqshare = 0;
+            uexQQ.isQQInstalled();
+        })
+
+        appcan.ready(function() {
+            var obj = App.getJson('shareData');
+            uexQQ.cbShareQQ = function(opId, dataType, data) {
+                App.Logs("uexQQ.cbShareQQ:" + opId + "," + dataType + "," + data)
+                if (parseInt(data) != 0) {
+                    App.toast('取消分享');
+                    //closepop();
+                } else {
+                    App.toast('分享成功');
+                    //closepop();
+                }
+            }
+            uexSina.cbShare = function(opCode, dataType, data) {
+                App.Logs("uexSina.cbShare:" + opCode + "," + dataType + "," + data)
+                if (parseInt(data) != 0) {
+                    App.toast('取消分享');
+                    //closepop();
+                } else {
+                    App.toast('分享成功');
+                    //closepop();
+                }
+            }
+            uexSina.cbRegisterApp = function(opCode, dataType, data) {
+                App.Logs("uexSina.cbRegisterApp:" + opCode + "," + dataType + "," + data)
+                if (parseInt(data) != 0) {
+                    App.toast("分享失败");
+                    //closepop();
+                } else {
+                    var sharedata = App.getJson('shareData');
+                    var content = sharedata.description + "\n" + sharedata.wedpageUrl + "&f=weibo";
+                    var realImgPath = sharedata.thumbImg;
+                    uexSina.sendTextContent(content);
+                }
+            }
+            uexQQ.cbIsQQInstalled = function(opId, dataType, data) {
+                App.Logs("uexQQ.cbIsQQInstalled:" + opId + "," + dataType + "," + data);
+                if (parseInt(data) != 0) {
+                    App.toast('分享失败，请联系客服');
+                    //closepop();
+                } else {
+                    var sharedata = App.getJson('shareData');
+                    if (qqshare == 0) {
+                        var JsonData = {
+                            title : sharedata.title,
+                            summary : sharedata.description,
+                            targetUrl : sharedata.wedpageUrl + "&f=qq",
+                            imageUrl : sharedata.thumbImg,
+                            appName : "海员港",
+                            cflag : "2"
+                        }
+                        if (App.getAppPlat()) {
+                            uexQQ.shareWebImgTextToQQ(App.qqAppId, JSON.stringify(JsonData));
+                        } else {
+                            uexQQ.shareWebImgTextToQQ(App.iOSqqAppId, JSON.stringify(JsonData));
+                        }
+                    } else {
+                        var JsonData = {
+                            title : sharedata.title,
+                            summary : sharedata.description,
+                            targetUrl : sharedata.wedpageUrl + "&f=qq",
+                            imageUrl : [sharedata.thumbImg]
+                        }
+                        if (App.getAppPlat()) {
+                            uexQQ.shareImgTextToQZone(App.qqAppId, JSON.stringify(JsonData));
+                        } else {
+                            uexQQ.shareImgTextToQZone(App.iOSqqAppId, JSON.stringify(JsonData));
+                        }
+                    }
+                }
+            }
+            uexWeiXin.cbIsWXAppInstalled = function(opId, dataTpye, data) {
+                App.Logs("uexWeiXin.cbIsWXAppInstalled:" + data)
+                if (parseInt(data) != 0) {
+                    App.toast('分享失败，请联系客服！');
+                    //closepop();
+                } else {
+                    var sharedata = App.getJson('shareData');
+                    if (scene == 0) {
+                        var JsonData = {
+                            thumbImg : sharedata.thumbImg,
+                            wedpageUrl : sharedata.wedpageUrl + "&f=wechat",
+                            scene : "0",
+                            title : sharedata.title,
+                            description : sharedata.description
+                        };
+                        uexWeiXin.shareLinkContent(JSON.stringify(JsonData));
+                    } else {
+                        var JsonData = {
+                            thumbImg : sharedata.thumbImg,
+                            wedpageUrl : sharedata.wedpageUrl + "&f=wechat",
+                            scene : "1",
+                            title : sharedata.title,
+                            description : sharedata.title
+                        };
+                        uexWeiXin.shareLinkContent(JSON.stringify(JsonData));
+                    }
+                }
+            }
+            uexWeiXin.cbRegisterApp = function(opCode, dataType, data) {
+                App.Logs("uexWeiXin.cbRegisterApp:" + data);
+                var sharedata = App.getJson('shareData');
+                if (parseInt(data) != 0) {
+                    App.toast('分享失败！errorCode:-1,请联系客服');
+                    //closepop();
+                } else {
+                    var params = {
+                        windowName : sharedata.windowName
+                    };
+                    uexWeiXin.setCallbackWindowName(JSON.stringify(params));
+                    uexWeiXin.isWXAppInstalled();
+                }
+            }
+        });
+
+        function closepop() {
+            setTimeout(function() {
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    type : 1,
+                    js : 'closeShareMenu()'
+                });
+            }, 0);
+        }
+    </script>
+</html>

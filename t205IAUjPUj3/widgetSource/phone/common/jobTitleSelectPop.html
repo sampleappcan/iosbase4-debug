@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="jobTitlePop_content/css/main.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.5em;
+                min-height: 2.2em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="c-wh-pLG" style="top:0;padding:0;background: rgba(0, 0, 0, 0.3);height: 100%"></div>
+        <div id="listview" class=" sc-bg tx-c us" style="width:100%;height: 60%;overflow: hidden;position: absolute;bottom:0;z-index: 999999">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/options.js"></script>
+        <script src="../js/iscorll.js"></script>
+    </body>
+    <script>
+        var myScroll;
+        var userinfo;
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            myScroll = new IScroll('#listview', {
+                useTransform : true,
+                useTransition : true,
+                HWCompositing : true,
+                scrollbars : false,
+                mouseWheel : false,
+                interactiveScrollbars : false,
+                shrinkScrollbars : 'clip',
+                fadeScrollbars : false,
+                scrollY : true,
+                bounce : false,
+                probeType : 1,
+                click : true
+            });
+            App.ajaxLoading(1,true);
+            loadJobTitleList();
+        }
+
+        function loadJobTitleList() {
+            App.authApi({
+                url : "user/getUserRecrutList",
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var d = ''
+                        d += '<li data-id="" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+                        d += '   <div class="line1 ulev-5 ub-f1">请选择职位</div>';
+                        d += '</li>';
+                        for (var i = 0; i < data.items.length; i++) {
+                            d += createJobTitleHtml(data.items[i]);
+                        }
+                        $("#listview ul").html(d);
+                        $("#listview").on("click", "li", function(evt) {
+                            var target = $(evt.target);
+                            var id = $(this).attr('data-id');
+                            var winName = App.getCurrWinName();
+                            var jobTitle = $(this).attr("data-job");
+                            var shipLine = $(this).attr("data-line");
+                            var onBoardTime = $(this).attr("data-time");
+                            if ( winName == "chatRoom") {
+                                var obj = {
+                                    id : id,
+                                    remark : jobTitle + "," + shipLine + "," + onBoardTime
+                                }
+                                App.evalJs({
+                                    winName : winName,
+                                    js : "sendOnBoardConfirm('" + App.toJsonStr(obj) + "')"
+                                });
+                            } else {
+                                if (!App.isNull(id)) {
+                                    App.setVal("resumeJobTitleId", id);
+                                    App.evalJs({
+                                        winName : winName,
+                                        js : "reqApply()"
+                                    });
+                                }
+                            }
+                            closepop();
+                        })
+                    } else {
+                        App.toast(data.message);
+                    }
+                    myScroll.refresh();
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function createJobTitleHtml(str) {
+            var h = '';
+            var onBoardTime = "";
+            if (!App.isNull(str.onboardtime)) {
+                onBoardTime = str.onboardtime.split("-");
+                onBoardTime = parseInt(onBoardTime[1]) + "月" + onBoardTime[2] + "日";
+            }
+            h += '<li data-job="' + str.jobtitle + '" data-line="' + str.shipline + '" data-time="' + onBoardTime + '" data-id="' + str.id + '" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+            h += '   <div class="ub ub-f1 ub-ac">'
+            h += '      <div class="line1 ulev-5 umar-r ">' + str.jobtitle + '</div>';
+            h += '      <div class="line1 ulev-5 umar-r shipLine">' + str.shipline + '</div>';
+            h += '      <div class="line1 ulev-4 ">上船日期:<span style="color:red;margin-left:0.2em">' + onBoardTime + '</span></div>';
+            h += '   </div>'
+            h += '   <div class="ub ub-ac ub-pc" style="margin-right: 1em">';
+            h += '      <div class="ub ub-img unselect_icon" style="min-width: 1.5em;min-height: 1.5em"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+
+        appcan.button("#pop", "", function(evt) {
+            closepop();
+        })
+        function closepop() {
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : "closePop()"
+            })
+        }
+
+    </script>
+</html>

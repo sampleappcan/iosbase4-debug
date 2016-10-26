@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="jobTitlePop_content/css/main.css">
+        <style>
+            .ulev-2s {
+                font-size: .725em;
+            }
+            .b-blu {
+                background-color: #51C296;
+            }
+            .c-grenn {
+
+                background-color: #FCB606;
+            }
+            .uinn25 {
+                padding: 0.325em;
+            }
+            .b-blu1 {
+                background-color: #FD4E53;
+            }
+            .lis2 {
+                padding: 0.5em;
+                min-height: 2.2em;
+            }
+        </style>
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="pop" class="c-wh-pLG" style="top:0;padding:0;background: rgba(0, 0, 0, 0.3);height: 100%"></div>
+        <div id="listview" class=" sc-bg tx-c us" style="width:100%;height: 70%;overflow: hidden;position: absolute;top:0;z-index: 999999">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/options.js"></script>
+        <script src="../js/iscorll.js"></script>
+    </body>
+    <script>
+        var myScroll;
+        var jobCondition;
+        appcan.ready(function() {
+            loadData();
+        })
+        function loadData() {
+            jobCondition = App.getJson("jobCondition");
+            myScroll = new IScroll('#listview', {
+                useTransform : true,
+                useTransition : true,
+                HWCompositing : true,
+                scrollbars : false,
+                mouseWheel : false,
+                interactiveScrollbars : false,
+                shrinkScrollbars : 'clip',
+                fadeScrollbars : false,
+                scrollY : true,
+                bounce : false,
+                probeType : 1,
+                click : true
+            });
+            loadJobTitleList();
+        }
+
+        function loadJobTitleList() {
+            var d = ''
+            var icon = "unselect_icon";
+            if (App.isNull(jobCondition) || App.isNull(jobCondition.jobTitle)) {
+                icon = "select_icon";
+            }
+            d += '<li data-id="" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+            d += '   <div class="line1 ulev-5 ub-f1">不限</div>';
+            d += '   <div class="ub ub-ac ub-pc" style="margin-right: 1em">';
+            d += '      <div class="ub ub-img ' + icon + '" style="min-width: 1.5em;min-height: 1.5em"></div>';
+            d += '   </div>';
+            d += '</li>';
+            var start = 0;
+            if(App.getCurrWinName()=="resumeSearch"){
+                start = 1;
+            }
+            for (var i = start; i < positionArray.length; i++) {
+                d += createJobTitleHtml(positionArray[i]);
+            }
+            $("#listview ul").html(d);
+            $("#listview").on("click", "li", function(evt) {
+                var target = $(evt.target);
+                var id = $(this).attr('data-id');
+                if (App.isNull(jobCondition)) {
+                    jobCondition = {
+                        jobTitle : id,
+                        date : 3
+                    }
+                } else {
+                    jobCondition["jobTitle"] = id;
+                }
+                App.setVal("jobCondition", jobCondition);
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    js : "loadData()"
+                });
+                var str = "职务:" + id+",";
+                App.evalJs({
+                    winName : App.getCurrWinName(),
+                    type : 1,
+                    js : "setFilter('" + str + "')"
+                });
+                closepop();
+            })
+            myScroll.refresh();
+        }
+
+        function createJobTitleHtml(str) {
+            var h = '';
+            var icon = "unselect_icon";
+            if (!App.isNull(jobCondition) && appcan.trim(jobCondition.jobTitle) == appcan.trim(str)) {
+                icon = "select_icon";
+            }
+            h += '<li data-id="' + str + '" class="btn2 ubb ub bc-border bc-text ub-ac ub-pc lis2" >';
+            h += '   <div class="line1 ulev-5 ub-f1">' + str + '</div>';
+            h += '   <div class="ub ub-ac ub-pc" style="margin-right: 1em">';
+            h += '      <div class="ub ub-img ' + icon + '" style="min-width: 1.5em;min-height: 1.5em"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+
+        appcan.button("#pop", "", function(evt) {
+            closepop();
+        })
+        function closepop() {
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : "closePop()"
+            })
+        }
+
+    </script>
+</html>

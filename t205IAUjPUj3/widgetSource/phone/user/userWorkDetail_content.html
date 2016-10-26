@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+            textarea::-webkit-input-placeholder:after {
+                display: block;
+                content: "\A【工作职责】\A 简要描述工作内容或职责 \A\A【项目经历及业绩】\A 简要描述项目经历以及成绩等  ";/*  \A 表示换行  */
+            };
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub uinn ub-ac ub-f1">
+                <div class="ub-f1 ulev-5 t-gra">
+                    我的工作经历
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1 c-wh">
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    公司
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="compName" placeholder="请输入公司名(必填)" type="text" class="ub-f1 tx-r txt-color" maxlength="100" style="padding-right: 1em">
+                    </div>
+                </div>
+            </div>
+            <div class="ub uinn ub-ac ubb bc-border ub-f1">
+                <div class="ulev-5 umar-r">
+                    职位
+                </div>
+                <div class="tx-r ulev-5 txt-gray ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="jobTitle" placeholder="请输入职位名(必填)" type="text" class="ub-f1 tx-r txt-color" maxlength="20" style="padding-right: 1em">
+                    </div>
+                </div>
+            </div>
+            <div id="startTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    开始年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择开始年份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="startMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    开始月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择开始月份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="startMonth" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endTime" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    结束年份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择结束年份(必填)
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endTime" selectedindex="0"></select>
+                </div>
+            </div>
+            <div id="endMonth" class="ub uinn ub-ac ub-f1 ubb bc-border">
+                <div class="ub-f1 ulev-5">
+                    结束月份
+                </div>
+                <div class="select sc-text">
+                    <div class="ulev-5 text txt-color">
+                        请选择结束月份
+                    </div>
+                    <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    <select data-id="endMonth" selectedindex="0"></select>
+                </div>
+            </div>
+        </div>
+        <div class="ulev-5 uinn5 sc-text" style="background-color: #F9F9F9">
+            工作经历描述
+        </div>
+        <div class="ub ub-ver ub-f1 c-wh">
+            <div class="ub ub-ac ub-f1 ubb bc-border">
+                <div class="tx-r ulev-1 txt-gray ub-f1">
+                    <div class="uba bc-border uinput ub ub-f1">
+                        <textarea id="experience" placeholder="可参考如入格式:" type="text" class="ub-f1" style="height: 15em"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var type = 0;
+        var userinfo;
+        var workType;
+        var wordexpid;
+        var startTime = "请选择开始年份(必填)";
+        var endTime = "请选择结束年份(必填)";
+        var startMonth = "请选择开始月份(必填)";
+        var endMonth = "";
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loaddata();
+        })
+        function loaddata() {
+            App.ajaxLoading(1, true);
+            loadDateAndMonth();
+            userinfo = App.getUserInfo();
+            workType = App.getVal('workType');
+            wordexpid = App.getVal('wordexpid');
+            if (workType == 0) {
+                App.authApi({
+                    url : "user/getUserWorkExp",
+                    data : {
+                        params : {
+                            expId : wordexpid
+                        }
+                    },
+                    callBack : function(data) {
+                        App.ajaxLoading(0);
+                        if (data.code == 0) {
+                            $('#compName').val(data.items.compname);
+                            $('#jobTitle').val(data.items.jobtitle);
+                            var tempStr = data.items.starttime;
+                            var tempStr1 = data.items.endtime;
+                            tempStr = tempStr.split("-");
+                            tempStr1 = tempStr1.split("-");
+                            if (tempStr.length > 1) {
+                                startTime = tempStr[0];
+                                startMonth = tempStr[1];
+                                $('#startTime .text').html(startTime);
+                                $('#startMonth .text').html(startMonth);
+                            }
+                            if (tempStr1[0] == "至今") {
+                                $('#endTime .text').html("至今");
+                                endTime = "至今";
+                                $('#endMonth').addClass("uhide");
+                            } else {
+                                endTime = tempStr1[0];
+                                endMonth = tempStr1[1];
+                                $('#endTime .text').html(endTime);
+                                $('#endMonth .text').html(endMonth);
+                            }
+
+                            //$('#startTime .txt-color').html(data.items.starttime);
+                            //$('#endTime .txt-color').html(data.items.endtime);
+                            $('#experience').val(data.items.experience);
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                })
+            } else {
+                App.ajaxLoading(0);
+            }
+
+        }
+
+        function loadDateAndMonth() {
+            var year = new Date().getFullYear();
+            //console.log(year - 1970)
+            var option = "";
+            var option1 = "";
+            for (var i = 1970; i <= year; i++) {
+                option += "<option value=" + i + ">" + i + "</option>";
+            };
+            for (var i = 1; i <= 12; i++) {
+                option1 += "<option value=" + i + ">" + i + "</option>";
+            };
+            $("#startTime select").html(option);
+            option += "<option value='至今'>至今</option>"
+            $("#endTime select").html(option);
+            $("#startMonth select").html(option1);
+            $("#endMonth select").html(option1);
+        }
+
+        function addOrUpdateWorkExp() {
+            var compName = appcan.trim($('#compName').val());
+            var jobTitle = appcan.trim($('#jobTitle').val());
+            var experience = appcan.trim($('#experience').val());
+            var startDate = new Date();
+            var endDate = new Date();
+            if (App.isNull(compName)) {
+                App.toast("请输入公司名");
+                return;
+            }
+            if (App.isNull(jobTitle)) {
+                App.toast("请输入职位名");
+                return;
+            }
+            if (startTime == "请选择开始年份(必填)" || App.isNull(startTime)) {
+                App.toast("请选择开始年份");
+                return;
+            }
+            if (startMonth == "请选择开始月份(必填)" || App.isNull(startTime)) {
+                App.toast("请选择开始月份");
+                return;
+            }
+            if (endTime == "请选择结束年份(必填)" || App.isNull(endTime)) {
+                App.toast("请选择结束年份");
+                return;
+            }
+            startDate.setFullYear(startTime);
+            startDate.setMonth(startMonth - 1);
+            startDate.setDate(1);
+            var endTimeStr = "至今";
+            if (endTime != "至今") {
+                if (App.isNull(endMonth) || endMonth == "请选择结束月份") {
+                    App.toast("请选择结束月份");
+                    return;
+                }
+                endDate.setFullYear(endTime);
+                endDate.setMonth(endMonth - 1);
+                endDate.setDate(1);
+                if (startDate - endDate > 0) {
+                    App.toast("开始时间不能大于结束时间!");
+                    return;
+                }
+                endTimeStr = endTime + "-" + (endMonth < 10 ? "0" + endMonth : endMonth);
+            }
+            if (!isdebug) {
+                App.openLoading({
+                    title : '提交数据',
+                    msg : "正在提交数据...",
+                    canCancel : 1
+                });
+            }
+            var startTimeStr = startTime + "-" + (startMonth < 10 ? "0" + startMonth : startMonth);
+            App.authApi({
+                url : "user/addOrUpdateWorkExp",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        compName : compName,
+                        jobTitle : jobTitle,
+                        startTime : startTimeStr,
+                        endTime : endTimeStr,
+                        experience : experience,
+                        type : workType,
+                        workExpId : wordexpid
+                    }
+                },
+                callBack : function(data) {
+                    if (!isdebug) {
+                        App.closeLoading();
+                    }
+                    if (data.code == 0) {
+                        App.toast("数据提交成功");
+                        setTimeout(function() {
+                            App.evalJs({
+                                type : 0,
+                                winName : "userWorkExp",
+                                js : 'loaddata()'
+                            });
+                            App.evalJs({
+                                type : 1,
+                                winName : 'userWorkDetail',
+                                js : 'closeWin()'
+                            });
+                        }, 1000);
+                    } else {
+                        App.alertEx(data.message);
+                    }
+                }
+            })
+        }
+
+
+        appcan.select(".select", function(ele, value) {
+            var id = ele.attr("data-id");
+            switch(id) {
+            case "startTime":
+                startTime = value;
+                break;
+            case "startMonth":
+                startMonth = value;
+                break;
+            case "endTime":
+                endTime = value;
+                if (endTime == "至今") {
+                    $("#endMonth").addClass("uhide");
+                    endMonth = "";
+                } else {
+                    $("#endMonth").removeClass("uhide");
+                }
+                break;
+            case "endMonth":
+                endMonth = value;
+                break;
+            }
+        });
+    </script>
+</html>

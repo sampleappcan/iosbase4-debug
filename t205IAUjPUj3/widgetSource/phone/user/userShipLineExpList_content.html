@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userInfo_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #3BA6E7;
+            }
+
+            .lis-icon {
+                width: 2.5em;
+                min-height: 2.5em;
+                margin: 0;
+            }
+            .uinn {
+                padding: 0.7em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="workExpList" class="ub ub-ver ub-f1 c-wh ubt bc-border">
+            <ul>
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadShipLineList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadShipLineList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadShipLineList(1,0);
+        }
+
+        function loadShipLineList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "user/getUserShipLineList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "~" + objData.dataList[i].endtime + "," + objData.dataList[i].shiptype + "," + objData.dataList[i].shipline;
+                                var experience = objData.dataList[i].shipname + "," + objData.dataList[i].shippower;
+                                d += '<li class="ub ubb bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '      <div class="ub uinn3 ulev-3  ut-s">';
+                                d += '         <div class="ub-f1">' + objData.dataList[i].jobtitle + '</div>';
+                                d += '         <div onclick="openDetail(' + objData.dataList[i].id + ')" class="edit t-color fa fa-pencil ulev-3">编辑</div>';
+                                d += '     </div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + objData.dataList[i].servercomp + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s umar-b">' + info + '</div>';
+                                d += '     <div class="ulev-5 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em;">' + experience + '</div>';
+                                d += '   </div>';
+                                d += '</li>';
+                            };
+                            if (add) {
+                                $("#workExpList ul ").append(d)
+                            } else {
+                                $("#workExpList ul ").html(d)
+                            }
+                        }
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function openDetail(shipLineId) {
+            App.setVal('shipLineId', shipLineId);
+            App.setVal('shipLineType', 0);
+            App.openWin({
+                backName : "userShipLineExpList",
+                name : 'userShipLineExpDetail',
+                url : 'userShipLineExpDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+    </script>
+</html>

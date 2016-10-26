@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userResumeList_content/css/main.css">
+        <style>
+            .marg-l {
+                margin-right: 0.4em;
+            }
+            .txt-color {
+                color: #3BA6E7;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-f1 sc-bg ubt bc-border">
+            <div id="recruitList" class="ub ub-ver ub-f1 ">
+                <ul></ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                App.setPageBounce(function(bounceType) {
+                    loadUserRecruitList(1, 0, bounceType);
+                }, function(bounceType) {
+                    page = page + 1;
+                    loadUserRecruitList(page, 1, bounceType);
+                });
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            loadUserRecruitList(1, 0);
+        }
+
+        function loadUserRecruitList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            App.authApi({
+                url : "user/getUserRecruitList",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        parentId : App.isNull(userinfo.parentid) ? "" : userinfo.parentid
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var d = '';
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pageNumber > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createRecruitHtml(objData.dataList[i]);
+                            };
+                            if (add) {
+                                $("#recruitList ul").append(d);
+                            } else {
+                                $("#recruitList ul").html(d);
+                                // $("#recruitList ul").html(d);
+                            }
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra"> 您暂时还没有招聘信息,请发布招聘 </div>';
+                            d += '    <div onclick="createRecruit()" class="bc-btn ub-pc ub-ac ub t-wh btn uc-a1 us" style="width:10em;margin-top:1em">发布招聘</div>'
+                            d += '</div>';
+                            $("#recruitList ul").html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createRecruit() {
+            App.setVal("recruitmentType", 1);
+            if (userinfo.auditstatus != 2) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您的身份还没认证，发布的信息将不能被搜索到!',
+                    buttons : ['继续发布', '立即验证'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 0) {
+                            App.openWin({
+                                backName : 'userRecruitmentList',
+                                name : 'userRecruitment',
+                                url : 'userRecruitment.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        } else {
+                            App.openWin({
+                                backName : 'userResumeDetail',
+                                name : 'userAnnexAudit',
+                                url : '../audit/userAnnexAudit.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        }
+                    }
+                });
+            } else {
+                App.openWin({
+                    backName : 'userRecruitmentList',
+                    name : 'userRecruitment',
+                    url : 'userRecruitment.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                });
+            }
+        }
+
+        function openRecruit(id, type) {
+            App.setVal("recruitType", type);
+            App.setVal("recruitId", id);
+            App.openWin({
+                backName : 'userRecruitmentList',
+                name : 'userRecruitment',
+                url : 'userRecruitment.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+        
+        function openPreview(id){
+            App.setVal("recruitId",id);
+            App.openWin({
+                backName : 'userRecruitmentList',
+                name : 'userRecruitPreview',
+                url : 'userRecruitPreview.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function createRecruitHtml(obj) {
+            var h = '';
+            var isshow = "(不限时间)";
+            var type = "海员招聘";
+            if (obj.recruittype == "normal") {
+                type = "普通招聘";
+            }
+            if (!App.isNull(obj.dealinetime)) {
+                isshow = "有效期至" + obj.dealinetime;
+            }
+            h += '<li onclick="openPreview(\'' + obj.id + '\')" class="ub ubb bc-border uinn ub-ver">';
+            h += '   <div class="ub ub-f1">';
+            h += '     <div class="ub-f1 ub ub-ver marg-l">'
+            h += '       <div class="ub ulev2 ut-m ub-f1">' + obj.jobtitle + '<span class="ulev-2 umar-l txt-color">(' + isshow + ')</span>' + '</div>';
+            h += '       <div class="ulev-1 t-gra uinn3 ut-m">' + type + '</div>';
+            h += '       <div class="ulev-1 t-gra uinn3 ut-m">被浏览次数(' + obj.viewcount + ')</div>';
+            h += '     </div>';
+            h += '     <div class="ub ub-ac fa fa-angle-right ulev2 t-gra"></div>';
+            h += '   </div>';
+            h += '</li>';
+            h += '<li class="ub ub-f1 uinn ubb bc-border">';
+            h += '    <div onclick="openRecruit(' + obj.id + ',\'' + obj.recruittype + '\')" class="ub ub-f1 ub-pc ubr bc-border" style="width: 50%">编辑招聘</div>';
+            h += '    <div onclick="openApplyList('+ obj.id +')" class="ub ub-f1 ub-pc" style="width: 50%">申请列表(' + obj.applycount + ')</div>';
+            h += '</li>';
+            return h;
+        }
+        function openApplyList(id){
+            App.setVal("recruitId",id);
+            App.openWin({
+                backName : 'userRecruitmentList',
+                name : 'userRecruitApplyList',
+                url : 'userRecruitApplyList.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+    </script>
+</html>

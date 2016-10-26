@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../indexNew_content/css/main.css">
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div id="bodyDiv" class="ub ub-ver ub-f1">
+            <div class="ub ub-ver" id="comment">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var orderType = 1;
+        var dynamicId;
+        var dynamicItem;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadDynamicList(1, orderType, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1
+                loadDynamicList(page, orderType, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            if ($("#comment ul li").length > 0) {
+                return;
+            }
+            App.ajaxLoading(1, true);
+            loadDynamicList(page, orderType, 0);
+        }
+
+        function loadDynamicList(pages, orderTypes, add, bounceType) {
+            page = pages;
+            orderType = orderTypes;
+            var userId = App.getVal("userId");
+            if (App.isNull(userId)) {
+                userId = userinfo.userid;
+            }
+            App.authApi({
+                url : "dynamic/getUserDynamicList",
+                data : {
+                    params : {
+                        page : pages,
+                        pageSize : pageSize,
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data);
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (data.items.dataList.length > 0) {
+                            for (var i = 0; i < data.items.dataList.length; i++) {
+                                d += createDynamicHtml(data.items.dataList[i], i);
+                            };
+                            if (add) {
+                                $('#comment ul').append(d);
+                            } else {
+                                $('#comment ul').html(d);
+                            }
+                            setContentSize();
+                        } else {
+                            App.toast("暂时没有更多的动态了");
+                        }
+
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                        //uexWindow.resetBounceView(1);
+                    }
+                }
+            });
+        }
+
+        function setContentSize() {
+            //App.Logs("=======setContentSize=======");
+            $(".content").each(function() {
+                //App.Logs(App.toJsonStr($(this).find(".spec-title").offset()))
+                //App.Logs("content"+","+$(this).find(".spec-title").height()+","+$(this).height()+","+$(this).find(".spec-title").html());
+                if ($(this).find(".spec-title").height() <= $(this).height()) {
+                    $(this).css('height', '');
+                } else {
+                    $(this).css('height', '');
+                    $(this).find(".spec-title").addClass('spec-content');
+                    $(this).next().removeClass('uhide');
+                }
+            })
+            $('.icontent').each(function() {
+                // App.Logs(App.toJsonStr($(this).find(".spec-title").offset()))
+                // App.Logs('.icontent'+","+ $(this).find(".spec-title").height()+","+ $(this).height()+","+$(this).find(".spec-title").html())
+                if ($(this).find(".spec-title").height() <= $(this).height()) {
+                    $(this).css('height', '');
+                } else {
+                    $(this).css('height', '');
+                    $(this).find(".spec-title").addClass('spec-content2');
+                    $(this).next().removeClass('uhide');
+                }
+            })
+        }
+
+        function shwoMoreContent(item, type) {
+            if ($(item).html() == "全文") {
+                $(item).prev().css('height', '');
+                if (type == 1) {
+                    $(item).prev().children().removeClass('spec-content2');
+                } else {
+                    $(item).prev().children().removeClass('spec-content');
+                }
+                $(item).html('收起');
+            } else {
+                $(item).html('全文');
+                if (type == 1) {
+                    $(item).prev().css('height', '4em');
+                    $(item).prev().children().addClass('spec-content2');
+                } else {
+                    $(item).prev().css('height', '7em');
+                    $(item).prev().children().addClass('spec-content');
+                }
+            }
+        }
+
+        function createDynamicHtml(obj, index) {
+            var content = App.isNull(obj.content) ? "" : obj.content;
+            var cnname = obj.cnname;
+            var compname = obj.compname;
+            var jobtitle = obj.jobtitle;
+            var city = App.isNull(obj.city) ? "" : obj.city + " ";
+            var id = obj._id;
+            var userid = obj.userid;
+            var piclist = obj.piclist;
+            var isfriend = 1;
+            var shareContent = cnname + "|" + compname + jobtitle + "说:";
+            var userContent = content.replace(/[\r\n]/g, "").substr(0, 20);
+            var showDel = "uhide";
+            var showAddBtn = "uhide";
+            if (userid == userinfo.userid) {
+                showDel = "";
+            }
+            if (isfriend == -2 && userid != userinfo.userid) {
+                showAddBtn = "";
+            }
+            var showPic = "uhide";
+            var picHtml = '';
+            if (!App.isNull(piclist)) {
+                showPic = "";
+                picHtml = createPicHtml(piclist, id);
+            }
+            var usertype =  obj.usertype ;
+            //App.getUserType(obj.usertype);
+            var headuri = App.isNull(obj.headuri) ? "../indexNew_content/css/myImg/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + "t/100x100/" + obj.headuri;
+            }
+            var zanList = App.isNull(obj.zannum) ? "" : obj.zannum;
+            var showZanList = "uhide";
+            var zan = "";
+            var zanHtml = "";
+            var zanIcon = "zan"
+            if (!App.isNull(obj.iszan)) {
+                zanIcon = "zanY";
+            }
+            if (!App.isNull(obj.zanlistdata)) {
+                showZanList = "";
+                zan = zanList;
+                zanHtml += createZanHtml(obj.zanlistdata,true);
+            }
+            var kuosanList = App.isNull(obj.kuosannum) ? "" : obj.kuosannum;
+            var showKuosanList = "uhide";
+            var kuosan = "";
+            var kuosanHtml = "";
+            if (!App.isNull(obj.kuosanlistdata)) {
+                showKuosanList = "";
+                kuosan = kuosanList;
+                kuosanHtml += createKuosanHtml(obj.kuosanlistdata,true);
+            }
+            var pinglunList = App.isNull(obj.pinglunnum) ? "" : obj.pinglunnum;
+            var showPinglunList = "uhide";
+            var pinlun = "";
+            var pinlunHtml = "";
+            if (!App.isNull(obj.pinglunlistdata)) {
+                showPinglunList = "";
+                pinlun = pinglunList;
+                pinlunHtml = createPinglunHtml(id, obj.pinglunlistdata, pinlun);
+            }
+            var showBottom = "";
+            if (showPinglunList == "uhide" && showKuosanList == "uhide" && showZanList == "uhide") {
+                showBottom = "uhide";
+            }
+            var incontent = obj.incontent;
+            var incontentHtml = "";
+            var kuosanIco = "kuosan";
+            var kuosanid = App.isNull(obj.iskuosan) ? "" : obj.iskuosan;
+            if (!App.isNull(obj.iskuosan)) {
+                kuosanIco = "kuosanY";
+            }
+            if (!App.isNull(incontent)) {
+                incontentHtml += createIncontentHtml(incontent);
+            }
+            var verify = "uhide";
+            if (obj.auditstatus == 2) {
+                verify = "";
+            }
+            var h = '';
+            h += '<li id="C' + id + '" class="ubb ub bc-border lis" data-time="' + obj.regtime + '">';
+            h += '    <div data-img="' + headuri + '" class="uh-app3 uw-app3 uc-a1 ub-img1 mar-ar1 userImage" style="background-image:url(' + headuri + ');"></div>';
+            h += '    <div class="ub-f1 ub ub-ver">';
+            h += '       <div class="ub ub-f1 ub-ac ">';
+            h += '           <div onclick="openUserDetail(\'' + userid + '\')" class="ut-s sc-text-active userName" ontouchstart="appcan.touch(\'btn-act\')">' + cnname + '</div>';
+            h += '           <div class="ub-img verify umw1 umh1 ' + verify + '"></div>';
+            h += '           <div onclikc="addFriend(\'' + id + '\',\'' + userid + '\')" class="ub ub-pc ub-ac uba bc-border ulev-1 t-color addFriend ' + showAddBtn + '">+好友</div>';
+            h += '       </div>';
+            h += '       <div class="ub ub-f1" style="margin-top:0.2em">';
+            h += '           <div class="ub-f1 ub t-gra-comm ">';
+            h += '               <div class="umar-r ulev-1 uhide">' + city + '</div>';
+            h += '               <div class="ulev-1">' + usertype + '</div>';
+            h += '           </div>';
+            h += '       </div>';
+            h += '       <div  class="t-bla ub-f1 content" style="height:7.2em" >';
+            h += '         <div onclick="openContent(\'' + id + '\')" class="ub-f1 spec-title" ontouchstart="appcan.touch(\'btn-act\')">' + content + '</div>'
+            h += '       </div>';
+            h += '       <div onclick="shwoMoreContent(this,0)" class="sc-text-active umar-t all ulev-5 allContent uhide">全文</div>';
+            h += '       ' + incontentHtml;
+            h += '       <div class="umar-t ub-f1 piclist ' + showPic + '">';
+            h += '            ' + picHtml;
+            h += '       </div>';
+            if (!App.isNull(obj.atlist)) {
+                if (userid == userinfo.userid) {
+                    var str = "";
+                    for (var i = 0; i < obj.atlist.length; i++) {
+                        str += obj.atlist[i].cnname + ",";
+                    };
+                    str = str.substring(0, str.length - 1);
+                    h += '<div class="t-gra-comm ub-f1" style="font-size: 0.68em">提到了:' + str + '</div>';
+                } else {
+                    if (checkInAtList(obj.atlist, userinfo.userid)) {
+                        h += '<div class="t-gra-comm ub-f1" style="font-size: 0.68em">提到了我</div>';
+                    }
+                }
+            }
+            h += '       <div class="uinn ub ub-pe ub-f1">';
+            h += '           <div onclick="delDynamic(\'' + id + '\')" class="ub ub-pc ub-ac ' + showDel + '" style="margin-right: 1em">';
+            h += '               <div class="delBtn" style="color: #008CE4;font-size:0.8125em;margin-top:0.2em">删除</div>';
+            h += '           </div>';
+            h += '           <div onclick="publishZan(\'' + id + '\',this)" class="ub ub-pc ub-ac" style="margin-right: 1em">';
+            h += '               <div class="ub-img ' + zanIcon + '"></div>';
+            h += '               <div class="zanBtn" style="color: #B4BEC6;font-size:0.9125em;margin-top:0.2em">' + zan + '</div>';
+            h += '           </div>';
+            h += '           <div onclick="publishPinlun(\'' + id + '\',0)" class="ub ub-pc ub-ac umar-r " style="margin-right: 1em">';
+            h += '               <div class="ub-img pinlun"></div>';
+            h += '               <div class="pinglunBtn" style="color: #B4BEC6;font-size:0.9125em;margin-top:0.2em">' + pinlun + '</div>';
+            h += '           </div>';
+            h += '           <div onclick="publishKuoSan(\'' + id + '\',\'' + shareContent + '\',\'' + userContent + '\',this,\'' + cnname + '\')" class="ub umar-r ub-pc ub-ac" style="margin-right: 1em">';
+            h += '               <div class="ub-img ' + kuosanIco + '"></div>';
+            h += '               <div data-dynamicid="' + kuosanid + '" class="kuosanBtn" style="color: #B4BEC6;font-size:0.9125em;margin-top:0.2em">' + kuosan + '</div>';
+            h += '           </div>';
+            h += '       </div>';
+            h += '       <div class="footer ub ub-f1 ub-ver ' + showBottom + ' ulev-1">';
+            h += '           <div class="umar-at1" style="background-color: #F3F4F6">';
+            h += '               <div class="pingTriangle"></div>';
+            h += '               <div class="ub  uinn-comm ub-ver ub-f1">';
+            h += '                   <div class="ub ub-f1 ub-ac zanList uinn3 ' + showZanList + '">';
+            h += '                       <div class="ub ub-ac">';
+            h += '                           <div class="ub-img zan"></div>';
+            h += '                       </div>';
+            h += '                       <div class="ub ub-f1">';
+            h += '                           <div class="ub-f1 ut-s zanHtml">' + zanHtml + '</div>';
+            h += '                           <div class="zanStr ulev-5"><span style="color:#B4BEC6">等' + zan + '人觉得很赞</span></div>';
+            h += '                       </div>';
+            h += '                   </div>';
+            h += '                   <div class="ub ub-f1 ub-ac kuosanList uinn3 ' + showKuosanList + '">';
+            h += '                       <div class="ub ub-ac">';
+            h += '                           <div class="ub-img kuosan"></div>';
+            h += '                       </div>';
+            h += '                       <div class="ub ub-f1">';
+            h += '                           <div class="ub-f1 ut-s kuosanHtml">' + kuosanHtml + '</div>';
+            h += '                           <div class="kuosanStr ulev-5"><span style="color:#B4BEC6">等' + kuosan + '人扩散了</span></div>';
+            h += '                       </div>';
+            h += '                   </div>';
+            h += '                   <div class="ub ub-f1 ub-ver pinglunList uinn3 ' + showPinglunList + '">';
+            h += '                        ' + pinlunHtml;
+            h += '                   </div>'
+            if (pinlun > 2) {
+                h += '               <div class="ub ub-f1 ub-ac pinglunNum" style="margin: 2px" ontouchstart="appcan.touch(\'btn-act\')">';
+                h += '                   <span class="sc-text-active">查看全部' + pinlun + '条评论...</span>';
+                h += '               </div>';
+            }
+            h += '               </div>';
+            h += '           </div>';
+            h += '       </div>';
+            h += '    </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function checkInAtList(objList, userId) {
+            if (!App.isNull(objList)) {
+                for (var i = 0; i < objList.length; i++) {
+                    if (objList[i].userId == userId) {
+                        return true;
+                    };
+                };
+            }
+            return false;
+        }
+
+        function addFriend(id, userId) {
+            if (userId == userinfo.userid) {
+                App.toast("不能添加自己");
+                return;
+            }
+            if (!isdebug) {
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : userinfo.cnname + "请求添加你为好友",
+                            remark1 : "你请求添加" + cnName + "为好友"
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : "我请求把你加入我的好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            $('#C' + id).find('.addFriend').addClass('uhide');
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        function createIncontentHtml(obj) {
+            var cnname = obj.cnname;
+            var h = '';
+            if (!App.isNull(cnname)) {
+                var showPic = "uhide";
+                var picHtml = '';
+                if (!App.isNull(obj.piclist) && obj.piclist.length > 0) {
+                    showPic = "";
+                    picHtml = createPicHtml(obj.piclist, obj.id);
+                }
+                h += '<div data-id="' + obj.id + '" data-headuri="' + obj.headuri + '" class="ub ub-ver ub-f1 uinn-comm inContent" style="background-color: #F3F4F6">';
+                h += '    <div class="ub ub-f1 ub-ac ">';
+                h += '        <div onclick="openUserDetail(\'' + obj.userid + '\')" class="ut-s sc-text-active userName" >' + obj.cnname + '</div>';
+                h += '        <div class="ubl bc-border uhide" style="margin-left: 0.2em;color: #B4BEC6;height: 0.625em"></div>';
+                h += '        <div class="ut-s compName uhide" >' + obj.compname + '</div>';
+                h += '        <div class="ut-s ub-f1 umar-r jobTitle uhide">' + obj.jobtitle + '</div>';
+                h += '    </div>';
+                h += '    <div onclick="openContent(\'' + obj.id + '\')" class="t-bla ub-f1 icontent" style="height:4em" >';
+                h += '       <div class="ub-f1 spec-title" ontouchstart="appcan.touch(\'btn-act\')">' + obj.content + '</div>';
+                h += '    </div>';
+                h += '    <div onclick="shwoMoreContent(this,1)" class="sc-text-active umar-t all ulev-5 iallContent uhide">全文</div>';
+                h += '    <div class="umar-t ub-f1 ipiclist ' + showPic + '">';
+                h += '        ' + picHtml;
+                h += '    </div>';
+                h += '</div>';
+            } else {
+                h += '<div class="ub ub-ver ub-f1 uinn-comm inContent" style="background-color: #F3F4F6">';
+                h += '    <div class="ub ub-f1 ub-ac ulev-5" style="color: #6e6e6e">该条动态已被屏蔽或删除</div>';
+                h += '</div>';
+            }
+            return h;
+        }
+
+        /**
+         *删除动态
+         */
+        function delDynamic(id) {
+            appcan.window.confirm({
+                title : '提醒',
+                content : '确定要删除这条状态吗?',
+                buttons : ['不要删除', '我要删除'],
+                callback : function(err, data, dataType, optId) {
+                    if (err) {
+                        return;
+                    }
+                    if (parseInt(data) == 1) {
+                        App.authApi({
+                            url : "dynamic/delDynamic",
+                            data : {
+                                params : {
+                                    id : id,
+                                    userId : userinfo.userid
+                                }
+                            },
+                            callBack : function(data) {
+                                App.Logs("delDynamic:" + App.toJsonStr(data));
+                                if (data.code == 0) {
+                                    $('#C' + id).remove();
+                                    if (!App.isNull(data.items.dynamicid)) {
+                                        if (data.items.num == 0) {
+                                            $('#C' + data.items.dynamicid + ' .footer .kuosanList').addClass('uhide');
+                                            $('#C' + data.items.dynamicid + ' .footer .kuosanHtml').html("");
+                                            $('#C' + data.items.dynamicid + ' .kuosanBtn').html('');
+                                        } else {
+                                            $('#C' + data.items.dynamicid + ' .kuosanBtn').html(data.items.num);
+                                        }
+                                        $('#C' + data.items.dynamicid + ' .kuosanBtn').prev().removeClass('kuosanY');
+                                        $('#C' + data.items.dynamicid + ' .kuosanBtn').prev().addClass('kuosan');
+                                        $('#K' + data.items.kuosanid).remove();
+                                        checkFooter(data.items.dynamicid);
+                                    }
+                                } else {
+                                    App.toast(data.message);
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        }
+
+        function openImageBrowser(id, index) {
+            var picList = [];
+            $('#C' + id + " .piclist .imgitem").each(function() {
+                var obj = {
+                    src : $(this).attr("data-o")
+                }
+                picList.push(obj);
+            })
+            var param = {
+                displayActionButton : false,
+                displayNavArrows : true,
+                enableGrid : false,
+                startOnGrid : false,
+                startIndex : index,
+                data : picList
+            }
+            uexImage.openBrowser(App.toJsonStr(param));
+        }
+
+        function createPicHtml(piclist, id) {
+            var h = '';
+            for (var i = 0; i < piclist.length; i++) {
+                var image = App.dynamicPicUri + 't/160x160/' + piclist[i];
+                var oimage = App.dynamicPicUri + 'o/' + piclist[i];
+                h += '<img data-o="' + oimage + '" onclick="openImageBrowser(\'' + id + '\',' + i + ')" class="imgitem" src="' + image + '">';
+            };
+            return h
+        }
+
+        function createPinglunHtml(id, obj) {
+            var h = '';
+            for (var i = 0; i < obj.length; i++) {
+                h += '<span id="P' + obj[i]._id + '" class="ub ub-ac ub-f1" style="margin: 2px">';
+                //console.log(obj[i]._id)
+                var content = obj[i].content;
+                var reg = /\[([^\]]+)\]/g;
+                content = content.replace(reg, function($1) {
+                    return emoarr1[$1] || $1;
+                });
+                //console.log(content)
+                if (obj[i].type == 0) {
+                    h += '<span class="sc-text-active" onclick="openUserDetail(\'' + obj[i].userid + '\')" ontouchstart="appcan.touch(\'btn-act\')">' + obj[i].username + '</span><span>:</span>';
+                    h += '<span class="ub-f1" style="word-break: break-all;" onclick="publishPinlun(\'' + id + '\',1,\'' + obj[i].userid + '\',\'' + obj[i].username + '\',\'' + obj[i]._id + '\')" ontouchstart="appcan.touch(\'btn-act\')">' + content + '</span>';
+                } else {
+                    h += '<span class="sc-text-active" onclick="openUserDetail(\'' + obj[i].userid + '\')" ontouchstart="appcan.touch(\'btn-act\')">' + obj[i].username + '</span><span>回复</span><span class="sc-text-active" onclick="openUserDetail(\'' + obj[i].touserid + '\')" ontouchstart="appcan.touch(\'btn-act\')">' + obj[i].tousername + '</span><span>:</span><span style="word-break: break-all;" ontouchstart="appcan.touch(\'btn-act\')" onclick="publishPinlun(\'' + id + '\',1,\'' + obj[i].userid + '\',\'' + obj[i].username + '\',\'' + obj[i]._id + '\')" class="ub-f1">' + content + '</span>';
+                }
+                h += '</span>';
+            };
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            if (userId == userinfo.userid) {
+                App.setVal('viewMode', 'edit');
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : 'userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function createZanHtml(obj, type) {
+            var h = '';
+            for (var i = 0; i < obj.length; i++) {
+                h += '<span id="Z' + obj[i]._id + '" onclick="openUserDetail(\'' + obj[i].userid + '\')" class="sc-text-active" ontouchstart="appcan.touch(\'btn-act\')">' + obj[i].username + '<span class="bc-text">,</span></span>'
+            };
+            if (type) {
+                var index = h.lastIndexOf('<span class="bc-text">,</span>');
+                h = h.substring(0, index) + '</span>';
+            }
+            return h;
+        }
+
+        function checkFooter(id) {
+            var zanList = $('#C' + id + " .footer .zanList").hasClass('uhide');
+            var kuosanList = $('#C' + id + " .footer .kuosanList").hasClass('uhide');
+            var pinglunList = $('#C' + id + " .footer .pinglunList").hasClass('uhide');
+            if (zanList && kuosanList && pinglunList) {
+                $('#C' + id + " .footer").addClass('uhide');
+            } else {
+                $('#C' + id + " .footer").removeClass('uhide');
+            }
+        }
+
+        function openContent(id) {
+            App.setVal("dynamicId", id);
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : id,
+                name : 'dynamic',
+                url : '../dynamic/dynamic.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function createKuosanHtml(obj,type) {
+            var h = '';
+            for (var i = 0; i < obj.length; i++) {
+                h += '<span id="K' + obj[i]._id + '" onclick="openUserDetail(\'' + obj[i].userid + '\')" class="sc-text-active" ontouchstart="appcan.touch(\'btn-act\')">' + obj[i].username + '<span class="bc-text">,</span></span>';
+            };
+            if (type) {
+                var index = h.lastIndexOf('<span class="bc-text">,</span>');
+                h = h.substring(0, index) + '</span>';
+            }
+            return h;
+        }
+
+        function addLocalKuosan(id, num, content, kuosanId) {
+            if (num == 0) {
+                $('#C' + id + " .footer .kuosanList").addClass('uhide');
+                $('#C' + id + " .footer .kuosanHtml").html("");
+                $('#C' + id + " .kuosanBtn").html("");
+            } else {
+                $('#C' + id + " .footer .kuosanList").removeClass('uhide');
+                $('#C' + id + " .kuosanBtn").html(num);
+                var html = createKuosanHtml([{
+                    _id : kuosanId,
+                    userid : userinfo.userid,
+                    username : userinfo.cnname
+                }]);
+                $('#C' + id + " .footer .kuosanHtml").prepend(html);
+                $('#C' + id + " .footer .kuosanStr").find('span').html("等" + num + "人扩散了");
+                App.authApi({
+                    url : 'dynamic/publishDynamic',
+                    data : {
+                        params : {
+                            userId : userinfo.userid,
+                            content : content,
+                            imgList : [],
+                            userType : userinfo.userid,
+                            id : id
+                        }
+                    },
+                    callBack : function(data) {
+                        App.Logs("addKuosanHtml:" + App.toJsonStr(data));
+                        if (data.code == 0) {
+                            $('#C' + id + " .kuosanBtn").attr("data-dynamicid", data.items._id);
+                            if ($('#C' + data.items.indynamicid + " .kuosanBtn").prev().hasClass('kuosanY')) {
+                                $('#C' + data.items.indynamicid + " .kuosanBtn").prev().removeClass('kuosanY');
+                                $('#C' + data.items.indynamicid + " .kuosanBtn").prev().addClass('kuosan');
+                            } else {
+                                $('#C' + data.items.indynamicid + " .kuosanBtn").prev().removeClass('kuosan');
+                                $('#C' + data.items.indynamicid + " .kuosanBtn").prev().addClass('kuosanY');
+                            }
+                            addLocalDynimic(App.toJsonStr(data.items));
+                            App.evalJs({
+                                winName : 'indexNew',
+                                type : 1,
+                                js : 'closeShareInfo()'
+                            });
+                            App.toast("动态已扩散到您的商友圈");
+                            checkFooter(id);
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+            checkFooter(id);
+        }
+
+        function publishZan(id, item) {
+            App.authApi({
+                url : "dynamic/publishZan",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        id : id,
+                        userName : userinfo.cnname
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data, item);
+                    if (data.code == 0) {
+                        if (data.items.num == 0) {
+                            $(item).find(".zanBtn").html("");
+                            $('#C' + id + " .footer .zanList").addClass('uhide');
+                            $('#C' + id + " .footer .zanHtml").html("");
+                        } else {
+                            $(item).find(".zanBtn").html(data.items.num);
+                            $('#C' + id + " .footer .zanList").removeClass('uhide');
+                            $('#C' + id + " .footer .zanStr").find('span').html("等" + data.items.num + "人觉得很赞");
+                        }
+                        if ($(item).find(".zanBtn").prev().hasClass('zanY')) {
+                            $(item).find(".zanBtn").prev().removeClass('zanY');
+                            $(item).find(".zanBtn").prev().addClass('zan');
+                            $('#Z' + data.items.zanid).remove();
+                        } else {
+                            $(item).find(".zanBtn").prev().removeClass('zan');
+                            $(item).find(".zanBtn").prev().addClass('zanY');
+                            var html = createZanHtml([{
+                                userid : userinfo.userid,
+                                username : userinfo.cnname,
+                                _id : data.items.zanid
+                            }]);
+                            $('#C' + id + " .footer .zanHtml").prepend(html);
+                        }
+                        checkFooter(id);
+                    }
+                }
+            })
+        }
+
+        function delePinglun(id, pingLunId, userId) {
+            App.authApi({
+                url : "dynamic/delePinglun",
+                data : {
+                    params : {
+                        id : pingLunId,
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        $('#P' + pingLunId).remove();
+                        if (data.items.num == 0) {
+                            $('#C' + id + " .pinglunList").addClass('uhide');
+                            $('#C' + id + " .pinglunBtn").html('');
+                        } else {
+                            $('#C' + id + " .pinglunBtn").html(data.items.num);
+                        }
+                        checkFooter(id);
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            })
+        }
+
+        function colseInputTextField() {
+            //if (App.getAppPlat()) {
+            // App.evalJs({
+            //     winName : 'indexNew',
+            //     type : 1,
+            //    js : "closeInputTextFieldView()"
+            //})
+            //} else {
+            uexInputTextFieldView.close();
+            //}
+            appcan.window.enableBounce();
+            setTimeout(function() {
+                $('#MaskDiv').remove();
+            }, 400);
+        }
+
+        function publishPinlun(id, type, toUserId, toUserName, pingLunId) {
+            if (toUserId == userinfo.userid) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '是否要删除您所发布的这条评论?',
+                    buttons : ['不要删除', '我要删除'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            delePinglun(id, pingLunId, toUserId);
+                        }
+                    }
+                });
+                return;
+            }
+            if (type == 0) {
+                openContent(id);
+            }
+        }
+
+        function sendPinglun(content, type, toUserId, toUserName) {
+            $('#MaskDiv').remove();
+            //App.Logs(dynamicId + "," + dynamicItem);
+            if (App.isNull(toUserId)) {
+                toUserId = 0;
+            }
+            App.openLoading({
+                title : '',
+                msg : "正在提交评论...",
+                canCancel : 1
+            });
+            App.authApi({
+                url : "dynamic/publishPinglun",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        id : dynamicId,
+                        content : content,
+                        type : type,
+                        toUserId : toUserId
+                    }
+                },
+                callBack : function(data) {
+                    // console.log(data)
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        var a = [];
+                        var obj = {
+                            type : type,
+                            userid : userinfo.userid,
+                            username : userinfo.cnname,
+                            content : content,
+                            touserid : toUserId,
+                            tousername : toUserName,
+                            _id : data.items._id
+                        }
+                        a.push(obj);
+                        $('#C' + dynamicId + " .pinglunBtn").html(data.items.num);
+                        $('#C' + dynamicId + " .footer").removeClass('uhide');
+                        $('#C' + dynamicId + " .pinglunList").removeClass('uhide');
+                        $('#C' + dynamicId + " .pinglunList").append(createPinglunHtml(dynamicId, a));
+                    }
+                }
+            });
+        }
+
+        function addLocalPingLun(opts) {
+            opts = typeof opts == "string" ? App.toJson(opts) : opts;
+            var a = [];
+            a.push(opts);
+            $('#C' + opts.dynamicId + " .pinglunBtn").html(opts.num);
+            $('#C' + opts.dynamicId + " .footer").removeClass('uhide');
+            $('#C' + opts.dynamicId + " .pinglunList").removeClass('uhide');
+            $('#C' + opts.dynamicId + " .pinglunList").append(createPinglunHtml(opts.dynamicId, a));
+        }
+
+        function cancleKuosan() {
+            var shareData = App.getJson('shareData');
+            if (App.isNull(shareData) && App.isNull(shareData.dynamicId)) {
+                return;
+            }
+            var oriId = shareData.oriId;
+            var dynamicId = shareData.dynamicId;
+            var userId = userinfo.userid;
+            App.authApi({
+                url : "dynamic/cancleKuosan",
+                data : {
+                    params : {
+                        userId : userId,
+                        oriId : oriId,
+                        dynamicId : dynamicId
+                    }
+                },
+                callBack : function(data) {
+                    App.Logs('cancleKuosan:' + App.toJsonStr(data))
+                    if (data.code == 0) {
+                        //$('#C' + oriId).remove();
+                        var dynamicidnew = $('#C' + dynamicId + ' .kuosanBtn').attr('data-dynamicid');
+                        var inContentid = $('#C' + dynamicId + " .inContent").attr("data-id");
+                        App.Logs(dynamicidnew + ',' + dynamicId + ',' + inContentid);
+                        if (!App.isNull(dynamicidnew)) {
+                            $('#C' + dynamicidnew).remove();
+                            $('#C' + dynamicId + ' .kuosanBtn').attr('data-dynamicid', '');
+                            $('#C' + dynamicId + ' .kuosanBtn').prev().removeClass('kuosanY');
+                            $('#C' + dynamicId + ' .kuosanBtn').prev().addClass('kuosan');
+                            $('#C' + dynamicId + ' .kuosanBtn').html(data.items.num);
+                            if (data.items.num == 0) {
+                                $('#C' + dynamicId + ' .kuosanBtn').html("");
+                                $('#C' + dynamicId + ' .footer .kuosanList').addClass('uhide');
+                                $('#C' + dynamicId + ' .footer .kuosanHtml').html('');
+                            } else {
+                                $('#K' + data.items.kuosanid).remove();
+                            }
+                        } else {
+                            $('#C' + dynamicId).remove();
+                            $('#C' + inContentid + ' .kuosanBtn').attr('data-dynamicid', '');
+                            $('#C' + inContentid + ' .kuosanBtn').html(data.items.num);
+                            if (data.items.num == 0) {
+                                $('#C' + inContentid + ' .kuosanBtn').html('');
+                                $('#C' + inContentid + ' .footer .kuosanList').addClass('uhide');
+                                $('#C' + inContentid + ' .footer .kuosanHtml').html('');
+                            } else {
+                                $('#K' + data.items.kuosanid).remove();
+                            }
+                            $('#C' + inContentid + ' .kuosanBtn').prev().removeClass('kuosanY');
+                            $('#C' + inContentid + ' .kuosanBtn').prev().addClass('kuosan');
+                        }
+
+                        App.toast("已取消扩散");
+                    } else {
+                        App.toast(data.message);
+                    }
+                    checkFooter(dynamicId);
+                }
+            });
+        }
+
+        function publishKuoSan(id, shareContent, userContent, item, cnName) {
+            var shareData = {};
+            //console.log($('#C' + id + " .inContent").length)
+            var isCancle = $(item).children().first().hasClass('kuosanY');
+            if ($('#C' + id + " .inContent").length > 0) {
+                var cnname = $('#C' + id + " .inContent").find(".userName").html();
+                var compname = $('#C' + id + " .inContent").find(".compName").html();
+                var jobtitle = $('#C' + id + " .inContent").find(".jobTitle").html();
+                var content = $('#C' + id + " .inContent").find(".spec-title").html();
+                var shareContent = cnname + "|" + compname + jobtitle + "说:";
+                var Oid = $('#C' + id + " .inContent").attr("data-id");
+                var userContent = content.replace(/<br\s*\/?>/g, "").substr(0, 20);
+                var image = $('#C' + id + " .inContent").attr("data-headuri");
+                if (App.isNull(image)) {
+                    image = "res://comImg.png";
+                } else if (image.substr(0, 4) != "http") {
+                    image = App.headUri + "t/100x100/" + image
+                }
+                shareData = {
+                    cnName : cnname,
+                    inContent : shareContent + userContent,
+                    windowName : App.getCurrWinName(),
+                    thumbImg : image,
+                    wedpageUrl : App.dynamicShareUri + id,
+                    title : userContent,
+                    dynamicId : Oid,
+                    oriId : id,
+                    isCancle : isCancle
+                };
+
+            } else {
+                var image = $('#C' + id + " .userImage").attr('data-img');
+                if (image.substr(0, 2) == "./") {
+                    image = "res://comImg.png";
+                }
+                shareData = {
+                    cnName : cnName,
+                    inContent : shareContent + userContent,
+                    windowName : App.getCurrWinName(),
+                    thumbImg : image,
+                    wedpageUrl : App.dynamicShareUri + id,
+                    title : userContent,
+                    dynamicId : id,
+                    isCancle : isCancle
+                };
+            }
+            App.setVal('shareData', shareData);
+            App.evalJs({
+                winName : App.getCurrWinName(),
+                type : 1,
+                js : 'openShareMunu()'
+            })
+        }
+
+        function imgResize(imgObj) {
+            var img = new Image();
+            img.src = imgObj.src;
+            App.Logs(img.src + "," + img.width);
+            App.Logs((imgObj.width / imgObj.height) + "," + imgObj.width + "," + (imgObj.height / imgObj.width) + "," + $('.piclist').width());
+            var rate = imgObj.width / imgObj.height;
+            if (imgObj.width > imgObj.height) {
+                rate = imgObj.height / imgObj.width;
+            }
+            imgObj.width = parseInt($('.piclist').width()) * rate * 0.6;
+        }
+
+        function addLocalDynimic(data) {
+            App.Logs("addLocalDynimic:" + data);
+            var obj = App.toJson(data);
+            var html = createDynamicHtml(obj);
+            $('#comment ul').prepend(html);
+            setContentSize();
+        }
+
+        function addToKuosanHtml(dynamicId, kuosanId, num) {
+            if (num == 0) {
+                $('#C' + dynamicId + " .footer .kuosanList").addClass('uhide');
+                $('#C' + dynamicId + " .footer .kuosanHtml").html("");
+                $('#C' + dynamicId + " .kuosanBtn").html("");
+            } else {
+                $('#C' + dynamicId + " .footer .kuosanList").removeClass('uhide');
+                $('#C' + dynamicId + " .kuosanBtn").html(num);
+                var html = createKuosanHtml([{
+                    _id : kuosanId,
+                    userid : userinfo.userid,
+                    username : userinfo.cnname
+                }]);
+                $('#C' + dynamicId + " .footer .kuosanHtml").prepend(html);
+                $('#C' + dynamicId + " .footer .kuosanStr").find('span').html("等" + num + "人扩散了");
+            }
+            checkFooter(dynamicId);
+        }
+
+        function removeKuosanHtml(dynamicId, kuosanid, num, dynamicidnew) {
+            App.Logs('removeKuosanHtml:' + dynamicId + "," + kuosanid + "," + num + "," + dynamicidnew);
+            $('#C' + dynamicidnew).remove();
+            $('#K' + kuosanid).remove();
+            $('#C' + dynamicId + ' .kuosanBtn').attr('data-dynamicid', '');
+            $('#C' + dynamicId + ' .kuosanBtn').prev().removeClass('kuosanY');
+            $('#C' + dynamicId + ' .kuosanBtn').prev().addClass('kuosan');
+            $('#C' + dynamicId + ' .kuosanBtn').html(num);
+            if (num == 0) {
+                $('#C' + dynamicId + ' .kuosanBtn').html("");
+                $('#C' + dynamicId + ' .footer .kuosanList').addClass('uhide');
+                $('#C' + dynamicId + ' .footer .kuosanHtml').html('');
+            }
+            checkFooter(dynamicId);
+        }
+
+    </script>
+</html>

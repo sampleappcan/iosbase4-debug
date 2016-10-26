@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="jobSearch_content/css/main.css">
+        <style>
+            .txt-color {
+                color: #8D969D;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1">
+            <div class="ub ub-ver ub-f1" id="listview">
+                <ul>
+
+                </ul>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        var type = "seaman";
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                getResumeList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                getResumeList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            getResumeList(1, 0);
+        }
+
+        function getResumeList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            var jobCondition = App.getJson("jobCondition");
+            jobCondition = App.isNull(jobCondition) ? "" : jobCondition;
+            if (App.isNull(jobCondition)) {
+                jobCondition = {
+                    date : "3"
+                }
+            }
+            App.authApi({
+                url : "s/searchResumeList",
+                data : {
+                    params : {
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        jobCondition : jobCondition,
+                        type : type
+                    }
+                },
+                callBack : function(data) {
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && pageNumber > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createResumeHtml(objData.dataList[i], i);
+                            }
+                            if (add) {
+                                $('#listview ul').append(d);
+                            } else {
+                                $('#listview ul').html(d);
+                            }
+                        } else {
+                            d = '<div class="ub ub-ac ub-pc ub-f1" style="padding-top:10em;color:#7C807F">没有找到合适的职位</div>';
+                            $('#listview').removeClass('sc-bg');
+                            $('#listview ul').html(d);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    if (bounceType != undefined && bounceType != null) {
+                        uexWindow.resetBounceView(bounceType);
+                    }
+                }
+            });
+        }
+
+        function createResumeHtml(obj) {
+            console.log(obj)
+            var h = '';
+            var photoUri = "../user/userResumeDetail_content/css/myImg/resume_photo.png";
+            if (!App.isNull(obj.photouri)) {
+                photoUri = App.resumeUri + "o/" + obj.photouri;
+            }
+            var applyjobtitle = App.isNull(obj.applyjobtitle) ? "" : "求职意向:" + obj.applyjobtitle;
+            var sex = obj.sex;
+            var age = App.getIdCardInfo(obj.idcode, 3) + "岁";
+            var shipexp = App.isNull(obj.shipexp) ? "" : obj.shipexp + "年航海经验|";
+            var contxt = sex + "|" + age + "|" + shipexp + obj.certificatelv;
+            var applytonnage = App.isNull(obj.applytonnage) ? "" : obj.applytonnage;
+            var applyshipline = App.isNull(obj.applyshipline) ? "" : obj.applyshipline;
+            var applyshiptype = App.isNull(obj.applyshiptype) ? "" : obj.applyshiptype;
+            var applypayroll = App.isNull(obj.applypayroll) ? "" : obj.applypayroll;
+            var payrolltype = App.isNull(obj.payrolltype) ? "" : obj.payrolltype;
+            var resumetitle = obj.certificatelv + obj.applyjobtitle + obj.cnname + "的简历";
+            var remarkTxt = "载重吨" + applytonnage + ",航线" + applyshipline + ",船型" + applyshiptype + ",月薪" + applypayroll + payrolltype;
+            h += '<li onclick="openResumePrev(' + obj.id + ')" class="ub ubb bc-border uinn sc-bg ub-ver umar-t">';
+            h += '    <div class="ub ub-f1">';
+            h += '        <div id="photoUri" class="ub ub ub-ver umar-r">';
+            h += '            <div class="uba ub ub-ac ub-pc uc-a1" style="background-color:#F6F6F6;border-color:#F6F6F6 ">';
+            h += '                <div class="ub-img1 " style="width: 3.2em;height: 4em;background-image:url(' + photoUri + ')"></div>';
+            h += '            </div>';
+            h += '        </div>';
+            h += '        <div class="ub-f1 ub ub-ver marg-l">';
+            h += '            <div class="ub ulev2 ut-m ub-f1">' + resumetitle + '</div>';
+            h += '            <div class="ulev-1 t-gra uinn3 ut-m">' + contxt + '</div>';
+            h += '            <div class="ulev-1 t-gra uinn3 ut-m">' + applyjobtitle + '</div>';
+            h += '        </div>';
+            h += '    </div>';
+            h += '    <div class="ulev-4 umar-t txt-color " style="border-top: 1px dashed #BABABA;padding-top: 0.2em">' + remarkTxt + '</div>'
+            h += '</li>';
+            return h;
+        }
+
+        function openResumePrev(id) {
+            App.setVal("resumeId", id);
+            App.setVal("resumeType", "seaman");
+            App.openWin({
+                backName : "userResumeList",
+                name : 'userResumePreview',
+                url : '../user/userResumePreview.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+    </script>
+</html>

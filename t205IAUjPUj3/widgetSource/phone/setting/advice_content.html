@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="advice_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="ub ub-ver uinn-a1">
+            <div class="uba b-gra3 uc-a1 c-wh ub ub-ac ulev-1">
+                <div class="ub ub-f1 ub-ver">
+                    <div class="uinput ub ub-f1">
+                        <textarea oninput="textLimitCheck(200)" id="content" style="outline: none" placeholder="请告诉我们您的意见和建议" type="text" class="ub-f1"></textarea>
+                    </div>
+                    <div id="textcount" class="ub sc-text-hint ub-pe umar-a">
+                        0/200
+                    </div>
+                </div>
+            </div>
+            <div class="uba b-gra3 uc-a1 c-wh ub uinn-a7 ub-ac umar-at1 ulev-1 uhide">
+                <div class="ub ub-ac umh5 ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input id="contact" style="outline: none" placeholder="请留下您的手机号/邮箱" type="text" class="ub-f1">
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-ver">
+                <div class="uinn-at1">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1"  id="submit">
+                        提交
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            appcan.window.enableBounce();
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            userinfo = App.getUserInfo();
+        })
+        function textLimitCheck(maxLength) {
+            //alert(thisArea.id);
+            var text = $('#content').val();
+
+            var strlen = maxLength - text.length;
+            $("#textcount").html(text.length + "/" + maxLength);
+
+            if (text.length > maxLength) {
+                $('#content').val(text.substring(0, maxLength));
+            }
+
+        }
+
+
+        appcan.button("#submit", "ani-act", function() {
+            var content = $('#content').val();
+            if (App.isNull(content)) {
+                App.alertEx("请输入反馈内容!");
+                return;
+            }
+            App.authApi({
+                url : 'hyw/addAdvice',
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        content : content,
+                        type : uexWidgetOne.platformName
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        App.alertEx("意见提交成功,感谢您的建议!", function() {
+                            App.evalJs({
+                                winName : "advice",
+                                type : 1,
+                                js : "closeWin()"
+                            })
+                        });
+                    } else {
+                        App.alertEx(data.message);
+                    }
+                }
+            });
+        })
+    </script>
+</html>

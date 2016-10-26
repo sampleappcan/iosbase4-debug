@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="chatRoom_content/css/main.css">
+        <style>
+            .umw2 {
+                min-width: 2em;
+            }
+            .umh4 {
+                min-height: 2em;
+            }
+            .spec-content {
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                word-break: break-all;
+            }
+
+        </style>
+    </head>
+    <body class="um-vp" style="background-color: #EBEBEB" ontouchstart>
+        <div class="ub ub-ver ub-f1 bc-text uinn marg-bottom" id="list">
+            <ul></ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+        <script src="../js/Base64-80.js"></script>
+        <script src="../wgtRes/emojicons/emojijson.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var status = false;
+        var groupId;
+        var myId;
+        var stremo;
+        var myImage = "../wgtRes/comImg.png";
+        var sendImage = "../wgtRes/comImg.png";
+        var lastSendTime = 0;
+        var chatHeight;
+        var lat;
+        var lon;
+        var address;
+        var winHeight = 0;
+        var picList = [];
+        var mapType = 0;
+        var msgAddType = 0;
+        var recordStartTime;
+        var groupInfo;
+        var bounceType;
+        var isPlaying = false;
+        var playItem;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        function checkGroupMember(userId) {
+            var isMember = false;
+            if (App.isNull(groupInfo) || App.isNull(groupInfo.members)) {
+                return isMember;
+            }
+            //先判断是不是在成员列表里
+            for (var i = 0; i < groupInfo.members.length; i++) {
+                if (Number(groupInfo.members[i]) == Number(userId)) {
+                    isMember = true;
+                    break;
+                }
+            };
+            //如果不在成员列表，则判断是不是群主
+            if (!isMember) {
+                isMember = (Number(userId) == Number(groupInfo.owner));
+            }
+            return isMember;
+        }
+
+
+        appcan.ready(function() {
+            try {
+                App.setPageUpBounce(function(type) {
+                    var msgId = $('#list ul li').eq(0).attr("data-id");
+                    var lastMsgId = App.getLastMsgId(groupId);
+                    msgAddType = 1;
+                    var startMsgId = '';
+                    if (App.isNull(msgId)) {
+                        startMsgId = lastMsgId;
+                        // startMsgId = '"startMsgId":"' + lastMsgId + '",';
+                    } else {
+                        startMsgId = msgId;
+                        // startMsgId = '"startMsgId":"' + msgId + '",';
+                    }
+                    bounceType = type;
+                    var params = {
+                        username : groupId,
+                        chatType : "1",
+                        startMsgId : startMsgId,
+                        pagesize : 8
+                    }
+                    uexEasemob.getMessageHistory(App.toJsonStr(params));
+                    //uexEasemob.getMessageHistory('{"username":"' + sendId + '",' + startMsgId + '"chatType":"0","pagesize":"8"}');
+                    App.Logs("setPageUpBounce:" + App.toJsonStr(params));
+                    App.Logs("setPageUpBounce:" + $('#list ul li').eq(0).attr("data-id") + "," + startMsgId + "," + lastMsgId);
+                })
+                groupInfo = App.getJson('groupInfo');
+                chatHeight = App.getVal('chatHeight');
+                userinfo = App.getUserInfo();
+                groupId = groupInfo.groupId;
+                myId = userinfo.userid;
+                if (!checkGroupMember(myId)) {
+                    App.alertEx("您不是这个群的成员，不能进行聊天，可能您已被群主移出此群!", function() {
+                        App.evalJs({
+                            winName : "indexNew",
+                            popName : "message_content",
+                            type : 2,
+                            js : "removeFriendHtml('" + groupId + "',1)"
+                        });
+                        var win = App.getWin("myGroupList");
+                        if (!App.isNull(win)) {
+                            App.evalJs({
+                                winName : "myGroupList",
+                                js : "removeGroupListHtml('" + groupId + "')"
+                            });
+                        }
+                        App.evalJs({
+                            winName : "groupChatRoom",
+                            type : 1,
+                            js : "closeWin()"
+                        });
+                    });
+                    return;
+                }
+                winHeight = window.innerHeight;
+                if (!App.isNull(userinfo.headuri)) {
+                    if (userinfo.headuri.substr(0, 4) != "http" && (userinfo.headuri.substr(0, 3) != "../" || userinfo.headuri.substr(0, 2) != "./")) {
+                        myImage = App.headUri + userinfo.headuri;
+                    } else {
+                        myImage = userinfo.headuri;
+                    }
+                }
+                var plat = App.getAppPlat();
+                if (!isdebug) {
+                    if (!plat) {
+                        winHeight = screen.availHeight;
+                    }
+                    uexGaodeMap.cbReverseGeocode = function(json) {
+                        App.Logs("cbReverseGeocode:" + json);
+                        var data = JSON.parse(json);
+                        lat = data.latitude;
+                        lon = data.longitude;
+                        address = data.address;
+                        uexGaodeMap.stopLocation();
+                        sendmap();
+                    };
+
+                    uexGaodeMap.cbGetCurrentLocation = function(json) {
+                        App.Logs("cbGetCurrentLocation:" + json);
+                        uexGaodeMap.reverseGeocode(json);
+                    }
+
+                    uexGaodeMap.onMapLoadedListener = function() {
+                        try {
+                            App.Logs("onMapLoadedListener:" + lat + "," + lon);
+                            var params = {
+                                level : 18
+                            };
+                            uexGaodeMap.setZoomLevel(JSON.stringify(params));
+                            if (mapType == 0) {
+                                var params = {
+                                    type : 1
+                                };
+                                uexGaodeMap.setMyLocationEnable(JSON.stringify(params));
+                                var params = {
+                                    type : 2
+                                };
+                                uexGaodeMap.setUserTrackingMode(JSON.stringify(params));
+                                uexGaodeMap.startLocation();
+                            } else {
+                                var params = {
+                                    longitude : lon,
+                                    latitude : lat
+                                };
+                                uexGaodeMap.setCenter(JSON.stringify(params));
+                                var marklist = [];
+                                var chatname = App.getVal('chatname');
+                                var marker = {
+                                    id : 10001,
+                                    latitude : lat,
+                                    longitude : lon,
+                                    icon : "res://mark.png",
+                                    bubble : {
+                                        title : chatname,
+                                        subTitle : address
+                                    }
+                                };
+                                marklist.push(marker);
+                                uexGaodeMap.addMarkersOverlay(JSON.stringify(marklist));
+                            }
+                        } catch(err) {
+                            App.Logs(err.message);
+                        }
+                    }
+                    uexChatKeyboard.cbGetInputBarHeight = function(data) {
+                        var obj = JSON.parse(data);
+                        if (App.getAppPlat()) {
+                            if (status == true || status == "true") {
+                                appcan.window.evaluateScript('groupChatRoom', 'reSizeWin(' + obj.height + ',' + winHeight + ',1,' + obj.emHeight + ')');
+                            } else {
+                                appcan.window.evaluateScript('groupChatRoom', 'reSizeWin(' + obj.height + ',' + winHeight + ',0,' + obj.emHeight + ')');
+                            }
+                            if (parseInt(obj.emHeight) > 0) {
+                                $("#list").css("padding-bottom", (parseInt(obj.emHeight) + 30) + "px");
+                            } else {
+                                $("#list").css("padding-bottom", "2em");
+                            }
+                        } else {
+                            scrollWin();
+                        }
+                    }
+                    uexChatKeyboard.onKeyBoardShow = function(json) {
+                        var obj = JSON.parse(json);
+                        if (parseInt(obj.status) == 0) {
+                            status = false;
+                            uexChatKeyboard.getInputBarHeight();
+                        } else {
+                            status = true;
+                            uexChatKeyboard.getInputBarHeight();
+                        }
+                    }
+                    uexChatKeyboard.onCommitJson = function(data) {
+                        var str = data.emojiconsText;
+                        addmychat(str, 1);
+                        str = encode64(str);
+                        var sendData = {
+                            username : groupId,
+                            chatType : "1",
+                            content : str,
+                            ext : createExtInfo()
+                        };
+                        uexEasemob.sendText(JSON.stringify(sendData));
+                    }
+
+                    uexChatKeyboard.onShareMenuItem = function(data) {
+                        if (data == 0) {
+                            Cameraopen();
+                        }
+                        if (data == 1) {
+                            photoopen();
+                        }
+                        if (data == 2) {
+                            mapopen(0);
+                        }
+
+                    }
+                    uexChatKeyboard.onVoiceAction = function(data) {
+                        var str = JSON.parse(data);
+                        App.Logs("进入录音:" + data)
+                        if (parseInt(str.status) == 0) {
+                            ly();
+                        }
+                        if (parseInt(str.status) == 1) {
+                            stoply();
+                        }
+                        if (parseInt(str.status) == -1) {
+                            return;
+                        }
+                    }
+                    var startMsgId = '';
+                    if (msgAddType != 0) {
+                        var lastMessageId = App.getLastMsgId(groupId);
+                        if (!App.isNull(lastMessageId)) {
+                            startMsgId = lastMessageId;
+                        }
+                    }
+                    var params = {
+                        username : groupInfo.groupId,
+                        chatType : "1",
+                        startMsgId : startMsgId,
+                        pagesize : 8
+                    }
+                    App.Logs("getMessageHistory:" + App.toJsonStr(params));
+                    uexEasemob.getMessageHistory(App.toJsonStr(params));
+                    var jsonstr = '{"emojicons":"res://emojicons/emojicons.xml","shares":"res://shares/shares.xml","placeHold":"","touchDownImg":"res://3.png","dragOutsideImg":"res://4.png","textColor":"#FFF","textSize":"12.5"}';
+                    if (!App.isNull(groupId) && groupId != "admin") {
+                        uexChatKeyboard.open(jsonstr);
+                    }
+                    //newMessage();
+                }
+                // var message = "{\"chatType\":\"0\",\"from\":\"1000003\",\"isAcked\":\"0\",\"isGroup\":\"0\",\"isRead\":\"0\",\"messageBody\":{\"text\":\"hello\",\"longitute\":\"1\",\"latitude\":\"1\",\"thumbnailRemotePath\":\"http://img.i-css.com:88/cn/user_image/t/333x333/6c05333465fabe06ad0141d359e8b761/A4a06f59ec1ed42debbf.jpg\"},\"messageId\":\"116324502178103868\",\"messageTime\":\"1444648708478\",\"messageType\":\"audio\",\"to\":\"1000010\"}"
+                // sendId = 1000003
+                // var message ='{"chatType":"0","ext":"杉杉","from":"1000003","isAcked":"1","isGroup":"0","isRead":"1","messageBody":{"address":"上海市杨浦区大桥上海市杨浦区大桥街道九州丽园街道九州丽园","latitude":"31.261006","longitude":"121.531957"},"messageId":"182682132584333856","messageTime":"1460098798104","messageType":"location","to":"1000003"}';
+                //  var receiveMsg = JSON.parse(message);
+                //  sethtml(receiveMsg);
+                //mapopen()
+                //addhistory();
+                //console.log(appcan.getLocalTime(1444541627841));
+                //addmychat(createDynamicHtml("点击打开地图","../wgtRes/comImg.png","sss"), 1);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 1, 1);
+                //   addmychat('点击打开地图点击打开地图点击打开地图', 5,1);
+                //addmychat('点击打开地图点击打开地图点击打开地图', 3,7);
+                //    addmychat('点击打开地图点击打开地图点击打开地图', 3,50);
+                //     addmychat('http://img.i-css.com:88/hsquan/user_Image/msgImage/o/f31c147335274c56d801f833d3c26a70/175189911542956576.png', 2);
+                // addmychat('http://img.4006865980.com:66/hsqua/user_Image/msgImage/o/f31c147335274c56d801f833d3c26a70/182357591219765712.png', 2);
+                //newMessage();
+            } catch(err) {
+                App.Logs(err.message);
+            }
+        })
+        function addmychat(str, typestr, len) {
+            var html = "";
+            var timeStr = "";
+            var nowTime = new Date().getTime();
+            if ((nowTime - lastSendTime) / (1000 * 60) >= 1) {
+                //timeStr = new Date(nowTime).Format("hh:mm");
+                timeStr = App.setMsgTime(nowTime, true);
+            }
+            var obj = {};
+            obj.content = "rightGroupContent";
+            lastSendTime = nowTime;
+            if (!App.isNull(timeStr)) {
+                obj.timeStr = timeStr;
+            }
+            obj.oriText = str;
+            if (typestr == 1) {
+                stremo = str;
+                var reg = /\[([^\]]+)\]/g;
+                stremo = stremo.replace(reg, function($1) {
+                    return emoarr1[$1] || $1;
+                });
+                obj.type = 1;
+                obj.text = stremo;
+            }
+            if (typestr == 2) {
+                var imgId = 'img' + nowTime;
+                var chatImgList = App.getJson('chatImgList');
+                if (App.isNull(chatImgList)) {
+                    chatImgList = [];
+                }
+                chatImgList.push(imgId);
+                //如果是发送图片，，加上遮罩层。
+                var picObj = {
+                    src : str
+                }
+                picList.push(picObj);
+                obj.type = 2;
+                obj.text = str;
+                obj.imgId = imgId;
+                obj.mask = true;
+                App.setVal('chatImgList', chatImgList);
+            }
+            if (typestr == 3) {
+                obj.type = 3;
+                obj.text = str;
+                obj.len = len;
+            }
+            if (typestr == 4) {
+                obj.type = 4;
+                obj.text = str;
+            }
+            if (typestr == 5) {
+                var lat = str.split(",")[0];
+                var lon = str.split(",")[1];
+                obj.type = 5;
+                obj.lat = lat;
+                obj.lon = lon;
+                obj.address = address;
+            }
+            html = createRightHtml(obj);
+            $('#list ul').append(html);
+            setContentEvent(obj.content);
+            scrollWin();
+        }
+
+        function createExtInfo() {
+            var text = "gm$$" + userinfo.cnname + "$$" + userinfo.compname + userinfo.jobtitle;
+            var headuri = App.isNull(userinfo.headuri) ? "../wgtRes/comImg.png" : userinfo.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + headuri;
+            }
+            text += "$$" + headuri + "$$" + userinfo.userid;
+            return text;
+        }
+
+        function createTipsHtml(str) {
+            var h = '';
+            h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 " >';
+            h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+            h += '   </div>';
+            return h;
+        }
+
+        function createLeftHtml(obj) {
+            // App.Logs("createLeftHtml:" + App.toJsonStr(obj));
+            var h = '';
+            var headUri = '../wgtRes/comImg.png';
+            var cnName = "";
+            var userData = "职位信息未设置";
+            var userId = ""
+            if (!App.isNull(obj.ext)) {
+                var text = obj.ext;
+                text = text.split('$$');
+                if (text[0] == "gm") {
+                    cnName = text[1];
+                    userData = text[2];
+                    headUri = text[3];
+                    userId = text[4];
+                }
+            }
+            h += '<li id="m' + obj.messageId + '" data-id="' + obj.messageId + '" class="ub ub-ver ub-f1">';
+            if (!App.isNull(obj.timeStr)) {
+                h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 " >';
+                h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+                h += '   </div>';
+            }
+            h += '   <div style="text-align: left;margin-top:0.8em;margin-bottom:0.8em;">';
+            h += '      <img onclick="openUserDetail(\'' + userId + '\')" src="' + headUri + '" class="leftUserHead uc-a1"/>';
+            h += '      <div style="display: inline-block;max-width: 75%;text-align: left;">';
+            h += '         <div class="ulev-4 ut-s" style="display: inline-block;width:100%"><span>' + cnName + '</span><span class="ut-s" style="color:#999999;padding-left:0.5em">' + userData + '</span></div>'
+            h += '         ' + createContentHtml(obj);
+            h += '      </div>';
+            h += '      <div class="gpingTriangleleft"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openUserDetail(userId) {
+            if (App.isNull(userId)) {
+                return;
+            }
+            App.setVal('userId', userId);
+            App.setVal('viewMode', 'view');
+            App.openWin({
+                backName : App.getCurrWinName(),
+                winId : userId,
+                name : 'userAccount',
+                url : '../user/userAccount.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        }
+
+        function createRightHtml(obj) {
+            //App.Logs("createRightHtml:" + App.toJsonStr(obj));
+            var h = '';
+            h += '<li id="m' + obj.messageId + '" data-id="' + obj.messageId + '" class="ub ub-ver ub-f1">';
+            if (!App.isNull(obj.timeStr)) {
+                h += '   <div class="timestr ub ub-f1 ub-pc ub-ac ulev-2 t-gra-1 uc-a1" >';
+                h += '       <span class="uc-a1">' + obj.timeStr + '</span>';
+                h += '   </div>';
+            }
+            h += '   <div class="ub-f1" style="text-align: right;margin-top:0.8em;margin-bottom:0.8em;">';
+            h += '      <img src="' + myImage + '" class="rightUserHead uc-a1"/>';
+            h += '      <div style="display: inline-block;overflow: hidden;max-width: 75%;text-align: right;">';
+            h += '      <div class="ulev-4 ut-s" style="display: inline-block;overflow: hidden;width:100%">' + userinfo.cnname + '</div>'
+            h += '       ' + createContentHtml(obj);
+            h += '      </div>';
+            h += '      <div class="gpingTriangle"></div>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function createContentHtml(obj) {
+            //App.Logs("createContentHtml:" + App.toJsonStr(obj))
+            var h = '';
+            switch(obj.type) {
+            case 1:
+                if (!App.isNull(obj.ext)) {
+                    var text = obj.ext;
+                    text = text.split('$$');
+                    if (text[0] == "sm") {
+                        if (text.length > 3) {
+                            text = createDynamicHtml(text[1], text[2], text[3]);
+                        } else {
+                            text = obj.text;
+                        }
+                        h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-ext="' + obj.ext + '">' + text + '</div>';
+                    } else {
+                        h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '">' + obj.text + '</div>';
+                    }
+                } else {
+                    h += ' <div class="' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '">' + obj.text + '</div>';
+                }
+                break;
+            case 2:
+                h += ' <div onclick="openPic(' + (picList.length - 1) + ');" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-picindex="' + (picList.length - 1) + '">';
+                h += '    <img class="chatpic" src="' + obj.text + '" style="width:6em;height:8em" />';
+                if (!App.isNull(obj.mask)) {
+                    h += '    <div id="' + obj.imgId + '" class="ub ub-pc ub-ac" style="position: absolute;width:100%;height:100%;top:0;left:0;background-color: rgba(255,255,255,0.7);color:#fff"><img src="../wgtRes/loading.gif" style="width:1.8em"></div>';
+                }
+                h += '</div>';
+                break;
+            case 3:
+                var widthStr = "3em";
+                var align = "right";
+                var hiStr = "0.5em";
+                if (App.getAppPlat()) {
+                    hiStr = "1em";
+                }
+                var isRead = "uhide";
+                if (obj.isRead == 0) {
+                    isRead = "";
+                }
+                if (!App.isNull(obj.len)) {
+                    var width = (window.innerWidth * 0.5) * obj.len / 15;
+                    if (width >= (window.innerWidth * 0.5)) {
+                        widthStr = (window.innerWidth * 0.5) + "px";
+                    } else {
+                        widthStr = width + "px";
+                    }
+                }
+                if (obj.content == "leftGroupContent") {
+                    align = "left";
+                    h += ' <div onclick="playly(\'' + obj.text + '\',\'' + obj.messageId + '\',this);" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-len="' + obj.len + '">';
+                    h += '    <div style="text-align:' + align + ';width:' + widthStr + '">'
+                    h += '      <img src="../wgtRes/audio_play' + align + '.png" style="width:1em"/>';
+                    h += '    </div>';
+                    h += ' </div>';
+                    h += ' <div class="leftLen t-gra ulev-5" style="display: inline-block;bottom:' + hiStr + ';">' + obj.len + '"</div>';
+                    h += ' <div class="leftCirle t-gra ' + isRead + '" style="display: inline-block;bottom:1em;-webkit-border-radius: 1.2em;width:0.5em;height:0.5em;background-color: red"></div>';
+                } else {
+                    h += ' <div class="rightCirle t-gra ' + isRead + '" style="display: inline-block;bottom:1em;-webkit-border-radius: 1.2em;width:0.5em;height:0.5em;background-color: red"></div>';
+                    h += ' <div class="rightLen t-gra ulev-5" style="display: inline-block;bottom:' + hiStr + ';">' + obj.len + '"</div>';
+                    h += ' <div onclick="playly(\'' + obj.text + '\',\'' + obj.messageId + '\',this);" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '" data-txt="' + obj.oriText + '" data-len="' + obj.len + '">';
+                    h += '    <div style="text-align:' + align + ';width:' + widthStr + '">'
+                    h += '      <img src="../wgtRes/audio_play' + align + '.png" style="width:1em"/>';
+                    h += '    </div>';
+                    h += ' </div>';
+                }
+                break;
+            case 4:
+                h += ' <div onclick="openfile(\'' + obj.text + '\');" class="ulev-5 ' + obj.content + '">[文件]</div>';
+                break;
+            case 5:
+                h += ' <div onclick="openmap(' + obj.lat + ',' + obj.lon + ',\'' + obj.address + '\');" class="ulev-5 ' + obj.content + '" data-type="' + obj.type + '">';
+                h += '     <img class="mappic" src="../wgtRes/map.png" style="width:5em"/>';
+                h += '     <div class="uhide lat">' + obj.lat + '</div>';
+                h += '     <div class="uhide lng">' + obj.lon + '</div>';
+                h += '     <div class="uhide addr">' + obj.oriText + '</div>';
+                h += ' </div>';
+                break;
+            }
+            return h;
+        }
+
+        function createDynamicHtml(str, headuri, id) {
+            var h = '';
+            h += '<div onclick="openContent(\'' + id + '\')" class="ub ub-ver ub-f1">';
+            h += '   <div class="ub-f1 spec-content">' + str + '</div>';
+            h += '   <div class="ub ub-f1 ub-ac umar-t">';
+            h += '       <img src="' + headuri + '" style="width:3em;height:3em">';
+            h += '       <div class="umar-l">商友圈实名动态</div>';
+            h += '   </div>';
+            h += '</div>';
+            return h;
+        }
+
+        function openContent(id) {
+            if (App.isNull(id)) {
+                return;
+            }
+            App.setVal("dynamicId", id);
+            App.openWin({
+                backName : 'groupChatRoom',
+                winId : id,
+                name : 'dynamic',
+                url : '../dynamic/dynamic.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+        function sendPosition() {
+            uexGaodeMap.getCurrentLocation();
+        }
+
+        function ly() {
+            App.Logs("开始录音...")
+            recordStartTime = new Date().getTime();
+            var t = Math.round(new Date().getTime()) + "";
+            //按时间做为文件名称
+            uexAudio.startBackgroundRecord(2, t);
+        }
+
+        function stoply() {
+            App.Logs("录音结束...");
+            var fileName = ""
+            uexAudio.cbBackgroundRecord = function(opCode, dataType, data) {
+                var recordStopTime = new Date().getTime();
+                var length = Math.floor((recordStopTime - recordStartTime) / 1000);
+                if (App.isNull(length)) {
+                    length = 1;
+                }
+                App.Logs("cbBackgroundRecord文件保存路径:" + data + ",length:" + length);
+                postly(data, length);
+            }
+            uexAudio.stopBackgroundRecord();
+        }
+
+        function postly(str, len) {
+            if (App.isNull(str)) {
+                return;
+            }
+            var index = str.lastIndexOf("/") + 1;
+            var displayName = str.substring(index);
+            App.Logs("postly:" + index + "," + displayName);
+            addmychat(str, 3, len);
+            //播放音频
+            var voiceData = {
+                username : groupId,
+                chatType : "1",
+                filePath : str,
+                length : len,
+                displayName : displayName,
+                ext : createExtInfo()
+            };
+            uexEasemob.sendVoice(JSON.stringify(voiceData));
+        }
+
+        function closemap() {
+            uexGaodeMap.close();
+        }
+
+        function mapopen(type, Lat, Lng) {
+            mapType = type;
+            if (App.isNull(Lat)) {
+                Lat = 31.238068;
+            }
+            if (App.isNull(Lng)) {
+                Lng = 121.501654;
+            }
+            if (type == 0) {
+                appcan.window.evaluateScript('groupChatRoom', 'changeTitle(1)');
+            } else {
+                appcan.window.evaluateScript('groupChatRoom', 'changeTitle(2)');
+            }
+            var height = screen.availHeight;
+            if (App.getAppPlat()) {
+                uexChatKeyboard.hideKeyboard();
+                appcan.window.evaluateScript('groupChatRoom', 'reSizeWin(0,0,1,0)');
+                height = screen.availHeight - chatHeight - 50;
+            }
+            //App.Logs("mapopen:" + chatFooterHeight + "," + screen.availHeight + "," + height);
+            var data = {
+                left : 0,
+                top : chatHeight,
+                width : window.innerWidth,
+                height : height,
+                isScrollWithWeb : false,
+                latitude : Lat,
+                longitude : Lng
+            }
+            if (!isdebug) {
+                uexGaodeMap.open(JSON.stringify(data));
+            }
+        }
+
+        function sendmap() {
+            appcan.window.evaluateScript('groupChatRoom', 'changeTitle(0)');
+            var locationMsg = {
+                username : groupId,
+                chatType : "1",
+                locationAddress : address,
+                latitude : lat,
+                longitude : lon,
+                ext : createExtInfo()
+            }
+            uexEasemob.sendLocationMsg(JSON.stringify(locationMsg));
+            var str = lat + "," + lon;
+            addmychat(str, 5);
+            uexGaodeMap.close();
+        }
+
+        function photoopen() {
+            uexImage.onPickerClosed = function(data) {
+                var obj = JSON.parse(data);
+                if (!obj.isCancelled) {
+                    var pic = obj.data[0];
+                    sendpic(pic);
+                }
+            }
+            var data = {
+                min : 1,
+                max : 1,
+                quality : 0.5,
+                usePng : false,
+                detailedInfo : false
+            }
+            var json = JSON.stringify(data);
+            uexImage.openPicker(json);
+        }
+
+        function Cameraopen() {
+            uexCamera.cbOpen = function(opId, dataType, data) {
+                if (!App.isNull(data)) {
+                    sendpic(data);
+                }
+            }
+            uexCamera.open(0, 80);
+        }
+
+        function sendpic(str) {
+            if (str == "") {
+                return;
+            }
+            imgurl = str;
+            addmychat(str, 2);
+            //发送的是图片
+            var index = str.lastIndexOf("/") + 1;
+            var displayName = str.substring(index);
+            var picData = {
+                username : groupId,
+                chatType : "1",
+                filePath : str,
+                displayName : displayName,
+                ext : createExtInfo()
+            }
+            uexEasemob.sendPicture(JSON.stringify(picData));
+            //uexEasemob.sendPicture('{"username":"' + sendId + '","chatType":"0","filePath":"' + str + '","displayName":"mypic"}');
+        }
+
+        function closeKeyBoard() {
+            if (status == true || status == "true") {
+                if (!isdebug) {
+                    uexChatKeyboard.hideKeyboard();
+                    status = false;
+                }
+            } else {
+                if (!isdebug) {
+                    uexEasemob.getRecentChatters();
+                }
+                appcan.window.evaluateScript('groupChatRoom', 'closeWin()');
+            }
+        }
+
+        function GetMessageById() {
+            var data = App.getVal("cbGetMessageById");
+            var obj = eval('(' + data + ')');
+            var josn = [];
+            josn.push(obj);
+            historyhtml(josn, msgAddType);
+            App.removeVal("cbGetMessageById");
+        }
+
+        function addhistory() {
+            var data = App.getVal("historyMsg");
+            var historymessage = eval('(' + data + ')');
+            var lastMessageId = App.getLastMsgId(groupId);
+            if (!App.isNull(historymessage)) {
+                if (!App.isNull(historymessage.messages)) {
+                    historymessage = historymessage.messages;
+                }
+                App.Logs("addhistory:" + lastMessageId + "," + msgAddType + "," + historymessage.length);
+                if (historymessage.length > 0) {
+                    historyhtml(historymessage, msgAddType);
+                } else if (msgAddType > 0) {
+                    App.toast("没有更多记录了");
+                }
+                if (bounceType != null && bounceType != undefined) {
+                    uexWindow.resetBounceView(bounceType);
+                }
+            }
+            App.removeVal('historyMsg');
+            //alert("历史信息");
+        }
+
+        function newMessage(data) {
+            var data = App.getVal('newMessage');
+            var receiveMsg = eval('(' + data + ')');
+            if (App.isNull(receiveMsg)) {
+                return;
+            }
+            if (!App.isNull(receiveMsg)) {
+                App.addLastMsgId(groupId, receiveMsg.messageId);
+                uexEasemob.sendHasReadResponseForMessage('{"msgId":"' + receiveMsg.messageId + '"}');
+                var data = {
+                    username : groupId,
+                    chatType : "1"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                sethtml(receiveMsg);
+                uexEasemob.getRecentChatters();
+            }
+            App.removeVal("newMessage");
+        }
+
+        function sethtml(message) {
+            var json = message;
+            if (groupId == json.to) {
+                var html = "";
+                var timeStr = "";
+                var nowTime = parseInt(json.messageTime);
+                if ((lastSendTime - nowTime ) / (1000 * 60) >= 1) {
+                    timeStr = App.setMsgTime(nowTime, true);
+                }
+                lastSendTime = nowTime;
+                var obj = {};
+                obj.content = "leftGroupContent";
+                obj.messageId = json.messageId;
+                obj.isRead = json.isRead;
+                obj.ext = json.ext;
+                if (!App.isNull(timeStr)) {
+                    obj.timeStr = timeStr;
+                }
+                if (json.messageType == 'text') {
+                    obj.type = 1;
+                    stremo = decode64(json.messageBody.text);
+                    obj.oriText = stremo;
+                    var reg = /\[([^\]]+)\]/g;
+                    stremo = stremo.replace(reg, function($1) {
+                        return emoarr1[$1] || $1;
+                    });
+                    obj.text = stremo;
+                }
+                if (json.messageType == 'image') {
+                    var picObj = {
+                        src : json.messageBody.remotePath
+                    }
+                    picList.push(picObj);
+                    obj.type = 2;
+                    obj.text = json.messageBody.remotePath;
+                    obj.oriText = json.messageBody.remotePath;
+                }
+                if (json.messageType == 'audio') {
+                    obj.type = 3;
+                    obj.text = json.messageBody.remotePath;
+                    obj.len = json.messageBody.length;
+                    obj.oriText = json.messageBody.remotePath;
+                }
+                if (json.messageType == 'file') {
+                    obj.type = 4;
+                }
+                if (json.messageType == 'location') {
+                    obj.type = 5;
+                    var longitute = json.messageBody.longitute;
+                    var latitude = json.messageBody.latitude;
+                    var addr = json.messageBody.address;
+                    if (App.isNull(longitute)) {
+                        longitute = json.messageBody.longitude;
+                    }
+                    obj.text = json.messageBody.address;
+                    obj.lat = latitude;
+                    obj.lon = longitute;
+                    obj.oriText = json.messageBody.address;
+                }
+                html = createLeftHtml(obj);
+                $('#list ul').append(html);
+                setContentEvent(obj.content);
+            }
+            scrollWin();
+        }
+
+        function setContentEvent(name) {
+            if (!App.isNull(name)) {
+                $('.' + name).off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    /*App.setVal("chatObj", chatObj);
+                     App.evalJs({
+                     winName : "groupChatRoom",
+                     type : 1,
+                     js : "openMessageMenu()"
+                     });*/
+                })
+            } else {
+                $('.rightGroupContent').off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    /* App.setVal("chatObj", chatObj);
+                     App.evalJs({
+                     winName : "chatRoom",
+                     type : 1,
+                     js : "openMessageMenu()"
+                     });*/
+                });
+                $('.leftGroupContent').off('longTap').on('longTap', function(evt) {
+                    //App.Logs("longTap " + $(this).parent().parent().attr("data-id") + "," + $(this).attr("data-type") + "," + $(this).attr("data-txt"))
+                    var chatObj = {
+                        msgId : $(this).parent().parent().attr("data-id"),
+                        type : $(this).attr("data-type"),
+                        text : $(this).attr("data-txt"),
+                        len : $(this).attr("data-len"),
+                        lat : $(this).find(".lat").html(),
+                        lng : $(this).find(".lng").html(),
+                        addr : $(this).find(".addr").html(),
+                        ext : $(this).attr("data-ext"),
+                        picIndex : $(this).attr("data-picindex")
+                    };
+                    App.Logs("longTap" + App.toJsonStr(chatObj));
+                    App.setVal("chatObj", chatObj);
+                    App.evalJs({
+                        winName : "chatRoom",
+                        type : 1,
+                        js : "openMessageMenu()"
+                    });
+                });
+            }
+            var msg = {
+                username : groupId,
+                chatType : "1"
+            }
+            uexEasemob.resetUnreadMsgCount(JSON.stringify(msg));
+            App.evalJs({
+                winName : "indexNew",
+                type : 1,
+                js : 'shwoTabBage("xiaoxi",0)'
+            });
+        }
+
+        function deleteMsg(type) {
+            var chatObj = App.getJson("chatObj");
+            var msgId = "";
+            if (chatObj.msgId == App.getLastMsgId(groupId)) {
+                msgId = $("#m" + chatObj.msgId).prev().attr("data-id");
+                App.addLastMsgId(groupId, msgId, true);
+            }
+            App.Logs("deleteMsg:" + type + "," + msgId + "," + App.getLastMsgId(groupId) + "," + chatObj.msgId);
+            $("#m" + chatObj.msgId).remove();
+            if (chatObj.type == 2 && picList.length > 0) {
+                picList.splice(chatObj.picIndex, 1);
+            }
+            var param = {
+                username : groupId, //username | groupid
+                msgId : chatObj.msgId,
+                chatType : type,//0-个人 1-群组(默认0,此参数仅iOS需要)
+            };
+            uexEasemob.removeMessage(App.toJsonStr(param));
+            uexEasemob.getRecentChatters();
+        }
+
+        function copyText() {
+            var chatObj = App.getJson("chatObj");
+            uexClipboard.copy(chatObj.text);
+            App.toast("已复制");
+        }
+
+        function canleImgMask() {
+            //发送完后取消遮罩
+            var chatImgList = App.getJson('chatImgList');
+            App.Logs("canleImgMask:" + JSON.stringify(chatImgList));
+            if (!App.isNull(chatImgList)) {
+                for (var i = 0; i < chatImgList.length; i++) {
+                    $('#' + chatImgList[i]).remove();
+                    chatImgList.splice(i, 1);
+                };
+                App.setVal('chatImgList', chatImgList);
+            }
+        }
+
+        function historyhtml(json) {
+            var lastMessageId = App.getLastMsgId(groupId);
+            var msgTime = 0;
+            if (json.length > 0) {
+                //json.reverse();
+                json = App.listSortBy(json, "messageTime", "asc");
+            }
+
+            var html = "";
+            for (var i = 0; i < json.length; i++) {
+                var longitude;
+                var latitude;
+                var addr;
+                if (json[i].messageType == 'location') {
+                    longitude = json[i].messageBody.longitude;
+                    latitude = json[i].messageBody.latitude;
+                    addr = json[i].messageBody.address;
+                    if (App.isNull(longitude)) {
+                        longitude = json[i].messageBody.longitute;
+                    }
+                }
+                var timeStr = "";
+                if (Math.abs((json[i].messageTime - msgTime) / (1000 * 60)) >= 1) {
+                    msgTime = parseInt(json[i].messageTime);
+                    timeStr = App.setMsgTime(msgTime, true);
+                    if (msgAddType != 1) {
+                        lastSendTime = parseInt(msgTime);
+                    }
+                }
+                // App.Logs("myId:" + myId + "," + json[i].to + ",groupId:" + groupId + "," + json[i].from)
+                if (groupId == json[i].to) {
+                    if (myId == json[i].from) {
+                        var obj = {};
+                        obj.content = "rightGroupContent";
+                        obj.messageId = json[i].messageId;
+                        obj.isRead = json[i].isRead;
+                        obj.ext = json[i].ext;
+                        if (!App.isNull(timeStr)) {
+                            obj.timeStr = timeStr;
+                        }
+                        if (json[i].messageType == 'text') {
+                            obj.type = 1;
+                            stremo = decode64(json[i].messageBody.text);
+                            obj.oriText = stremo;
+                            var reg = /\[([^\]]+)\]/g;
+                            stremo = stremo.replace(reg, function($1) {
+                                return emoarr1[$1] || $1;
+                            });
+                            obj.text = stremo;
+                            html += createRightHtml(obj);
+
+                        }
+                        if (json[i].messageType == 'image') {
+                            var fileName = hex_md5(json[i].from).toLowerCase() + "/" + json[i].messageId + ".png";
+                            filename = App.downIp + "user_Image/msgImage/o/" + fileName;
+                            App.Logs(json[i].from + "-->图片路径:" + filename);
+                            var picObj = {
+                                src : filename
+                            }
+                            picList.push(picObj);
+                            obj.type = 2;
+                            obj.text = filename;
+                            obj.oriText = filename;
+                            html += createRightHtml(obj);
+                        }
+                        if (json[i].messageType == 'audio') {
+                            // App.Logs("audio:" + JSON.stringify(json[i]));
+                            obj.type = 3;
+                            obj.text = json[i].messageBody.remotePath;
+                            obj.len = json[i].messageBody.length;
+                            obj.oriText = json[i].messageBody.remotePath;
+                            html += createRightHtml(obj);
+                        }
+                        if (json[i].messageType == 'file') {
+                        }
+                        if (json[i].messageType == 'location') {
+                            obj.lon = longitude;
+                            obj.lat = latitude;
+                            obj.address = json[i].messageBody.address;
+                            obj.oriText = json[i].messageBody.address;
+                            obj.type = 5;
+                            html += createRightHtml(obj);
+                        }
+                    } else {
+                        if (!isdebug) {
+                            //App.Logs("sdfksldjfskdjfskjdfskjdf:"+json[i].isRead)
+                            if (json[i].isRead == false || json[i].isRead == "false") {
+                                //App.Logs("sekfjdkjfkdjfdf");
+                                var obj = {
+                                    msgId : json[i].messageId
+                                }
+                                //App.Logs("sekfjdkjfkdjfdf:"+App.toJsonStr(obj));
+                                uexEasemob.sendHasReadResponseForMessage(App.toJsonStr(obj));
+                            }
+                        }
+                        var obj = {};
+                        obj.content = "leftGroupContent";
+                        obj.messageId = json[i].messageId;
+                        obj.isRead = json[i].isRead;
+                        obj.ext = json[i].ext;
+                        if (!App.isNull(timeStr)) {
+                            obj.timeStr = timeStr;
+                        }
+                        if (json[i].messageType == 'text') {
+                            obj.type = 1;
+                            stremo = decode64(json[i].messageBody.text);
+                            obj.oriText = stremo;
+                            var reg = /\[([^\]]+)\]/g;
+                            stremo = stremo.replace(reg, function($1) {
+                                return emoarr1[$1] || $1;
+                            });
+                            obj.text = stremo;
+                            html += createLeftHtml(obj);
+                        }
+                        if (json[i].messageType == 'image') {
+                            // App.Logs(hex_md5(json[i].from).toLowerCase() + "," + json[i].messageId);
+                            var fileName = hex_md5(json[i].from).toLowerCase() + "/" + json[i].messageId + ".png";
+                            filename = App.downIp + "user_Image/msgImage/o/" + fileName;
+                            App.Logs(json[i].to + "-->图片路径:" + filename);
+                            var picObj = {
+                                src : filename
+                            }
+                            picList.push(picObj);
+                            obj.type = 2;
+                            obj.text = filename;
+                            obj.oriText = filename;
+                            html += createLeftHtml(obj);
+                        }
+                        if (json[i].messageType == 'audio') {
+                            //App.Logs("audio:" + JSON.stringify(json[i]));
+                            obj.type = 3;
+                            obj.text = json[i].messageBody.remotePath;
+                            obj.len = json[i].messageBody.length;
+                            obj.oriText = json[i].messageBody.remotePath;
+                            html += createLeftHtml(obj);
+                        }
+                        if (json[i].messageType == 'file') {
+
+                        }
+                        if (json[i].messageType == 'location') {
+                            obj.lon = longitude;
+                            obj.lat = latitude;
+                            obj.address = json[i].messageBody.address;
+                            obj.oriText = json[i].messageBody.address;
+                            obj.type = 5;
+                            html += createLeftHtml(obj);
+                        }
+                    }
+                }
+            }
+            if (msgAddType == 1) {
+                $('#list ul').prepend(html);
+            } else {
+                $('#list ul').append(html);
+                scrollWin();
+            }
+            if (bounceType != null && bounceType != undefined) {
+                uexWindow.resetBounceView(bounceType);
+            }
+            setContentEvent();
+        }
+
+        function playly(str, messageId, item) {
+            App.Logs("playly:" + str + ",messageId:" + messageId);
+            uexAudio.onPlayFinished = function(loopTime) {
+                App.Logs("uexAudio.onPlayFinished:" + loopTime);
+                var playing = '../wgtRes/audio_playright.png';
+                if ($(item).hasClass('leftGroupContent')) {
+                    playing = '../wgtRes/audio_playleft.png';
+                    $(item).next().next().addClass("uhide");
+                } else {
+                    $(item).prev().prev().addClass("uhide");
+                }
+                if (!App.isNull(playItem)) {
+                    $(playItem).find('img').attr('src', playing);
+                } else {
+                    $(item).find('img').attr('src', playing);
+                }
+                isPlaying = false;
+                playItem = null;
+            }
+            if (!App.isNull(messageId) && (str.startWith("http") || str.startWith("https"))) {
+                App.Logs("开始下载语音.");
+                var opId = Math.floor(Math.random() * (10000 + 1));
+                var audioPath = "wgt://audio/" + messageId + ".mp3";
+                App.Logs("本地保存路径:" + audioPath);
+                uexFileMgr.cbIsFileExistByPath = function(opId, dataType, data) {
+                    if (parseInt(data) == 1) {
+                        App.Logs("文件已存在:" + audioPath + "," + data + ",开始播放语音");
+                        if (isPlaying) {
+                            uexAudio.stop();
+                            isPlaying = false;
+                        }
+                        if (!isPlaying) {
+                            setTimeout(function() {
+                                uexAudio.open(audioPath);
+                                uexAudio.play(0);
+                                var playing = '../wgtRes/audio_playingright.gif';
+                                if ($(item).hasClass('leftGroupContent')) {
+                                    playing = '../wgtRes/audio_playingleft.gif';
+                                }
+                                $(item).find('img').attr('src', playing);
+                                isPlaying = true;
+                                playItem = item;
+                            }, 200);
+                        }
+                    } else {
+                        App.Logs("文件不存在:" + audioPath + ",开始处理下载语音.");
+                        App.authApi({
+                            url : "chat/getAppMsgAudio",
+                            data : {
+                                params : {
+                                    messageId : messageId
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    var fileName = App.downIp + "userAudio/" + data.items.audioPath;
+                                    App.Logs("服务器语音路径:" + fileName + ",本地保存路径:" + audioPath);
+                                    uexDownloaderMgr.onStatus = function(opCode, fileSize, percent, status) {
+                                        switch (parseInt(status)) {
+                                        case 0:
+                                            App.Logs("下载进度:" + percent);
+                                            break;
+                                        case 1 :
+                                            App.Logs("下载成功:" + opCode + ",开始播放语音");
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                            if (isPlaying) {
+                                                uexAudio.stop();
+                                                isPlaying = false;
+                                            }
+                                            if (!isPlaying) {
+                                                setTimeout(function() {
+                                                    uexAudio.open(audioPath);
+                                                    uexAudio.play(0);
+                                                    var playing = '../wgtRes/audio_playingright.gif';
+                                                    if ($(item).hasClass('leftGroupContent')) {
+                                                        playing = '../wgtRes/audio_playingleft.gif';
+                                                    }
+                                                    $(item).find('img').attr('src', playing);
+                                                    isPlaying = true;
+                                                    playItem = item;
+                                                }, 200)
+                                            }
+                                            break;
+                                        case 2 :
+                                            App.Logs("下载失败:" + opCode);
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                            break;
+                                        }
+                                    }
+                                    uexDownloaderMgr.cbCreateDownloader = function(opCode, dataType, data) {
+                                        if (parseInt(data) == 0) {
+                                            App.Logs("创建下载成功:opCode:" + opCode + ",开始下载.");
+                                            uexDownloaderMgr.download(opCode, fileName, audioPath, '1');
+                                        } else {
+                                            App.Logs("创建下载失败.");
+                                            uexDownloaderMgr.closeDownloader(opCode);
+                                        }
+                                    }
+                                    App.Logs("开始创建下载.");
+                                    uexDownloaderMgr.createDownloader(opId);
+                                } else {
+                                    App.Logs(data.message);
+                                }
+                            }
+                        });
+                    }
+                }
+                App.Logs("检查本地是否存在文件:" + audioPath);
+                uexFileMgr.isFileExistByPath(opId, audioPath);
+            } else {
+                if (isPlaying) {
+                    uexAudio.stop();
+                    isPlaying = false;
+                }
+                if (!isPlaying) {
+                    setTimeout(function() {
+                        uexAudio.open(str);
+                        uexAudio.play(0);
+                        var playing = '../wgtRes/audio_playingright.gif';
+                        if ($(item).hasClass('leftGroupContent')) {
+                            playing = '../wgtRes/audio_playingleft.gif';
+                        }
+                        $(item).find('img').attr('src', playing);
+                        isPlaying = true;
+                        playItem = item;
+                    }, 200)
+                }
+            }
+        }
+
+        function openmap(Lat, Lng, Addr) {
+            App.Logs("openmap:" + Lat + "," + Lng + "," + Addr);
+            lat = Lat;
+            lon = Lng
+            address = Addr;
+            mapopen(1, Lat, Lng);
+        }
+
+        function scrollWin() {
+            //App.Logs("scrollWin:" + $('#list').height() + "," + screen.availHeight + "," + window.innerHeight + "," + document.body.scrollHeight);
+            window.scrollTo(0, $('#list').height());
+            if (!App.getAppPlat()) {
+                uexChatKeyboard.changeWebViewFrame($('#list').height());
+            }
+            $('#list .chatpic').each(function() {
+                $(this).on('load', function() {
+                    var isload = $(this).attr('data-load');
+                    if (App.isNull(isload)) {
+                        var img = new Image();
+                        img.src = $(this).attr('src');
+                        if (img.width > img.height) {
+                            $(this)[0].style.width = "8em";
+                            $(this)[0].style.height = "6em";
+                        }
+                        $(this).attr('data-load', true);
+                        window.scrollTo(0, $('#list').height());
+                        if (!App.getAppPlat()) {
+                            uexChatKeyboard.changeWebViewFrame($('#list').height());
+                        }
+                    }
+                })
+            });
+            $('#list .mappic').each(function() {
+                $(this).on('load', function() {
+                    window.scrollTo(0, $('#list').height());
+                    if (!App.getAppPlat()) {
+                        uexChatKeyboard.changeWebViewFrame($('#list').height());
+                    }
+                })
+            })
+        }
+
+        function openPic(index) {
+            if (App.isNull(picList) || picList.length < 1) {
+                return;
+            }
+            var data = {
+                displayActionButton : false,
+                displayNavArrows : false,
+                enableGrid : false,
+                startOnGrid : false,
+                startIndex : index,
+                data : picList
+            }
+            var json = JSON.stringify(data);
+            uexImage.openBrowser(json);
+        }
+    </script>
+</html>

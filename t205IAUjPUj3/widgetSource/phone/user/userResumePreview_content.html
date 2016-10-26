@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userResumeDetail_content/css/main.css">
+        <link rel="stylesheet" href="userResumePreview_content/css/main.css">
+        <style>
+            .bc-border {
+                border-color: #008CE4 !important;
+            }
+            .ubbs {
+                border-bottom: 2px solid;
+            }
+            .title {
+                min-height: 2.2em;
+            }
+            .uwh-bg {
+                width: 4.5em;
+                height: 5.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-ver ub-f1 uinn">
+            <div id="userinfo" class=" ub ub-f1 ub-ver">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        个人信息
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div class="ub ub-f1 umar-t">
+                    <div class="ub ub-f1 ub-ver umar-r">
+                        <div class="ulev2">
+                            <span id="cnName"></span><span id="birthday" class="ulev-2 umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t">
+                            <span id="sex"></span><span id="age"></span><span id="uWorkExp" class="normal uhide"></span><span id="educational" class="normal uhide"></span><span id="nation" class=" seaman uhide"></span><span id="bodyHeight" class="seaman uhide"></span><span id="shipExp" class="seaman uhide"></span>
+                        </div>
+                        <div class="ulev-5 umar-t">
+                            现居住地:<span id="livingPlace" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t">
+                            籍贯:<span id="birthPlace" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            毕业院校:<span id="school" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            所学专业:<span id="profession" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            毕业时间:<span id="graduationDate" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            证书等级:<span id="certificateLv" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            现任职务:<span id="jobTitle" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t seaman uhide">
+                            外语水平:<span id="foreignLanguage" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t">
+                            特殊技能:<span id="specSkill" class="umar-l"></span>
+                        </div>
+                        <div class="ulev-5 umar-t">
+                            其它说明:<span id="remark" class="umar-l"></span>
+                        </div>
+                    </div>
+                    <div id="photoUri" class="ub ub ub-ver">
+                        <div class="uba ub ub-ac ub-pc uc-a1" style="background-color:#F6F6F6;border-color:#F6F6F6 ">
+                            <div class="ub-img1 resume_photo headUri" style="width: 3.2em;height: 4em;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="applyExpect" class=" ub ub-f1 ub-ver">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        应聘期望
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div class="ub ub-f1 ub-ver umar-r">
+                    <div class="ulev-5 umar-t normal uhide">
+                        应聘职务:<span id="normalJobTitle" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t normal uhide">
+                        期望城市:<span id="applyCity" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t normal uhide">
+                        期望薪资:<span id="normalPayroll" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t normal uhide">
+                        工作性质:<span id="jobType" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide">
+                        应聘职务:<span id="applyJobTitle" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide">
+                        月薪要求:<span id="applyPayroll" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide" >
+                        航线要求:<span id="applyShipLine" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide">
+                        船型要求:<span id="applyShipType" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide">
+                        总吨要求:<span id="applyTonnage" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t seaman uhide">
+                        合同期限:<span id="contactDeadline" class="umar-l"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="workExp" class=" ub ub-f1 ub-ver normal uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        工作经历
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div id="workExpList" class="ub ub-f1 ub-ver">
+                    <ul></ul>
+                </div>
+            </div>
+            <div id="eduExp" class=" ub ub-f1 ub-ver normal uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        教育经历
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div id="eduExpList" class="ub ub-f1 ub-ver">
+                    <ul></ul>
+                </div>
+            </div>
+            <div id="shipLineExp" class=" ub ub-f1 ub-ver seaman uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        航海经历
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div id="shipLineExpList" class=" ub ub-f1 ub-ver">
+                    <ul></ul>
+                </div>
+            </div>
+            <div id="serviceUri" class=" ub ub-f1 ub-ver seaman uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        服务薄
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div id="serviceUriList">
+
+                </div>
+            </div>
+            <div id="shipLineExp" class=" ub ub-f1 ub-ver seaman uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        持有证书
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div id="listview1" class="ub ub-f1 ub-ver"></div>
+            </div>
+            <div id="contactMsg" class=" ub ub-f1 ub-ver uhide">
+                <div class="ub ulev1 sc-text-active ub-ac ubbs bc-border title">
+                    <div class=" ub-f1">
+                        联系方式
+                    </div>
+                    <div class="fa fa-angle-up fa-2x"></div>
+                </div>
+                <div class="ub ub-f1 ub-ver contactMsg">
+                    <div class="ulev-5 umar-t">
+                        手机号:<span id="mobile" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t">
+                        电子邮箱:<span id="email" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t">
+                        QQ:<span id="QQ" class="umar-l"></span>
+                    </div>
+                    <div class="ulev-5 umar-t">
+                        微信:<span id="wechat" class="umar-l"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var lv = appcan.listview({
+            selector : "#listview1",
+            type : "singleLine",
+            hasIcon : false,
+            hasAngle : true,
+            hasSubTitle : true
+        });
+        var page = 1;
+        var pageSize = 100;
+        var objData;
+        var userinfo;
+        var resumeType;
+        var resumeId;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        });
+
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            resumeType = App.getVal("resumeType");
+            $("." + resumeType).removeClass("uhide");
+            resumeId = App.getVal("resumeId");
+            loadDetail();
+        }
+
+        function loadDetail() {
+            App.authApi({
+                url : "user/getResumePreview",
+                data : {
+                    params : {
+                        resumeId : resumeId
+                    }
+                },
+                callBack : function(data) {
+                    // console.log(data)
+                    if (data.code == 0) {
+                        var birthday = data.items.birthday;
+                        if (!App.isNull(birthday)) {
+                            birthday = birthday.split("-");
+                            $("#birthday").html("(" + birthday[0] + "年" + birthday[1] + "月" + birthday[2] + "日)");
+                        } else {
+                            $("#birthday").html(birthday);
+                        }
+                        var headuri = App.isNull(data.items.photouri) ? "../wgtRes/comImg.png" : data.items.photouri;
+                        if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                            headuri = App.resumeUri + "o/" + data.items.photouri;
+                            $(".headUri").css("background-image", "url(" + headuri + ")");
+                        }
+                        $("#cnName").html(data.items.cnname);
+                        $("#sex").html(data.items.sex + "|");
+                        $("#age").html(App.getIdCardInfo(data.items.idcode, 3) + "岁" + "|");
+                        $("#livingPlace").html(data.items.livingplace);
+                        $("#birthPlace").html(data.items.birthplace);
+                        $("#specSkill").html(data.items.specskill);
+                        $("#mobile").html(data.items.mobile);
+                        $("#email").html(data.items.email);
+                        $("#QQ").html(data.items.qq);
+                        $("#wechat").html(data.items.wechat);
+                        $("#userinfo").attr("chatId", data.items.userid);
+                        $("#userinfo").attr("chatpic", headuri);
+                        $("#userinfo").attr('chatname', data.items.cnname);
+                        if (resumeType == "seaman") {
+                            var servicepic = data.items.servicepic;
+                            if (!App.isNull(servicepic)) {
+                                servicepic = servicepic.split(",");
+                                var h = '';
+                                var index = 0;
+                                for (var i = 0; i < servicepic.length; i++) {
+                                    if (!App.isNull(servicepic[i])) {
+                                        var src = App.downIp + "user_Image/serviceImage/t/320x320/" + servicepic[i];
+                                        var oriSrc = App.downIp + "user_Image/serviceImage/" + servicepic[i];
+                                        h += '<div onclick="openBrowse(' + index + ')" class="ufl ub-img1 uwh-bg umar-a picItem" data-src="' + oriSrc + '" style="background-image:url(' + src + ')"></div>';
+                                        index++;
+                                    }
+                                };
+                                $("#serviceUriList").html(h);
+                            } else {
+                                $("#serviceUri").addClass("uhide");
+                            }
+                            var school = App.isNull(data.items.school) ? "" : data.items.school;
+                            var profession = App.isNull(data.items.profession) ? "" : data.items.profession;
+                            var graduationdate = App.isNull(data.items.graduationdate) ? "" : data.items.graduationdate;
+                            var certificatelv = App.isNull(data.items.certificatelv) ? "" : data.items.certificatelv;
+                            var jobtitle = App.isNull(data.items.jobtitle) ? "" : data.items.jobtitle;
+                            var foreignlanguage = App.isNull(data.items.foreignlanguage) ? "" : data.items.foreignlanguage;
+                            var resumeremark = App.isNull(data.items.resumeremark) ? "" : data.items.resumeremark;
+                            $("#school").html(school);
+                            $("#profession").html(profession);
+                            $("#graduationDate").html(graduationdate);
+                            $("#certificateLv").html(certificatelv);
+                            $("#jobTitle").html(jobtitle);
+                            $("#foreignLanguage").html(foreignlanguage);
+                            $("#nation").html(App.isNull(data.items.nation) ? "" : data.items.nation + "|");
+                            $("#bodyHeight").html(App.isNull(data.items.bodyheight) ? "" : data.items.bodyheight + "CM|");
+                            $("#shipExp").html(App.isNull(data.items.shipexp) ? "" : data.items.shipexp + "年航海经验");
+                            $("#remark").html(resumeremark);
+                            $("#applyJobTitle").html(data.items.applyjobtitle);
+                            if (data.items.applypayroll != "面议") {
+                                $("#applyPayroll").html(data.items.applypayroll + data.items.payrolltype);
+                            } else {
+                                $("#applyPayroll").html(data.items.applypayroll);
+                            }
+                            $("#applyShipLine").html(data.items.applyshipline);
+                            $("#applyShipType").html(data.items.applyshiptype);
+                            $("#applyTonnage").html(data.items.applytonnage);
+                            $("#contactDeadline").html(data.items.contactdeadline);
+                            loadShipLineExp(data.items.userid);
+                            loadUserCert(data.items.userid);
+                            var title = data.items.certificatelv + data.items.jobtitle + data.items.cnname + "求职简历";
+                            var shareData = {
+                                thumbImg : "res://version.png",
+                                wedpageUrl : App.userResuemeUrl + resumeId,
+                                title : title,
+                                description : "在海员港发现了一个不错的简历，快来看看吧~",
+                                callBackName : "userResumePreview"
+                            }
+                            App.setVal("shareData", shareData);
+                        } else {
+                            $("#remark").html(data.items.remark);
+                            $("#uWorkExp").html(data.items.workexp + "工作经验|");
+                            $("#educational").html(data.items.educational);
+                            $("#normalJobTitle").html(data.items.normaljobtitle);
+                            $("#applyCity").html(data.items.applycity);
+                            $("#normalPayroll").html(data.items.normalpayroll);
+                            $("#jobType").html(data.items.jobtype);
+                            loadWorkExp(data.items.userid);
+                            loadEduExp(data.items.userid);
+                            var shareData = {
+                                thumbImg : "res://version.png",
+                                wedpageUrl : App.userResuemeUrl + resumeId,
+                                title : "简历推荐:" + data.items.cnname,
+                                description : "在海员港发现了一个不错的简历，快来看看吧~",
+                                windowName : "userResumePreview"
+                            }
+                            App.setVal("shareData", shareData);
+                        }
+                        if (data.items.userid != userinfo.userid) {
+                            App.isFriend(userinfo.userid, data.items.userid, function(data) {
+                                App.evalJs({
+                                    winName : "userResumePreview",
+                                    type : 1,
+                                    js : "shwoBtn(true," + data + ")"
+                                });
+                            })
+                            addViewCount(userinfo.userid);
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function openBrowse(index) {
+            var auditInfoList = [];
+            $(".picItem").each(function() {
+                var obj = {
+                    src : $(this).attr("data-src")
+                }
+                auditInfoList.push(obj);
+            })
+            if (auditInfoList.length > 0) {
+                var param = {
+                    displayActionButton : false,
+                    displayNavArrows : true,
+                    enableGrid : false,
+                    startOnGrid : false,
+                    startIndex : index,
+                    data : auditInfoList
+                }
+                uexImage.openBrowser(App.toJsonStr(param));
+            }
+        }
+
+        function addViewCount(userId) {
+            App.authApi({
+                url : "user/addViewCount",
+                data : {
+                    params : {
+                        resumeId : resumeId,
+                        userId : userId + (App.isNull(userinfo.parentid) ? "" : "." + userinfo.parentid),
+                        type : "resume"
+                    }
+                },
+                callBack : function(data) {
+                }
+            });
+        }
+
+        function acceptInvitid() {
+            userId = $("#userinfo").attr("chatid");
+            App.authApi({
+                url : "friend/acceptInvitation",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        toUserId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        if (!isdebug) {
+                            var param = {
+                                username : userId
+                            };
+                            App.Logs("acceptInvitation:" + App.toJsonStr(param));
+                            uexEasemob.acceptInvitation(App.toJsonStr(param));
+                        }
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function reqApply() {
+            App.openLoading({
+                title : "",
+                msg : "正在发送邀请，请稍后...",
+                canCancel : 1
+            });
+            var resumeJobTitleId = App.getVal("resumeJobTitleId");
+            App.authApi({
+                url : "user/reqApply",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        resumeId : resumeId,
+                        toId : $("#userinfo").attr("chatid"),
+                        jobTitleId : resumeJobTitleId,
+                        parentId : App.isNull(userinfo.parentid) ? "" : userinfo.parentid
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.toast("邀请成功!");
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function openChat() {
+            var chatId = $("#userinfo").attr("chatId");
+            var chatname = $("#userinfo").attr('chatname');
+            var chatpic = $("#userinfo").attr('chatpic');
+            App.setVal("chatId", chatId);
+            App.setVal("chatname", chatname);
+            App.setVal("chatpic", chatpic);
+            if (!isdebug) {
+                var data = {
+                    username : chatId,
+                    chatType : "0"
+                }
+                uexEasemob.resetUnreadMsgCount(JSON.stringify(data));
+                App.evalJs({
+                    winName : "indexNew",
+                    type : 1,
+                    js : 'shwoTabBage("xiaoxi",0)'
+                });
+            }
+            App.openWin({
+                backName : App.getCurrWinName(),
+                name : 'chatRoom',
+                url : '../chat/chatRoom.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            })
+        }
+
+
+        appcan.button(".title", '', function() {
+            var item = $(this).find(".fa")[0];
+            if ($(item).hasClass("fa-angle-up")) {
+                $(item).addClass("fa-angle-down");
+                $(item).removeClass("fa-angle-up");
+                $(this).next().addClass("uhide");
+            } else {
+                $(item).removeClass("fa-angle-down");
+                $(item).addClass("fa-angle-up");
+                $(this).next().removeClass("uhide");
+            }
+        })
+
+        lv.on('click', function(ele, data, subobj) {
+            data.certList = objData[data.id];
+            App.setVal("certData", data);
+            App.openWin({
+                backName : "userResumePreview",
+                name : 'userCertificateDetail',
+                url : 'userCertificateDetail.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+        function loadWorkExp(userId) {
+            App.authApi({
+                url : "user/getUserWorkExpList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "至" + objData.dataList[i].endtime + "," + objData.dataList[i].jobtitle;
+                                d += '<li class="ub ubb bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3 ut-s">' + objData.dataList[i].compname + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em;">' + objData.dataList[i].experience + '</div>';
+                                d += '   </div>';
+                                d += '</li>';
+                            };
+                            $('#workExpList ul').html(d);
+                        } else {
+                            d += '<li class="ub ubb bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                            d += '</li>';
+                            $('#workExpList ul').html(d);
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadEduExp(userId) {
+            App.authApi({
+                url : "user/getUserEduExpList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    App.ajaxLoading(0);
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "至" + objData.dataList[i].endtime + "," + objData.dataList[i].specialty + "," + objData.dataList[i].educational;
+                                d += '<li class="ub ubb bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3  ut-s">' + objData.dataList[i].school + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em">' + objData.dataList[i].remark + '</div>';
+                                d += '   </div>';
+                                d += '</li>';
+                            };
+                            $('#eduExpList ul').html(d);
+                        } else {
+                            d += '<li class="ub ubb bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn " style="min-height:4em">教育经历未填写</div>';
+                            d += '</li>';
+                            $('#eduExpList ul').html(d);
+                        }
+                    }
+                }
+            })
+        }
+
+        function loadUserCert(userId) {
+            App.authApi({
+                url : "user/getUserCertificate",
+                data : {
+                    params : {
+                        userId : userId
+                    }
+                },
+                callBack : function(data) {
+                    if (data.code == 0) {
+                        objData = data.items;
+                        var arrData = [];
+                        if (objData.qualified && objData.qualified.length > 0) {
+                            var obj = {};
+                            obj.title = "培训合格证";
+                            obj.subTitle = objData.qualified.length;
+                            obj.id = "qualified";
+                            arrData.push(obj);
+                        }
+                        if (objData.suit && objData.suit.length > 0) {
+                            var obj = {};
+                            obj.title = "适任证";
+                            obj.subTitle = objData.suit.length;
+                            obj.id = "suit";
+                            arrData.push(obj);
+                        }
+                        if (objData.health && objData.health.length > 0) {
+                            var obj = {};
+                            obj.title = "健康证";
+                            obj.subTitle = objData.health.length;
+                            obj.id = "health";
+                            arrData.push(obj);
+                        }
+                        if (objData.seaman && objData.seaman.length > 0) {
+                            var obj = {};
+                            obj.title = "海员证";
+                            obj.subTitle = objData.seaman.length;
+                            obj.id = "seaman";
+                            arrData.push(obj);
+                        }
+                        if (objData.inlandqualified && objData.inlandqualified.length > 0) {
+                            var obj = {};
+                            obj.title = "内河行驶资格证";
+                            obj.subTitle = objData.inlandqualified.length;
+                            obj.id = "inlandqualified";
+                            arrData.push(obj);
+                        }
+                        lv.set(arrData);
+                    } else {
+                        var d = '';
+                        d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                        d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">未获取到证书信息</div>';
+                        d += '</li>';
+                        $('#listview1').html(d);
+                    }
+                }
+            });
+        }
+
+        function loadShipLineExp(userId) {
+            App.authApi({
+                url : "user/getUserShipLineList",
+                data : {
+                    params : {
+                        userId : userId,
+                        page : page,
+                        pageSize : pageSize
+                    }
+                },
+                callBack : function(data) {
+                    var d = '';
+                    if (data.code == 0) {
+                        var objData = data.items;
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                var info = objData.dataList[i].starttime + "~" + objData.dataList[i].endtime + "," + objData.dataList[i].shiptype + "," + objData.dataList[i].shipline;
+                                var experience = objData.dataList[i].shipname + "," + objData.dataList[i].shippower;
+                                d += '<li class="ub ubt bc-border uinn3">';
+                                d += '   <div class="ub-f1 ub ub-ver marg-l">';
+                                d += '     <div class="ub uinn3 ulev-3 ut-s">' + objData.dataList[i].jobtitle + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + objData.dataList[i].servercomp + '</div>';
+                                d += '     <div class="ulev-1 t-gra uinn3 ut-s">' + info + '</div>';
+                                d += '     <div class="ulev-1 spec-title" style="margin-bottom: 0.2em;padding-left:0.2em">' + experience + '</div>';
+                                d += '   </div>';
+                                d += '</li>';
+                            };
+                            $('#shipLineExpList ul').html(d);
+                        } else {
+                            d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                            d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                            d += '</li>';
+                            $('#shipLineExpList ul').html(d);
+                        }
+                    } else {
+                        d += '<li class="ub ubt bc-border uinn3 ub-pc">';
+                        d += '  <div class="ub ub-pc ub-ac uinn ulev-5 sc-text-warn" style="min-height:4em">航海经历未填写</div>';
+                        d += '</li>';
+                        $('#shipLineExpList ul').html(d);
+                    }
+                }
+            });
+        }
+
+        function addToFriend(type) {
+            userId = $("#userinfo").attr('chatid');
+            if (!isdebug) {
+                if (userId == userinfo.userid) {
+                    App.toast("不能添加自己");
+                    return;
+                }
+                App.authApi({
+                    url : "friend/reqAddFriend",
+                    data : {
+                        params : {
+                            myId : userinfo.userid,
+                            toId : userId,
+                            remark : type == 1 ? userinfo.cnname + "请求跟你进行上船沟通" : userinfo.cnname + "请求添加你为好友",
+                            remark1 : type == 1 ? "你请求跟" + $("#cnName").html() + "进行上船沟通" : "你请求添加" + $("#cnName").html() + "为好友",
+                            type : type,
+                            mobile : $("#mobile").html(),
+                            addType : "resume",
+                            parentId : App.isNull(userinfo.parentid) ? "" : userinfo.parentid
+                        }
+                    },
+                    callBack : function(data) {
+                        if (data.code == 0) {
+                            var param = {
+                                toAddUsername : userId,
+                                reason : type == 1 ? userinfo.cnname + "请求跟你进行上船沟通" : userinfo.cnname + "请求添加你为好友"
+                            };
+                            uexEasemob.addContact(JSON.stringify(param));
+                            App.evalJs({
+                                winName : App.getCurrWinName(),
+                                type : 1,
+                                js : 'showBtn(true,0)'
+                            });
+                        } else {
+                            App.toast(data.message);
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</html>

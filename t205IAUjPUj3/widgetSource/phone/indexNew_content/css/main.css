@@ -1,0 +1,153 @@
+.uw-comm2 {
+    width: 0.625em;
+}
+.uh-comm2 {
+    height: 0.625em;
+}
+
+.t-gra-comm {
+    color: #989898;
+}
+.t-gra2-comm {
+    color: #707070;
+}
+.umar-r-comm {
+    margin-right: 2em;
+}
+.c-gra-comm {
+    background-color: #ebebeb;
+}
+.uinn-comm {
+    padding: 0.4em;
+}
+.line-hei-com {
+    line-height: 1.6em;
+}
+.uh-app3 {
+    height: 3em;
+}
+.uw-app3 {
+    width: 3em;
+}
+.uc-a-app2 {
+    -webkit-border-radius: 2.8125em;
+    border-radius: 2.8125em;
+}
+.umar-at1 {
+    margin-top: .2em;
+}
+.mar-ar1 {
+    margin-right: .5em;
+}
+.pingTriangle {
+    position: absolute;
+    top: -0.45em;
+    right: 5em;
+    width: 0;
+    height: 0;
+    border-left: 0.5em solid transparent;
+    border-right: 0.5em solid transparent;
+    border-bottom: 0.5em solid #F3F4F6;
+}
+.piclist {
+
+}
+.piclist .imgitem {
+    margin-right: 0.3em;
+    margin-bottom: 0.3em;
+    float: left;
+    height: 5.5em;
+    width: 5.5em;
+}
+.ipiclist .imgitem {
+    margin-right: 0.3em;
+    margin-bottom: 0.3em;
+    float: left;
+    height: 5em;
+    width: 5em;
+}
+
+.spec-title {
+    line-height: 1.5em;
+    /* max-height: 8em;*/
+    overflow: hidden;
+    /* text-overflow: ellipsis;
+     -webkit-box-orient: vertical;
+     display: -webkit-box;
+     -webkit-line-clamp: 5;*/
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.spec-content {
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+}
+.spec-content2 {
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+}
+.lis {
+    padding: 0.4em;
+    min-height: 2em;
+}
+.userName {
+    font-size: 0.9125em;
+}
+.compName {
+    padding-left: 0.2em;
+    color: #B4BEC6;
+    font-size: 0.75em;
+    max-width: 8em;
+}
+.jobTitle {
+    padding-left: 0.2em;
+    color: #B4BEC6;
+    font-size: 0.75em;
+}
+.addFriend {
+    padding: 0.3em;
+    min-width: 4em;
+    border-color: #0080E1;
+}
+.content {
+    padding-top: 0.2em;
+    font-size: 0.9125em;
+}
+.icontent {
+    margin-top: 0.2em;
+    font-size: 0.9125em;
+}
+.pinlun {
+    min-height: 1.5em;
+    min-width: 1.5em;
+    background-image: url(../../wgtRes/images/pinglun.png);
+}
+.kuosan {
+    min-height: 1.5em;
+    min-width: 1.5em;
+    background-image: url(../../wgtRes/images/kuosan.png);
+}
+.kuosanY {
+    min-height: 1.5em;
+    min-width: 1.5em;
+    background-image: url(../../wgtRes/images/kuosanY.png);
+}
+.zan {
+    min-height: 1.5em;
+    min-width: 1.5em;
+    background-image: url(../../wgtRes/images/zan.png);
+}
+.zanY {
+    min-height: 1.5em;
+    min-width: 1.5em;
+    background-image: url(../../wgtRes/images/zanY.png);
+}
+.topTips {
+    background-color: #FFF79D;
+    color: #555555;
+    min-height: 2.5em;
+}

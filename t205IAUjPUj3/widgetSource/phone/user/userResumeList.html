@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+    </head>
+    <body class="um-vp " ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <div class="ut ub-f1 ulev1 ut-s tx-c" tabindex="0">
+                    我的简历
+                </div>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div class="ub-img umw4 umh4 icon-edit"></div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var resumeMenu = false;
+        appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            App.openFrame("content", "userResumeList_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function() {
+                appcan.frame.resize("content", 0, titHeight);
+            }
+            if (App.getAppPlat()) {
+                uexWindow.onKeyPressed = function(keyCode) {
+                    if (keyCode == 0) {
+                        if (resumeMenu) {
+                            closeResumeMenu();
+                            return;
+                        }
+                        closeWin();
+                    }
+                }
+                uexWindow.setReportKey(0, 1);
+            }
+        });
+        appcan.button("#nav-left", "btn-act", function() {
+            if (resumeMenu) {
+                closeResumeMenu();
+                return;
+            }
+            closeWin(-1);
+        })
+
+        appcan.button('#nav-right', 'btn-act', function() {
+            var userinfo = App.getUserInfo();
+            if (userinfo.auditstatus != 2) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您的身份还没认证，发布的信息将不能被搜索到!',
+                    buttons : ['继续发布', '立即验证'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 0) {
+                            openResumeMenu();
+                        } else {
+                            App.openWin({
+                                backName : 'userResumeDetail',
+                                name : 'userPersonAudit',
+                                url : '../audit/userPersonAudit.html',
+                                type : 4,
+                                aniId : 2,
+                                animDuration : 200
+                            });
+                        }
+                    }
+                });
+            } else {
+                openResumeMenu();
+            }
+
+        })
+        function openResumeMenu() {
+            var titHeight = $('#header').offset().height;
+            if (resumeMenu) {
+                closeResumeMenu();
+                return;
+            }
+            resumeMenu = true;
+            App.openFrame("resumeMenu", "../common/resumeMenu.html", 0, titHeight);
+        }
+
+        function closeResumeMenu() {
+            resumeMenu = false;
+            appcan.window.closePopover("resumeMenu");
+        }
+
+        function closeWin(type) {
+            App.closeWin("userResumeList", type);
+            if (type == undefined || type == null) {
+                type = -1;
+            }
+            appcan.window.close(type);
+        }
+
+    </script>
+</html>

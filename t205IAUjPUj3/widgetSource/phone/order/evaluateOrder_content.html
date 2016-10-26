@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="evaluateOrder_content/css/main.css">
+        <style>
+            .uinput textarea {
+                min-height: 6.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="bodycontent" class="uinn-a1 ubt bc-border">
+            <div class="uba bc-border uc-a1 c-wh ub ub-ac ulev-5">
+                <div class="ub ub-f1 ub-ver">
+                    <div class="uinput ub ub-f1">
+                        <textarea oninput="textLimitCheck(200)" id="content" style="outline: none" placeholder="请输入评价内容" type="text" class="ub-f1"></textarea>
+                    </div>
+                    <div id="textcount" class="ub sc-text-hint ub-pe umar-a">
+                        0/200
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="padding-left: 0.625em;padding-right: 0.625em">
+            <div class="ub ub-ac t-gra-82">
+                给对方评分
+            </div>
+            <div class="ub ub-ac umar-at2">
+                <div id="score1" class="t-gra-82">
+                    职位描述相符
+                </div>
+                <div class="ub-f1 umar-l-ec">
+                    <div class="pos_re uwh-ec2">
+                        <div class="ub ub-ac uwh-ec2">
+                            <div data-id="1" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="2" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="3" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="4" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                            <div data-id="5" class="uwh-ec3 ub-img star2-ec umar-ar3 miaoshu"></div>
+                        </div>
+                        <div class=" uabs uof miaosufen" style="width:0;">
+                            <div class="ub ub-ac">
+                                <div data-id="1" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="2" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="3" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="4" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                                <div data-id="5" class="uwh-ec3 ub-img star1-ec umar-ar3 miaoshu1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ub ub-ac umar-at2">
+                <div id="score2" class="t-gra-82">
+                    服务态度
+                </div>
+                <div class="ub-f1 umar-l-ec">
+                    <div class="pos_re uwh-ec2">
+                        <div class="ub ub-ac uwh-ec2">
+                            <div data-id="1" class="uwh-ec3 ub-img star2-ec umar-ar3 fuwu"></div>
+                            <div data-id="2" class="uwh-ec3 ub-img star2-ec umar-ar3 fuwu"></div>
+                            <div data-id="3" class="uwh-ec3 ub-img star2-ec umar-ar3 fuwu"></div>
+                            <div data-id="4" class="uwh-ec3 ub-img star2-ec umar-ar3 fuwu"></div>
+                            <div data-id="5" class="uwh-ec3 ub-img star2-ec umar-ar3 fuwu"></div>
+                        </div>
+                        <div class=" uabs uof fuwufen" style="width:0;">
+                            <div class="ub ub-ac">
+                                <div data-id="1" class="uwh-ec3 ub-img star1-ec umar-ar3 fuwu1"></div>
+                                <div data-id="2" class="uwh-ec3 ub-img star1-ec umar-ar3 fuwu1"></div>
+                                <div data-id="3" class="uwh-ec3 ub-img star1-ec umar-ar3 fuwu1"></div>
+                                <div data-id="4" class="uwh-ec3 ub-img star1-ec umar-ar3 fuwu1"></div>
+                                <div data-id="5" class="uwh-ec3 ub-img star1-ec umar-ar3 fuwu1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class=" ub  bc-text ub-ac t-gra-82 ulev-5 umar-at2 uhide">
+                <div class="lv_title  marg-l ub ub-ver ut-m line1  umar-ar3">
+                    匿名评价
+                </div>
+                <div class="checkbox  umar-l">
+                    <input type="checkbox" class="uabs ub-con">
+                </div>
+            </div>
+            <div class=" uinn-a1 ulev-5 umar-t">
+                <div id="confirmOrder" class="btn ub ub-ac t-wh ub-pc sc-bg-alert uc-a1 umar-r ">
+                    提交评价
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loadData();
+        })
+        function loadData() {
+            userinfo = App.getUserInfo();
+            if (userinfo.usertype == "企业") {
+                $("#score1").html("英语能力");
+                $("#score2").html("业务水平");
+            }
+        }
+
+
+        appcan.button("#confirmOrder", 'btn-act', function() {
+            submitEval();
+        })
+        function submitEval() {
+            var content = appcan.trim($("#content").val());
+            var score1 = $(".miaosufen").attr("data-fenshu");
+            var score2 = $(".fuwufen").attr("data-fenshu");
+            var orderId = App.getVal("orderId");
+            var payToUserId = App.getVal("payToUserId");
+            if (App.isNull(content)) {
+                App.toast("请输入评论内容");
+                return;
+            }
+            if (App.isNull(score1)) {
+                App.toast("请给" + appcan.trim($("#score1").html()) + "评分");
+                return;
+            }
+            if (App.isNull(score2)) {
+                App.toast("请给" + appcan.trim($("#score2").html()) + "评分");
+                return;
+            }
+            App.openLoading({
+                title : '',
+                msg : '正在提交评论...',
+                canCancel : 1
+            });
+            App.authApi({
+                url : "order/evalOrder",
+                data : {
+                    params : {
+                        userId : userinfo.userid,
+                        orderId : orderId,
+                        toUserId : payToUserId,
+                        score1 : score1,
+                        score2 : score2,
+                        content : content,
+                        isPinglun : userinfo.usertype == "个人" ? 1 : 2
+                    }
+                },
+                callBack : function(data) {
+                    App.closeLoading();
+                    if (data.code == 0) {
+                        App.alertEx("评论成功", function() {
+                            App.evalJs({
+                                winName : "orderList",
+                                js : "loadOrderList(1,0)"
+                            });
+                            App.evalJs({
+                                winName : "evaluateOrder",
+                                type : 1,
+                                js : "closeWin()"
+                            });
+                        });
+                    } else {
+                        App.toast(data.message);
+                    }
+                }
+            });
+        }
+
+        function textLimitCheck(maxLength) {
+            var text = $('#content').val();
+            var strlen = maxLength - text.length;
+            $("#textcount").html(text.length + "/" + maxLength);
+            if (text.length > maxLength) {
+                $('#content').val(text.substring(0, maxLength));
+            }
+        }
+
+
+        appcan.button('.miaoshu', '', function() {
+            var fenshu = parseInt($(this).attr("data-id"));
+            $(this).parent().next().css("width", (fenshu * 20) + "%")
+            $(this).parent().next().attr("data-fenshu", fenshu);
+        })
+        appcan.button('.miaoshu1', '', function() {
+            var fenshu = parseInt($(this).attr("data-id"));
+            $(this).parent().parent().css("width", (fenshu * 20) + "%");
+            $(this).parent().parent().attr("data-fenshu", fenshu);
+        })
+        appcan.button('.fuwu', '', function() {
+            var fenshu = parseInt($(this).attr("data-id"));
+            $(this).parent().next().css("width", (fenshu * 20) + "%");
+            $(this).parent().next().attr("data-fenshu", fenshu);
+        })
+        appcan.button('.fuwu1', '', function() {
+            var fenshu = parseInt($(this).attr("data-id"));
+            $(this).parent().parent().css("width", (fenshu * 20) + "%");
+            $(this).parent().parent().attr("data-fenshu", fenshu);
+        })
+    </script>
+</html>

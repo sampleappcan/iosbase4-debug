@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexCamera">
+        <method name="open"></method>
+        <method name="openInternal"></method>
+        <method name="openViewCamera"></method>
+        <method name="removeViewCameraFromWindow"></method>
+        <method name="changeFlashMode" sync = "true"></method>
+        <method name="changeCameraPosition" sync = "true"></method>
+	</plugin>
+</uexplugins>

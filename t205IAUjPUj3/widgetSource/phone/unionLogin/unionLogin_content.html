@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="unionLogin_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="c-gra1 uinn-a1 ub ub-ver ub-f1">
+            <div class="ub-f1 ub ub-pc ub-ac">
+                <div class="ub uwh-set3 pos_re ">
+                    <div id="userLogo" class="uwh-set3 uc-a-set3 ub-img" style="background-image:url('./myinfo_content/css/myImg/accuser.png')"></div>
+                </div>
+            </div>
+            <div class="ub umar-at1">
+                <div class="t-gra-set3">
+                    亲爱的<span id="loginType"></span>用户:
+                </div>
+                <div id="nickName">
+                    
+                </div>
+            </div>
+            <div>
+                为了给您更好的服务,请关联一个海员港账号
+            </div>
+        </div>
+        <div class="ub ub-ver ub-f1 uinn-a1">
+            <div class="t-gra-set3">
+                还没有海员港账号?
+            </div>
+            <div class="ub ub-ac ub-f1 umar-t">
+                <div class="btn ub-f1 ub ub-ac t-wh ub-pc uc-a1 bc-btn " id="regSubmit" style="min-height: 2.2em;">
+                    立即注册
+                </div>
+            </div>
+            <div class="t-gra-set3 umar-t">
+                已有海员港账号?
+            </div>
+            <div class=" ub  ub-ac ub-f1 umar-t">
+                <div class="btn ub-f1 ub ub-ac  ub-pc uc-a1 uba bc-border " id="unionSubmit" style="min-height: 2.2em;">
+                    立即关联
+                </div>
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var loginParms;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            loaddata();
+        })
+        function loaddata() {
+            loginParms = App.getJson('loginParms');
+            App.Logs("unionlogin:" + JSON.stringify(loginParms));
+            if (App.isNull(loginParms)) {
+                App.alertEx("登陆参数获取不正确，请稍后重试!", function() {
+                    appcan.window.evaluateScript('unionLogin', 'closeWin()');
+                });
+                return;
+            }
+            var loginType = "";
+            switch(loginParms.type) {
+            case 'Sina':
+                loginType = "新浪";
+                break;
+            case 'QQ':
+                loginType = "腾讯";
+                break;
+            case 'Weixin':
+                loginType = "微信";
+                break;
+            }
+            $('#loginType').html(loginType);
+            $('#userLogo').css("background-image", "url(" + loginParms.logoUri + ")");
+        }
+        appcan.button('#unionSubmit', 'btn-act', function() {
+            App.openWin({
+                backName : 'unionLogin',
+                name : 'quickLogin',
+                url : 'quickLogin.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+        appcan.button('#regSubmit', 'btn-act', function() {
+            App.openWin({
+                backName : 'unionLogin',
+                name : 'quickReg',
+                url : 'quickReg.html',
+                type : 4,
+                aniId : 2,
+                animDuration : 200
+            });
+        })
+    </script>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="userAnnexAudit_content/css/main.css">
+        <style>
+            .uwh-bg {
+                width: 10em;
+                height: 7.5em;
+            }
+        </style>
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div class="ub ub-f1 ubb bc-border ub-ac uinn ulev-3" style="color: red">
+            请上传上个人有效身份证，以便尽快通过审核。<span class="ulev-1">注意:审核期间您的简历将不可被搜索到</span>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                身份证(正面)
+            </div>
+            <div id ="busiPicList">
+                <div data-index="0" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem ">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1 ubb bc-border ub-ver">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                身份证(背面)
+            </div>
+            <div id ="otherPicList">
+                <div data-index="1" data-change="false" class="ub-img1 uwh-bg imgBg ufl umar-a picItem">
+                    <div class="ub-img delBg delcss uhide"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ub ub-f1">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                审核状态:
+            </div>
+            <div class="ub ub-ac ubb bc-border uinn ulev-3 status" style="color: red">
+                未审核
+            </div>
+        </div>
+        <div class="ub ub-f1 ub-ver uhide">
+            <div class="ub ub-ac ubb bc-border ub-f1 uinn ulev-3">
+                备注信息:
+            </div>
+            <div class="ub ub-ac ubb bc-border uinn ulev-3 remark" style="color: red">
+                正在审核中
+            </div>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var type = 0;
+        var picList = [];
+        var imgList = [];
+        var userinfo;
+        var auditstatus;
+        var edit = false;
+        var uploadNum = 0;
+        window.onerror = function(sMessage, sUrl, sLine) {
+            if (sMessage.indexOf("evaluating 'document'") == -1) {
+                App.Logs(sMessage + " " + sUrl + " " + sLine)
+            }
+        }
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+                uexImage.onPickerClosed = function(data) {
+                    App.Logs("uexImage.onPickerClosed:" + data);
+                    var obj = JSON.parse(data);
+                    if (obj.isCancelled == false || obj.isCancelled == "false") {
+                        if (type == 0) {
+                            $('#busiPicList .picItem').removeClass('imgBg');
+                            $('#busiPicList .picItem').css("background-image", 'url(' + obj.data[0] + ')');
+                            $('#busiPicList .picItem').attr("data-src", obj.data[0]);
+                            $('#busiPicList .picItem').attr("data-change", true);
+                            $('#busiPicList .picItem').children().removeClass("uhide");
+                        } else {
+                            $('#otherPicList .picItem').removeClass('imgBg');
+                            $('#otherPicList .picItem').css("background-image", 'url(' + obj.data[0] + ')');
+                            $('#otherPicList .picItem').attr("data-src", obj.data[0]);
+                            $('#otherPicList .picItem').attr("data-change", true);
+                            $('#otherPicList .picItem').children().removeClass("uhide");
+                        }
+                    }
+                }
+                uexCamera.cbOpen = function(opCode, dataType, data) {
+                    App.Logs("uexCamera.cbOpenInternal:" + data);
+                    if (type == 0) {
+                        $('#busiPicList .picItem').removeClass('imgBg');
+                        $('#busiPicList .picItem').css("background-image", 'url(' + data + ')');
+                        $('#busiPicList .picItem').attr("data-src", data);
+                        $('#busiPicList .picItem').attr("data-change", true);
+                        $('#busiPicList .picItem').children().removeClass("uhide");
+                    } else {
+                        $('#otherPicList .picItem').removeClass('imgBg');
+                        $('#otherPicList .picItem').css("background-image", 'url(' + data + ')');
+                        $('#otherPicList .picItem').attr("data-src", data);
+                        $('#otherPicList .picItem').attr("data-change", true);
+                        $('#otherPicList .picItem').children().removeClass("uhide");
+                    }
+                }
+                uexWindow.cbActionSheet = function(opId, dataType, data) {
+                    switch (parseInt(data)) {
+                    case 0:
+                        uexCamera.open(0, 80);
+                        break;
+                    case 1:
+                        if (type == 0) {
+                            max = 1;
+                        }
+                        var data = {
+                            min : 1,
+                            max : 1,
+                            quality : 0.8,
+                            usePng : false,
+                            detailedInfo : false
+                        }
+                        var json = JSON.stringify(data);
+                        uexImage.openPicker(json);
+                        break;
+                    }
+                }
+            }
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadAuditData();
+        }
+
+
+        appcan.button("#otherPicList .picItem", '', function(evt) {
+            type = 1;
+            if ((userinfo.auditstatus == 1 || userinfo.auditstatus == 2) && !edit) {
+                var index = $(this).attr("data-index");
+                var auditInfoList = [];
+                $(".picItem").each(function() {
+                    if (!$(this).hasClass("imgBg")) {
+                        var obj = {
+                            src : $(this).attr("data-src")
+                        }
+                        auditInfoList.push(obj);
+                    }
+                });
+                if (auditInfoList.length > 0) {
+                    var param = {
+                        displayActionButton : false,
+                        displayNavArrows : true,
+                        enableGrid : false,
+                        startOnGrid : false,
+                        startIndex : index,
+                        data : auditInfoList
+                    }
+                    uexImage.openBrowser(App.toJsonStr(param));
+                }
+                return;
+            }
+            var target = $(evt.target);
+            var fileName = $(this).attr("data-src");
+            if (target.hasClass("delBg")) {
+                target.parent().css("background-image", '');
+                target.parent().addClass("imgBg");
+                target.addClass("uhide");
+                target.parent().attr("data-src", "");
+                target.parent().attr("data-change", true);
+                if (fileName.substr(0, 4) != "http") {
+                    uexFileMgr.deleteFileByPath(fileName);
+                }
+                return;
+            }
+            if (!$(this).hasClass("imgBg")) {
+                return;
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+
+        appcan.button("#busiPicList .picItem", '', function(evt) {
+            type = 0;
+            var target = $(evt.target);
+            if ((userinfo.auditstatus == 1 || userinfo.auditstatus == 2) && !edit) {
+                var index = $(this).attr("data-index");
+                var auditInfoList = [];
+                $(".picItem").each(function() {
+                    if (!$(this).hasClass("imgBg")) {
+                        var obj = {
+                            src : $(this).attr("data-src")
+                        }
+                        auditInfoList.push(obj);
+                    }
+                });
+                if (auditInfoList.length > 0) {
+                    var param = {
+                        displayActionButton : false,
+                        displayNavArrows : true,
+                        enableGrid : false,
+                        startOnGrid : false,
+                        startIndex : index,
+                        data : auditInfoList
+                    }
+                    uexImage.openBrowser(App.toJsonStr(param));
+                }
+                return;
+            }
+            var fileName = $(this).attr("data-src");
+            if (target.hasClass("delBg")) {
+                target.parent().css("background-image", '');
+                target.parent().addClass("imgBg");
+                target.addClass("uhide");
+                target.parent().attr("data-src", "");
+                target.parent().attr("data-change", true);
+                if (fileName.substr(0, 4) != "http") {
+                    uexFileMgr.deleteFileByPath(fileName);
+                }
+                return;
+            }
+            if (!$(this).hasClass("imgBg")) {
+                return;
+            }
+            uexWindow.actionSheet("菜单", "取消", "拍照,从相册选择");
+        })
+        function submitAudit() {
+            if (userinfo.auditstatus == 1) {
+                App.toast("当前信息正在审核中,暂时无法提交");
+                return;
+            }
+            if ($("#busiPicList .picItem").hasClass("imgBg")) {
+                App.toast("请先上传身份证正面照片");
+                return;
+            }
+            if ($("#otherPicList .picItem").hasClass("imgBg")) {
+                App.toast("请先上传身份证背面照片");
+                return;
+            }
+            var isUpdate = checkChange();
+            if (!isUpdate && userinfo.auditstatus == 2) {
+                App.toast("已经通过审核，不用再次提交");
+                return;
+            }
+            picList = [];
+            imgList = [];
+            var id = $("#busiPicList").attr("data-id");
+            $(".picItem").each(function() {
+                var src = $(this).attr("data-src");
+                var oriImg = $(this).attr("data-ori");
+                var isChange = $(this).attr("data-change");
+                var obj = {
+                    src : src,
+                    oriImg : oriImg,
+                    isChange : isChange
+                }
+                picList.push(obj);
+            });
+            App.openLoading({
+                title : '',
+                msg : '正在提交审核信息...请稍候...',
+                canCancel : 1
+            });
+            uploadPic(function(data) {
+                if (data) {
+                    App.authApi({
+                        url : 'audit/savePersonAudit',
+                        data : {
+                            params : {
+                                userId : userinfo.userid,
+                                imgList : imgList,
+                                id : id,
+                                isUpdate : isUpdate,
+                                status : "1"
+                            }
+                        },
+                        callBack : function(data) {
+                            if (data.code == 0) {
+                                App.toast("提交成功，等待客服审核");
+                                userinfo.auditstatus = 1;
+                                userinfo = App.updateUserInfo(userinfo);
+                                App.evalJs({
+                                    winName : 'indexNew',
+                                    type : 2,
+                                    popName : 'myinfo_content',
+                                    js : 'setStatus("审核中")'
+                                });
+                                $(".status").html("审核中");
+                                $(".remark").html("正在审核中");
+                                setTimeout(function() {
+                                    App.evalJs({
+                                        winName : "userPersonAudit",
+                                        type : 1,
+                                        js : "closeWin()"
+                                    });
+                                }, 1000);
+                            } else {
+                                App.toast(data.message);
+                            }
+                            App.closeLoading();
+                        }
+                    });
+                }
+            })
+        }
+
+        function saveAudit() {
+            if (App.isNull(userinfo.cnname)) {
+                App.toast("您个人信息姓名未填写，请先填写姓名后在提交");
+                return;
+            }
+            if (userinfo.auditstatus == 1) {
+                App.toast("当前信息正在审核中,暂时无法保存");
+                return;
+            }
+            if ($("#busiPicList .picItem").hasClass("imgBg")) {
+                App.toast("请先上传身份证正面照片");
+                return;
+            }
+            if ($("#otherPicList .picItem").hasClass("imgBg")) {
+                App.toast("请先上传身份证背面照片");
+                return;
+            }
+            var isUpdate = checkChange();
+            picList = [];
+            imgList = [];
+            var id = $("#busiPicList").attr("data-id");
+            $(".picItem").each(function() {
+                var src = $(this).attr("data-src");
+                var oriImg = $(this).attr("data-ori");
+                var isChange = $(this).attr("data-change");
+                var obj = {
+                    src : src,
+                    oriImg : oriImg,
+                    isChange : isChange
+                }
+                picList.push(obj);
+            });
+            if (isUpdate && userinfo.auditstatus == 2) {
+                appcan.window.confirm({
+                    title : '提醒',
+                    content : '您已经审核过，修改保存后需要在次审核，是否要保存修改?',
+                    buttons : ['暂不保存', '立即保存'],
+                    callback : function(err, data, dataType, optId) {
+                        if (err) {
+                            return;
+                        }
+                        if (parseInt(data) == 1) {
+                            App.openLoading({
+                                title : '',
+                                msg : '正在保存审核信息...请稍候...',
+                                canCancel : 1
+                            });
+                            uploadPic(function(data) {
+                                if (data) {
+                                    App.authApi({
+                                        url : 'audit/savePersonAudit',
+                                        data : {
+                                            params : {
+                                                userId : userinfo.userid,
+                                                imgList : imgList,
+                                                id : id,
+                                                isUpdate : isUpdate,
+                                                status : "0"
+                                            }
+                                        },
+                                        callBack : function(data) {
+                                            if (data.code == 0) {
+                                                App.toast("保存成功");
+                                                imgList = [];
+                                                loadAuditData();
+                                            } else {
+                                                App.toast(data.message);
+                                            }
+                                            App.closeLoading();
+                                        }
+                                    });
+                                }
+                            })
+                        }
+                    }
+                });
+            } else {
+                App.openLoading({
+                    title : '',
+                    msg : '正在保存审核信息...请稍候...',
+                    canCancel : 1
+                });
+                uploadPic(function(data) {
+                    if (data) {
+                        App.authApi({
+                            url : 'audit/savePersonAudit',
+                            data : {
+                                params : {
+                                    userId : userinfo.userid,
+                                    imgList : imgList,
+                                    id : id,
+                                    isUpdate : isUpdate,
+                                    status : "0"
+                                }
+                            },
+                            callBack : function(data) {
+                                if (data.code == 0) {
+                                    App.toast("保存成功");
+                                    imgList = [];
+                                    loadAuditData();
+                                } else {
+                                    App.toast(data.message);
+                                }
+                                App.closeLoading();
+                            }
+                        });
+                    }
+                })
+            }
+        }
+
+        function checkChange() {
+            var result = false;
+            $(".picItem").each(function() {
+                var change = $(this).attr('data-change');
+                if (!App.isNull(change) && change == "true") {
+                    result = true;
+                }
+            })
+            return result;
+        }
+
+        function uploadPic(callBack) {
+            if (uploadNum >= picList.length || picList.length <= 0) {
+                if (callBack) {
+                    uploadNum = 0;
+                    callBack(true);
+                    return true;
+                }
+            }
+            App.Logs(uploadNum + "," + picList.length)
+            var obj = picList[uploadNum];
+            if (!App.isNull(obj) && obj.src.substr(0, 4) != "http") {
+                App.uploadTMPFile(obj.src, 0, 480, function(status, serverObj) {
+                    if (status == 1) {
+                        var data = {
+                            serverPath : serverObj.serverPath,
+                            oriImg : App.isNull(obj.oriImg) ? "" : obj.oriImg,
+                            isChange : obj.isChange
+                        }
+                        imgList.push(data);
+                        window.setTimeout(function() {
+                            uploadNum++;
+                            uploadPic(callBack);
+                        }, 100);
+                    }
+                });
+            } else {
+                window.setTimeout(function() {
+                    var data = {
+                        serverPath : "",
+                        oriImg : App.isNull(obj.oriImg) ? "" : obj.oriImg,
+                        isChange : obj.isChange
+                    }
+                    imgList.push(data);
+                    uploadNum++;
+                    uploadPic(callBack);
+                }, 100);
+            }
+        }
+
+        function loadAuditData() {
+            App.authApi({
+                url : 'audit/getAuditData',
+                data : {
+                    params : {
+                        userId : userinfo.userid
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        var prosonLicense = data.items.prosonlicense;
+                        $("#busiPicList").attr("data-id", data.items.id);
+                        if (!App.isNull(prosonLicense)) {
+                            prosonLicense = prosonLicense.split(",");
+                            var src = App.downIp + "user_Image/annexImage/t/320x320/" + prosonLicense[0];
+                            var oriSrc = App.downIp + "user_Image/annexImage/" + prosonLicense[0];
+                            $('#busiPicList .picItem').removeClass('imgBg');
+                            $('#busiPicList .picItem').css("background-image", 'url(' + src + ')');
+                            $('#busiPicList .picItem').attr("data-src", oriSrc);
+                            $('#busiPicList .picItem').attr("data-change", false);
+                            var src = App.downIp + "user_Image/annexImage/t/320x320/" + prosonLicense[1];
+                            var oriSrc = App.downIp + "user_Image/annexImage/" + prosonLicense[1];
+                            $('#otherPicList .picItem').removeClass('imgBg');
+                            $('#otherPicList .picItem').css("background-image", 'url(' + src + ')');
+                            $('#otherPicList .picItem').attr("data-src", oriSrc);
+                            $('#otherPicList .picItem').attr("data-change", false);
+                        }
+                        if (data.items.status != 1 && data.items.status != 2) {
+                            $('#busiPicList .picItem').children().removeClass("uhide");
+                            $('#otherPicList .picItem').children().removeClass("uhide");
+                        }
+                        $(".status").html(App.getUserStatus(data.items.status));
+                        if (data.items.status == 1 || data.items.status == 3) {
+                            $(".remark").parent().removeClass("uhide");
+                            if (data.items.status == 3) {
+                                $(".remark").html(data.items.remark);
+                            } else {
+                                $(".remark").html("正在审核中,请耐心等待.");
+                            }
+                        }
+                        App.evalJs({
+                            winName : "userPersonAudit",
+                            type : 1,
+                            js : "showBtn(" + data.items.status + ")"
+                        })
+                        userinfo.auditstatus = data.items.status;
+                        App.updateUserInfo(userinfo)
+                    } else {
+                        App.toast(data.message)
+                    }
+                    App.ajaxLoading(0);
+                }
+            });
+        }
+
+        function editMode() {
+            edit = true;
+            $(".picItem").each(function() {
+                if (!$(this).hasClass("imgBg")) {
+                    $(this).children().removeClass("uhide");
+                }
+            })
+        }
+    </script>
+</html>

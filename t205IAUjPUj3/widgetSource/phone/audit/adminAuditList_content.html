@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/ui-box.css">
+        <link rel="stylesheet" href="../css/ui-base.css">
+        <link rel="stylesheet" href="../css/ui-color.css">
+        <link rel="stylesheet" href="../css/appcan.icon.css">
+        <link rel="stylesheet" href="../css/appcan.control.css">
+        <link rel="stylesheet" href="../message_content/css/main.css">
+        <link rel="stylesheet" href="adminAuditList_content/css/main.css">
+        <style>
+            .lis-icon1 {
+                width: 4em;
+                margin: 0em 0.4em 0em 0px;
+                height: 4em;
+            }
+        </style>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div class="umar-t sc-bg" id="auditList">
+            <ul>
+
+            </ul>
+        </div>
+        <script src="../js/appcan.js"></script>
+        <script src="../js/appcan.control.js"></script>
+        <script src="../js/appcan.listview.js"></script>
+        <script src="../js/config.js"></script>
+        <script src="../js/md5.js"></script>
+        <script src="../js/project.js"></script>
+    </body>
+    <script>
+        var userinfo;
+        var page = 1;
+        var pageSize = 10;
+        var objData;
+        appcan.ready(function() {
+            if (!isdebug) {
+                uexWindow.setWindowScrollbarVisible(false);
+            }
+            App.setPageBounce(function(bounceType) {
+                loadAuditList(1, 0, bounceType);
+            }, function(bounceType) {
+                page = page + 1;
+                loadAuditList(page, 1, bounceType);
+            });
+            loadData();
+        })
+        function loadData() {
+            App.ajaxLoading(1, true);
+            userinfo = App.getUserInfo();
+            loadAuditList(1, 0);
+        }
+
+        function loadAuditList(pageNumber, add, bounceType) {
+            page = pageNumber;
+            var status = App.getVal("auditStatus");
+            if (App.isNull(status)) {
+                status = "1";
+            }
+            App.authApi({
+                url : 'audit/getAuditList',
+                data : {
+                    params : {
+                        page : pageNumber,
+                        pageSize : pageSize,
+                        status : status
+                    }
+                },
+                callBack : function(data) {
+                    //console.log(data)
+                    if (data.code == 0) {
+                        objData = data.items;
+                        if (App.isNull(objData.dataList.length) && page > 1) {
+                            page = objData.totalPage;
+                            App.toast("没有更多数据了");
+                            uexWindow.resetBounceView(bounceType);
+                            return;
+                        }
+                        var d = '';
+                        if (objData.dataList.length > 0) {
+                            for (var i = 0; i < objData.dataList.length; i++) {
+                                d += createAuditListHtml(objData.dataList[i]);
+                            }
+                            if (add) {
+                                $("#auditList ul").append(d)
+                            } else {
+                                $("#auditList ul").html(d)
+                            }
+                        } else {
+                            d += '<div class="ub ub-ac ub-pc ub-f1 ub-ver uinn">'
+                            d += '    <div class="ub-img nofriend " style="min-height:8em;min-width:8em"></div>'
+                            d += '    <div class="t-gra">没有找到符合的数据</div>';
+                            d += '</div>'
+                            $('#auditList ul').html(d);
+                        }
+                        App.ajaxLoading(0);
+                        if (bounceType != undefined && bounceType != null) {
+                            uexWindow.resetBounceView(bounceType);
+                        }
+                    }
+                }
+            })
+
+        }
+
+        function createAuditListHtml(obj) {
+            var h = '';
+            var type = "企业资质";
+            if (obj.audittype == 1) {
+                type = "个人资质";
+            }
+            var status = "待审核";
+            if (obj.status == 2) {
+                status = "已审核"
+            } else if (obj.status == 3) {
+                status = "已拒绝";
+            }
+            var headuri = App.isNull(obj.headuri) ? "../wgtRes/comImg.png" : obj.headuri;
+            if (headuri.substr(0, 4) != "http" && headuri.substr(0, 3) != "../") {
+                headuri = App.headUri + obj.headuri;
+            }
+            h += '<li onclick="openAuditDetail(\'' + obj.id + '\',\'' + obj.audittype + '\')" class="ubb ub bc-border t-bla lis">';
+            h += '   <div class="lis-icon1 ub-img1" style="background-image:url(' + headuri + ')"></div>';
+            h += '   <div class="ub-f1 ub ub-pj">';
+            h += '      <ul class="ub-f1 ub ub-ver marg-l">';
+            h += '         <li class="bc-text ub ub-ver ut-m line1">' + obj.cnname + "</li>";
+            h += '         <li class="ulev-1 sc-text1 uinn3">审核类型:' + type + '</li>';
+            h += '         <li class="ulev-1 sc-text1 uinn3">提交时间:' + obj.updatetime + '</li>';
+            h += '         <li class="ulev-1 sc-text1 uinn3">审核状态:<span style="color: red">' + status + '</span></li>';
+            h += '      </ul>';
+            h += '   </div>';
+            h += '</li>';
+            return h;
+        }
+
+        function openAuditDetail(id, type) {
+            App.setVal("auditId", id);
+            if (type == 0) {
+                App.openWin({
+                    backName : 'adminAuditList',
+                    name : 'adminAuditDetail',
+                    url : 'adminAuditDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+            } else {
+                App.openWin({
+                    backName : 'adminAuditList',
+                    name : 'adminAuditPDetail',
+                    url : 'adminAuditPDetail.html',
+                    type : 4,
+                    aniId : 2,
+                    animDuration : 200
+                })
+            }
+
+        }
+    </script>
+</html>

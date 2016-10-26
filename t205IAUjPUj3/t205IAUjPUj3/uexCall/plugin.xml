@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<uexplugins>
+    <plugin name="uexCall">
+        <method name="call"></method>
+		<method name="dial"></method>
+        <method name="facetime"></method>
+	</plugin>
+</uexplugins>
